@@ -11,3 +11,6 @@ GitHub resources:
 https://www.gitkraken.com/learn/git/git-flow
 https://nvie.com/posts/a-successful-git-branching-model/
 --->
+
+## Steps to run this repo:
+1. Set up virtual environment

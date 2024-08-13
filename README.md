@@ -1,4 +1,4 @@
-# ChemicalDataGeneration
+# Chemical Data Generation
 Repository for doctoral research on machine learning for data generation, with applications in chemical data generation and classification.
 
 <!---

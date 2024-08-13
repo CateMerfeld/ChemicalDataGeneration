@@ -13,4 +13,4 @@ https://nvie.com/posts/a-successful-git-branching-model/
 --->
 
 ## Steps to run this repo:
-1. Set up virtual environment
+1. Set up virtual environment using ```python -m venv env```.

@@ -5,6 +5,7 @@ Repository for doctoral research on machine learning for data generation, with a
 Notes on terminology:
 Instead of lab-generated spectra - EXPERIMENTAL spectra
 Instead of synthetic spectra - IN-SILICO spectra
+Instead of machine - INSTRUMENT
 --->
 <!---
 GitHub resources:

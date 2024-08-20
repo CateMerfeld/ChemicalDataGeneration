@@ -20,4 +20,4 @@ https://nvie.com/posts/a-successful-git-branching-model/
 
 ## Notation:
 Mathematical notation rules applied throughout this project are taken from [this](https://wookai.github.io/paper-tips-and-tricks/math.html) article.
-![alt text](images/notation_rules.png)
+![Notation rules](images/notation_rules.png)

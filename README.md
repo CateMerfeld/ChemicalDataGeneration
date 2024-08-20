@@ -24,8 +24,7 @@ Berkeley research on dynamical systems and machine learning: https://www.stat.be
 2. Install packages using ```pip install -r requirements.txt```. Verify correct installation with ```pip list```.
 3. Add virtual environment to ```.gitignore``` as it is unnecessary for GitHub to track.
 
-<!---
 ## Notation:
 Mathematical notation rules applied throughout this project are taken from [this](https://wookai.github.io/paper-tips-and-tricks/math.html) article.
 ![alt text](images/notation_rules.png)
---->
+

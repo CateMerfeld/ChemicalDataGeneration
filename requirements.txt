@@ -1,5 +1,6 @@
 beautifulsoup4==4.12.3
 click==8.1.7
+# git+https://github.com/rossant/ipycache.git # for %%cache. 
 ipykernel==6.29.5
 numpy==1.24.4 # most recent version of numpy that works with python 3.8.10
 matplotlib==3.7.1

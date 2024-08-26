@@ -13,18 +13,11 @@ https://www.gitkraken.com/learn/git/git-flow
 https://nvie.com/posts/a-successful-git-branching-model/
 --->
 
-<!---
-Dynamical systems resources:
-Invitation to dynamical systems by ER Scheinerman
-Berkeley research on dynamical systems and machine learning: https://www.stat.berkeley.edu/~mmahoney/talks/dynamical_systems_and_ml_2.pdf
---->
-
 ## Steps to run this repo:
 1. Set up virtual environment using ```python3 -m venv env```. Activate new virtual env with ```.\env\Scripts\activate``` for Windows or ```source env/bin/activate``` for macOS/Linux.
 2. Install packages using ```pip install -r requirements.txt```. Verify correct installation with ```pip list```.
 3. Add virtual environment to ```.gitignore``` as it is unnecessary for GitHub to track.
 
-
 ## Notation:
 Mathematical notation rules applied throughout this project are taken from [this](https://wookai.github.io/paper-tips-and-tricks/math.html) article.
-![alt text](images/notation_rules.png)
+![Notation rules](images/notation_rules.png)

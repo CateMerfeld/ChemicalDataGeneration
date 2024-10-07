@@ -14,7 +14,7 @@ https://nvie.com/posts/a-successful-git-branching-model/
 --->
 
 ## Steps to run this repo:
-1. Set up virtual environment using ```python3 -m venv env```. Activate new virtual env with ```.\env\Scripts\activate``` for Windows or ```source env/bin/activate``` for macOS/Linux.
+1. Set up virtual environment using ```python3 -m venv your_env_name```. Activate new virtual env with ```.\your_env_name\Scripts\activate``` for Windows or ```source your_env_name/bin/activate``` for macOS/Linux.
 2. Install packages using ```pip install -r requirements.txt```. Verify correct installation with ```pip list```.
 3. Add virtual environment to ```.gitignore``` as it is unnecessary for GitHub to track.
 

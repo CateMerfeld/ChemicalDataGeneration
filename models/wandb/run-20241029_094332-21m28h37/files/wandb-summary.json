@@ -1,1 +1,1 @@
-{"Encoder Training Loss": 1.3098138237151503e-05, "_timestamp": 1730209500.207001, "_runtime": 87.3200900554657, "_step": 5}
+{"Encoder Training Loss": 3.4098626044930105e-06, "_timestamp": 1730209703.1479528, "_runtime": 290.26104187965393, "_step": 19, "_wandb": {"runtime": 289}}

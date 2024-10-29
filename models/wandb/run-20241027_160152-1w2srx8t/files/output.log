@@ -1,0 +1,11 @@
+Using device: cuda
+GPU ID: 0, % of total memore used: Memory Free:0.9%
+GPU ID: 1, % of total memore used: Memory Free:0.0%
+Epoch[1/8], loss: 511.32318841013415
+-------------------------------------------
+GPU ID: 0, % of total memore used: Memory Free:0.9%
+GPU ID: 1, % of total memore used: Memory Free:0.0%
+Epoch[2/8], loss: 14.74604893552846
+-------------------------------------------
+GPU ID: 0, % of total memore used: Memory Free:0.9%
+GPU ID: 1, % of total memore used: Memory Free:0.0%

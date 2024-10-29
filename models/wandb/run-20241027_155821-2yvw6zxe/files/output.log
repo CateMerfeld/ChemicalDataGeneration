@@ -1,0 +1,31 @@
+Using device: cuda
+GPU ID: 0, Memory Free: 2264.0MB, Memory Used: 21952.0MB, Memory Total: 24564.0MB
+GPU ID: 1, Memory Free: 24203.0MB, Memory Used: 14.0MB, Memory Total: 24564.0MB
+Epoch[1/8], loss: 518.9440020922957
+-------------------------------------------
+GPU ID: 0, Memory Free: 2122.0MB, Memory Used: 22094.0MB, Memory Total: 24564.0MB
+GPU ID: 1, Memory Free: 24203.0MB, Memory Used: 14.0MB, Memory Total: 24564.0MB
+Epoch[2/8], loss: 14.269418710675733
+-------------------------------------------
+GPU ID: 0, Memory Free: 2122.0MB, Memory Used: 22094.0MB, Memory Total: 24564.0MB
+GPU ID: 1, Memory Free: 24203.0MB, Memory Used: 14.0MB, Memory Total: 24564.0MB
+Epoch[3/8], loss: 6.820693496177936
+-------------------------------------------
+GPU ID: 0, Memory Free: 2122.0MB, Memory Used: 22094.0MB, Memory Total: 24564.0MB
+GPU ID: 1, Memory Free: 24203.0MB, Memory Used: 14.0MB, Memory Total: 24564.0MB
+Epoch[4/8], loss: 4.101322846988152
+-------------------------------------------
+GPU ID: 0, Memory Free: 2122.0MB, Memory Used: 22094.0MB, Memory Total: 24564.0MB
+GPU ID: 1, Memory Free: 24203.0MB, Memory Used: 14.0MB, Memory Total: 24564.0MB
+Epoch[5/8], loss: 2.7413205247500847
+-------------------------------------------
+GPU ID: 0, Memory Free: 2122.0MB, Memory Used: 22094.0MB, Memory Total: 24564.0MB
+GPU ID: 1, Memory Free: 24203.0MB, Memory Used: 14.0MB, Memory Total: 24564.0MB
+Epoch[6/8], loss: 1.9964521628001641
+-------------------------------------------
+GPU ID: 0, Memory Free: 2122.0MB, Memory Used: 22094.0MB, Memory Total: 24564.0MB
+GPU ID: 1, Memory Free: 24203.0MB, Memory Used: 14.0MB, Memory Total: 24564.0MB
+Epoch[7/8], loss: 1.5667582565340503
+-------------------------------------------
+GPU ID: 0, Memory Free: 2122.0MB, Memory Used: 22094.0MB, Memory Total: 24564.0MB
+GPU ID: 1, Memory Free: 24203.0MB, Memory Used: 14.0MB, Memory Total: 24564.0MB

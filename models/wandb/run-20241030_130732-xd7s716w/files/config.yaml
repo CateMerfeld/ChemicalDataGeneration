@@ -1,0 +1,62 @@
+wandb_version: 1
+
+wandb_entity:
+  desc: null
+  value: catemerfeld
+wandb_project:
+  desc: null
+  value: ims_encoder_decoder
+gpu:
+  desc: null
+  value: true
+threads:
+  desc: null
+  value: 1
+learning_rate:
+  desc: null
+  value: 1.0e-05
+epochs:
+  desc: null
+  value: 10
+batch_size:
+  desc: null
+  value: 256
+model_architecture:
+  desc: null
+  value: encoder
+optimizer:
+  desc: null
+  value: AdamW
+loss:
+  desc: null
+  value: MSELoss
+_wandb:
+  desc: null
+  value:
+    python_version: 3.8.10
+    cli_version: 0.17.0
+    framework: torch
+    is_jupyter_run: true
+    is_kaggle_kernel: false
+    start_time: 1730308052
+    t:
+      1:
+      - 1
+      - 5
+      - 53
+      - 55
+      2:
+      - 1
+      - 5
+      - 53
+      - 55
+      3:
+      - 2
+      - 16
+      - 23
+      4: 3.8.10
+      5: 0.17.0
+      8:
+      - 1
+      - 5
+      13: linux-x86_64

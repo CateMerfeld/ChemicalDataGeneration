@@ -402,3 +402,298 @@
 2024-10-31 15:27:32,295 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
 2024-10-31 15:27:32,295 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
 2024-10-31 15:27:32,296 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:27:32,737 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:27:36,681 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:27:36,682 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:27:36,682 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:27:36,682 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:27:36,738 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:27:37,682 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:27:41,023 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:27:41,023 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:27:41,024 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:27:41,025 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:27:41,740 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:27:43,025 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:27:44,850 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-31 15:27:44,850 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: stop_status
+2024-10-31 15:27:45,379 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:27:45,379 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:27:45,379 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:27:45,380 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:27:45,741 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:27:48,380 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:27:49,717 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:27:49,718 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:27:49,718 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:27:49,718 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:27:49,742 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:27:53,719 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:27:54,040 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:27:54,041 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:27:54,041 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:27:54,042 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:27:54,743 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:27:56,743 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/output.log
+2024-10-31 15:27:58,412 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:27:58,413 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:27:58,413 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:27:58,413 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:27:58,744 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:27:59,413 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:27:59,758 DEBUG   SenderThread:721824 [sender.py:send():378] send: stats
+2024-10-31 15:27:59,850 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-31 15:27:59,850 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: stop_status
+2024-10-31 15:28:02,783 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:02,783 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:02,783 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:02,784 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:03,745 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:04,784 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:07,138 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:07,139 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:07,139 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:07,140 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:07,746 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:10,141 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:11,487 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:11,488 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:11,488 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:11,488 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:11,747 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:14,850 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-31 15:28:14,851 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: stop_status
+2024-10-31 15:28:15,869 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:15,870 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:15,870 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:15,870 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:15,870 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:16,748 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:20,239 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:20,239 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:20,239 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:20,241 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:20,749 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:21,241 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:24,619 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:24,620 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:24,620 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:24,620 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:24,750 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:26,621 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:29,017 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:29,018 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:29,018 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:29,018 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:29,752 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:29,758 DEBUG   SenderThread:721824 [sender.py:send():378] send: stats
+2024-10-31 15:28:29,850 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-31 15:28:29,850 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: stop_status
+2024-10-31 15:28:31,995 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:33,361 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:33,361 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:33,361 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:33,362 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:33,753 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:37,362 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:37,752 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:37,753 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:37,753 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:37,753 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:37,754 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:38,754 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/output.log
+2024-10-31 15:28:42,128 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:42,129 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:42,129 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:42,129 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:42,755 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:43,129 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:44,850 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-31 15:28:44,851 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: stop_status
+2024-10-31 15:28:46,498 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:46,499 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:46,499 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:46,499 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:46,756 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:48,500 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:50,873 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:50,873 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:50,874 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:50,875 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:51,757 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:53,875 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:55,289 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:55,289 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:55,289 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:55,289 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:55,758 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:59,290 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:28:59,682 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:28:59,683 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:28:59,683 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:28:59,683 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:28:59,759 DEBUG   SenderThread:721824 [sender.py:send():378] send: stats
+2024-10-31 15:28:59,760 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:28:59,851 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-31 15:28:59,851 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: stop_status
+2024-10-31 15:29:04,134 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:29:04,135 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:29:04,135 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:29:04,135 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:29:04,761 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:29:05,135 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:29:08,575 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:29:08,576 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:29:08,576 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:29:08,576 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:29:08,762 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:29:10,577 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:29:13,034 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: partial_history
+2024-10-31 15:29:13,034 DEBUG   SenderThread:721824 [sender.py:send():378] send: history
+2024-10-31 15:29:13,034 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: summary_record
+2024-10-31 15:29:13,035 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:29:13,763 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:29:14,851 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-31 15:29:14,851 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: stop_status
+2024-10-31 15:29:15,938 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:29:20,938 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:29:25,939 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:29:29,760 DEBUG   SenderThread:721824 [sender.py:send():378] send: stats
+2024-10-31 15:29:29,851 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: stop_status
+2024-10-31 15:29:29,851 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: stop_status
+2024-10-31 15:29:30,983 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:29:34,779 DEBUG   SenderThread:721824 [sender.py:send():378] send: telemetry
+2024-10-31 15:29:34,779 DEBUG   SenderThread:721824 [sender.py:send():378] send: exit
+2024-10-31 15:29:34,779 INFO    SenderThread:721824 [sender.py:send_exit():585] handling exit code: 0
+2024-10-31 15:29:34,779 INFO    SenderThread:721824 [sender.py:send_exit():587] handling runtime: 365
+2024-10-31 15:29:34,779 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:29:34,780 INFO    SenderThread:721824 [sender.py:send_exit():593] send defer
+2024-10-31 15:29:34,780 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:34,780 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 0
+2024-10-31 15:29:34,780 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:34,780 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 0
+2024-10-31 15:29:34,780 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 1
+2024-10-31 15:29:34,780 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:34,780 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 1
+2024-10-31 15:29:34,780 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:34,780 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 1
+2024-10-31 15:29:34,780 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 2
+2024-10-31 15:29:34,780 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:34,780 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 2
+2024-10-31 15:29:34,780 INFO    HandlerThread:721824 [system_monitor.py:finish():203] Stopping system monitor
+2024-10-31 15:29:34,781 DEBUG   SystemMonitor:721824 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2024-10-31 15:29:34,781 INFO    HandlerThread:721824 [interfaces.py:finish():200] Joined cpu monitor
+2024-10-31 15:29:34,781 DEBUG   SystemMonitor:721824 [system_monitor.py:_start():183] Publishing last batch of metrics
+2024-10-31 15:29:34,781 INFO    HandlerThread:721824 [interfaces.py:finish():200] Joined disk monitor
+2024-10-31 15:29:34,890 INFO    HandlerThread:721824 [interfaces.py:finish():200] Joined gpu monitor
+2024-10-31 15:29:34,890 INFO    HandlerThread:721824 [interfaces.py:finish():200] Joined memory monitor
+2024-10-31 15:29:34,890 INFO    HandlerThread:721824 [interfaces.py:finish():200] Joined network monitor
+2024-10-31 15:29:34,890 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:34,891 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 2
+2024-10-31 15:29:34,891 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 3
+2024-10-31 15:29:34,891 DEBUG   SenderThread:721824 [sender.py:send():378] send: stats
+2024-10-31 15:29:34,891 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:34,891 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 3
+2024-10-31 15:29:34,891 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:34,891 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 3
+2024-10-31 15:29:34,891 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 4
+2024-10-31 15:29:34,891 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:34,891 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 4
+2024-10-31 15:29:34,892 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:34,892 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 4
+2024-10-31 15:29:34,892 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 5
+2024-10-31 15:29:34,892 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:34,892 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 5
+2024-10-31 15:29:34,892 DEBUG   SenderThread:721824 [sender.py:send():378] send: summary
+2024-10-31 15:29:34,892 INFO    SenderThread:721824 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-10-31 15:29:34,892 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:34,892 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 5
+2024-10-31 15:29:34,892 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 6
+2024-10-31 15:29:34,893 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:34,893 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 6
+2024-10-31 15:29:34,893 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:34,893 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 6
+2024-10-31 15:29:34,895 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: status_report
+2024-10-31 15:29:34,974 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 7
+2024-10-31 15:29:34,974 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:34,974 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 7
+2024-10-31 15:29:34,974 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:34,974 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 7
+2024-10-31 15:29:35,768 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/config.yaml
+2024-10-31 15:29:35,768 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:29:35,779 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-31 15:29:36,328 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 8
+2024-10-31 15:29:36,328 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: poll_exit
+2024-10-31 15:29:36,328 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:36,328 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 8
+2024-10-31 15:29:36,328 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:36,329 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 8
+2024-10-31 15:29:36,329 INFO    SenderThread:721824 [job_builder.py:build():432] Attempting to build job artifact
+2024-10-31 15:29:36,329 INFO    SenderThread:721824 [job_builder.py:_get_source_type():565] is repo sourced job
+2024-10-31 15:29:36,329 INFO    SenderThread:721824 [job_builder.py:_get_program_relpath():583] run is notebook based run
+2024-10-31 15:29:36,331 INFO    SenderThread:721824 [job_builder.py:build():541] adding wandb-job metadata file
+2024-10-31 15:29:36,333 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 9
+2024-10-31 15:29:36,333 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:36,333 DEBUG   SenderThread:721824 [sender.py:send():378] send: artifact
+2024-10-31 15:29:36,333 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 9
+2024-10-31 15:29:36,622 INFO    SenderThread:721824 [sender.py:send_artifact():1467] sent artifact job-https___github.com_CateMerfeld_ChemicalDataGeneration.git__home_cmdunham_ChemicalDataGeneration_models_ims_generator.ipynb - {'id': 'QXJ0aWZhY3Q6MTMwMjg0OTU5NA==', 'state': 'COMMITTED', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjQ4MzU1NTc2NQ==', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6MTMwMjkwMTkwNw==', 'versionIndex': 2}}}
+2024-10-31 15:29:36,622 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:36,622 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 9
+2024-10-31 15:29:36,622 INFO    SenderThread:721824 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-10-31 15:29:36,768 INFO    Thread-36 :721824 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/output.log
+2024-10-31 15:29:36,769 INFO    SenderThread:721824 [dir_watcher.py:finish():388] scan: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files
+2024-10-31 15:29:36,769 INFO    SenderThread:721824 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/output.log output.log
+2024-10-31 15:29:36,769 INFO    SenderThread:721824 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-metadata.json wandb-metadata.json
+2024-10-31 15:29:36,769 INFO    SenderThread:721824 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json wandb-summary.json
+2024-10-31 15:29:36,771 INFO    SenderThread:721824 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/config.yaml config.yaml
+2024-10-31 15:29:36,773 INFO    SenderThread:721824 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/requirements.txt requirements.txt
+2024-10-31 15:29:36,775 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 10
+2024-10-31 15:29:36,776 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:36,776 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 10
+2024-10-31 15:29:36,776 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:36,776 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 10
+2024-10-31 15:29:36,776 INFO    SenderThread:721824 [file_pusher.py:finish():169] shutting down file pusher
+2024-10-31 15:29:36,779 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-31 15:29:36,780 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: poll_exit
+2024-10-31 15:29:37,017 INFO    wandb-upload_1:721824 [upload_job.py:push():130] Uploaded file /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/wandb-summary.json
+2024-10-31 15:29:37,024 INFO    wandb-upload_0:721824 [upload_job.py:push():130] Uploaded file /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/output.log
+2024-10-31 15:29:37,037 INFO    wandb-upload_3:721824 [upload_job.py:push():130] Uploaded file /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/requirements.txt
+2024-10-31 15:29:37,047 INFO    wandb-upload_2:721824 [upload_job.py:push():130] Uploaded file /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/files/config.yaml
+2024-10-31 15:29:37,247 INFO    Thread-35 :721824 [sender.py:transition_state():613] send defer: 11
+2024-10-31 15:29:37,248 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:37,248 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 11
+2024-10-31 15:29:37,248 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:37,248 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 11
+2024-10-31 15:29:37,248 INFO    SenderThread:721824 [file_pusher.py:join():175] waiting for file pusher
+2024-10-31 15:29:37,248 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 12
+2024-10-31 15:29:37,248 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:37,248 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 12
+2024-10-31 15:29:37,248 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:37,248 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 12
+2024-10-31 15:29:37,248 INFO    SenderThread:721824 [file_stream.py:finish():601] file stream finish called
+2024-10-31 15:29:37,465 INFO    SenderThread:721824 [file_stream.py:finish():605] file stream finish is done
+2024-10-31 15:29:37,465 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 13
+2024-10-31 15:29:37,465 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:37,465 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 13
+2024-10-31 15:29:37,465 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:37,465 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 13
+2024-10-31 15:29:37,465 INFO    SenderThread:721824 [sender.py:transition_state():613] send defer: 14
+2024-10-31 15:29:37,465 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: defer
+2024-10-31 15:29:37,466 INFO    HandlerThread:721824 [handler.py:handle_request_defer():184] handle defer: 14
+2024-10-31 15:29:37,466 DEBUG   SenderThread:721824 [sender.py:send():378] send: final
+2024-10-31 15:29:37,466 DEBUG   SenderThread:721824 [sender.py:send():378] send: footer
+2024-10-31 15:29:37,466 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: defer
+2024-10-31 15:29:37,466 INFO    SenderThread:721824 [sender.py:send_request_defer():609] handle sender defer: 14
+2024-10-31 15:29:37,466 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: poll_exit
+2024-10-31 15:29:37,467 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: poll_exit
+2024-10-31 15:29:37,468 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: internal_messages
+2024-10-31 15:29:37,468 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: server_info
+2024-10-31 15:29:37,468 DEBUG   SenderThread:721824 [sender.py:send_request():405] send_request: server_info
+2024-10-31 15:29:37,509 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: get_summary
+2024-10-31 15:29:37,509 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: sampled_history
+2024-10-31 15:29:37,553 DEBUG   HandlerThread:721824 [handler.py:handle_request():158] handle_request: shutdown
+2024-10-31 15:29:37,553 INFO    HandlerThread:721824 [handler.py:finish():882] shutting down handler
+2024-10-31 15:29:38,468 INFO    WriterThread:721824 [datastore.py:close():296] close: /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241031_152325-ktptqb4z/run-ktptqb4z.wandb
+2024-10-31 15:29:38,515 INFO    SenderThread:721824 [sender.py:finish():1545] shutting down sender
+2024-10-31 15:29:38,516 INFO    SenderThread:721824 [file_pusher.py:finish():169] shutting down file pusher
+2024-10-31 15:29:38,516 INFO    SenderThread:721824 [file_pusher.py:join():175] waiting for file pusher

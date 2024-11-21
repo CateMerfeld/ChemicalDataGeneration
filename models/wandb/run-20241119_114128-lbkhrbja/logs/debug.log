@@ -28,3 +28,13 @@ config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 
 2024-11-19 11:41:29,276 INFO    MainThread:12695 [wandb_run.py:_redirect():2294] Wrapping output streams.
 2024-11-19 11:41:29,276 INFO    MainThread:12695 [wandb_run.py:_redirect():2319] Redirects installed.
 2024-11-19 11:41:29,387 INFO    MainThread:12695 [wandb_init.py:init():838] run started, returning control to user process
+2024-11-19 11:42:31,159 INFO    MainThread:12695 [wandb_run.py:_finish():2103] finishing run catemerfeld/ims_encoder_decoder/lbkhrbja
+2024-11-19 11:42:31,162 ERROR   MainThread:12695 [jupyter.py:save_history():437] Run pip install nbformat to save notebook history
+2024-11-19 11:42:31,164 INFO    MainThread:12695 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2024-11-19 11:42:31,164 INFO    MainThread:12695 [wandb_init.py:_jupyter_teardown():448] cleaning up jupyter logic
+2024-11-19 11:42:31,164 INFO    MainThread:12695 [wandb_run.py:_atexit_cleanup():2343] got exitcode: 0
+2024-11-19 11:42:31,164 INFO    MainThread:12695 [wandb_run.py:_restore():2326] restore
+2024-11-19 11:42:31,164 INFO    MainThread:12695 [wandb_run.py:_restore():2332] restore done
+2024-11-19 11:42:33,776 INFO    MainThread:12695 [wandb_run.py:_footer_history_summary_info():3994] rendering history
+2024-11-19 11:42:33,776 INFO    MainThread:12695 [wandb_run.py:_footer_history_summary_info():4026] rendering summary
+2024-11-19 11:42:33,784 INFO    MainThread:12695 [wandb_run.py:_footer_sync_info():3953] logging synced files

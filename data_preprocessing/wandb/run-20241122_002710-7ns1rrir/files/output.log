@@ -1,0 +1,55 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  64
+epochs  :  100
+learning_rate  :  1e-05
+Saved best model at epoch 1
+Saved best model at epoch 4
+Saved best model at epoch 5
+Saved best model at epoch 7
+Epoch[10/100]:
+   Training loss: 2.9360969586149026e-07
+   Validation loss: 0.0005828537002182089
+-------------------------------------------
+Saved best model at epoch 11
+Saved best model at epoch 15
+Epoch[20/100]:
+   Training loss: 2.1944145473514407e-07
+   Validation loss: 0.0005781934853682931
+-------------------------------------------
+Epoch[30/100]:
+   Training loss: 1.7954328515167545e-07
+   Validation loss: 0.0005786637371906523
+-------------------------------------------
+Saved best model at epoch 39
+Epoch[40/100]:
+   Training loss: 1.5025973146232474e-07
+   Validation loss: 0.0005780719439993239
+-------------------------------------------
+Epoch[50/100]:
+   Training loss: 1.313061744573609e-07
+   Validation loss: 0.0005802782969756966
+-------------------------------------------
+Saved best model at epoch 53
+Epoch[60/100]:
+   Training loss: 1.1529324631422374e-07
+   Validation loss: 0.0005843519228623014
+-------------------------------------------
+Epoch[70/100]:
+   Training loss: 1.0451725409499934e-07
+   Validation loss: 0.0005793136562094977
+-------------------------------------------
+Epoch[80/100]:
+   Training loss: 9.731741226557267e-08
+   Validation loss: 0.0005834636552207447
+-------------------------------------------
+Epoch[90/100]:
+   Training loss: 9.039974560238118e-08
+   Validation loss: 0.0005795465215156525
+-------------------------------------------
+Epoch[100/100]:
+   Training loss: 8.049597497170984e-08
+   Validation loss: 0.0005879163551205124
+-------------------------------------------

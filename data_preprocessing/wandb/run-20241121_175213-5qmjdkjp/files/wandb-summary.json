@@ -1,0 +1,1 @@
+{"CIFAR10 Encoder Training Loss": 0.003466925997274952, "CIFAR10 Encoder Validation Loss": 0.029650039716537697, "_timestamp": 1732229639.8291492, "_runtime": 106.46208024024963, "_step": 99, "_wandb": {"runtime": 105}}

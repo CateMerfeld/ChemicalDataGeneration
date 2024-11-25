@@ -1,0 +1,225 @@
+2024-11-22 01:51:18,997 INFO    StreamThr :57119 [internal.py:wandb_internal():85] W&B internal server running at pid: 57119, started at: 2024-11-22 01:51:18.996426
+2024-11-22 01:51:18,998 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: status
+2024-11-22 01:51:19,009 INFO    WriterThread:57119 [datastore.py:open_for_write():87] open: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/run-7u94vhll.wandb
+2024-11-22 01:51:19,010 DEBUG   SenderThread:57119 [sender.py:send():378] send: header
+2024-11-22 01:51:19,111 DEBUG   SenderThread:57119 [sender.py:send():378] send: run
+2024-11-22 01:51:19,342 INFO    SenderThread:57119 [dir_watcher.py:__init__():211] watching files in: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files
+2024-11-22 01:51:19,343 INFO    SenderThread:57119 [sender.py:_start_run_threads():1123] run started: 7u94vhll with start time 1732258278.995913
+2024-11-22 01:51:19,352 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: check_version
+2024-11-22 01:51:19,353 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: check_version
+2024-11-22 01:51:19,422 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: run_start
+2024-11-22 01:51:19,457 DEBUG   HandlerThread:57119 [system_info.py:__init__():26] System info init
+2024-11-22 01:51:19,457 DEBUG   HandlerThread:57119 [system_info.py:__init__():41] System info init done
+2024-11-22 01:51:19,458 INFO    HandlerThread:57119 [system_monitor.py:start():194] Starting system monitor
+2024-11-22 01:51:19,458 INFO    SystemMonitor:57119 [system_monitor.py:_start():158] Starting system asset monitoring threads
+2024-11-22 01:51:19,458 INFO    HandlerThread:57119 [system_monitor.py:probe():214] Collecting system info
+2024-11-22 01:51:19,459 INFO    SystemMonitor:57119 [interfaces.py:start():188] Started cpu monitoring
+2024-11-22 01:51:19,460 INFO    SystemMonitor:57119 [interfaces.py:start():188] Started disk monitoring
+2024-11-22 01:51:19,460 INFO    SystemMonitor:57119 [interfaces.py:start():188] Started gpu monitoring
+2024-11-22 01:51:19,461 INFO    SystemMonitor:57119 [interfaces.py:start():188] Started memory monitoring
+2024-11-22 01:51:19,462 INFO    SystemMonitor:57119 [interfaces.py:start():188] Started network monitoring
+2024-11-22 01:51:19,513 DEBUG   HandlerThread:57119 [system_info.py:probe():150] Probing system
+2024-11-22 01:51:19,523 DEBUG   HandlerThread:57119 [system_info.py:_probe_git():135] Probing git
+2024-11-22 01:51:19,540 DEBUG   HandlerThread:57119 [system_info.py:_probe_git():143] Probing git done
+2024-11-22 01:51:19,540 DEBUG   HandlerThread:57119 [system_info.py:probe():198] Probing system done
+2024-11-22 01:51:19,540 DEBUG   HandlerThread:57119 [system_monitor.py:probe():223] {'os': 'Linux-5.15.0-125-generic-x86_64-with-glibc2.29', 'python': '3.8.10', 'heartbeatAt': '2024-11-22T06:51:19.513810', 'startedAt': '2024-11-22T06:51:18.987455', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': '/home/cmdunham/ChemicalDataGeneration/data_preprocessing/cifar10_encoder.ipynb', 'codePathLocal': 'cifar10_encoder.ipynb', 'git': {'remote': 'https://github.com/CateMerfeld/ChemicalDataGeneration.git', 'commit': '4d1171b7528f171354d2560604c7039d7c43169a'}, 'email': 'catemerfeld@gmail.com', 'root': '/home/cmdunham/ChemicalDataGeneration', 'host': 'paffenroth23-1', 'username': 'cmdunham', 'executable': '/home/cmdunham/ChemicalDataGeneration/chem_data_gen/bin/python', 'cpu_count': 16, 'cpu_count_logical': 32, 'cpu_freq': {'current': 1858.06078125, 'min': 1800.0, 'max': 4000.0}, 'cpu_freq_per_core': [{'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 2799.934, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}, {'current': 1800.0, 'min': 1800.0, 'max': 4000.0}], 'disk': {'/': {'total': 438.5479202270508, 'used': 233.5992889404297}}, 'gpu': 'NVIDIA GeForce RTX 4090', 'gpu_count': 2, 'gpu_devices': [{'name': 'NVIDIA GeForce RTX 4090', 'memory_total': 25757220864}, {'name': 'NVIDIA GeForce RTX 4090', 'memory_total': 25757220864}], 'memory': {'total': 125.60020446777344}}
+2024-11-22 01:51:19,540 INFO    HandlerThread:57119 [system_monitor.py:probe():224] Finished collecting system info
+2024-11-22 01:51:19,540 INFO    HandlerThread:57119 [system_monitor.py:probe():227] Publishing system info
+2024-11-22 01:51:19,540 INFO    HandlerThread:57119 [system_monitor.py:probe():229] Finished publishing system info
+2024-11-22 01:51:19,542 DEBUG   SenderThread:57119 [sender.py:send():378] send: files
+2024-11-22 01:51:19,542 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-metadata.json with policy now
+2024-11-22 01:51:19,601 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: python_packages
+2024-11-22 01:51:19,601 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: python_packages
+2024-11-22 01:51:19,602 DEBUG   SenderThread:57119 [sender.py:send():378] send: telemetry
+2024-11-22 01:51:19,602 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: stop_status
+2024-11-22 01:51:19,603 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: stop_status
+2024-11-22 01:51:19,825 INFO    wandb-upload_0:57119 [upload_job.py:push():130] Uploaded file /tmp/tmppy_gv28cwandb/piynits0-wandb-metadata.json
+2024-11-22 01:51:20,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/output.log
+2024-11-22 01:51:20,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/requirements.txt
+2024-11-22 01:51:20,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-metadata.json
+2024-11-22 01:51:20,452 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:20,454 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:20,454 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:20,454 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:21,192 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:21,193 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:21,193 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:21,194 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:21,343 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_created():271] file/dir created: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json
+2024-11-22 01:51:21,922 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:21,923 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:21,923 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:21,923 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:22,343 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/output.log
+2024-11-22 01:51:22,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json
+2024-11-22 01:51:22,604 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:22,605 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:22,605 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:22,606 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:23,270 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:23,271 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:23,272 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:23,272 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:23,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json
+2024-11-22 01:51:23,925 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:23,926 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:23,926 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:23,926 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:24,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/output.log
+2024-11-22 01:51:24,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json
+2024-11-22 01:51:24,580 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:24,580 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: status_report
+2024-11-22 01:51:24,581 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:24,581 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:24,581 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:25,240 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:25,241 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:25,241 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:25,241 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:25,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json
+2024-11-22 01:51:25,897 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:25,898 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:25,898 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:25,899 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:26,344 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/output.log
+2024-11-22 01:51:26,345 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json
+2024-11-22 01:51:26,561 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: partial_history
+2024-11-22 01:51:26,563 DEBUG   SenderThread:57119 [sender.py:send():378] send: history
+2024-11-22 01:51:26,563 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: summary_record
+2024-11-22 01:51:26,564 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:26,564 DEBUG   SenderThread:57119 [sender.py:send():378] send: telemetry
+2024-11-22 01:51:26,564 DEBUG   SenderThread:57119 [sender.py:send():378] send: exit
+2024-11-22 01:51:26,564 INFO    SenderThread:57119 [sender.py:send_exit():585] handling exit code: 0
+2024-11-22 01:51:26,564 INFO    SenderThread:57119 [sender.py:send_exit():587] handling runtime: 7
+2024-11-22 01:51:26,565 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:26,565 INFO    SenderThread:57119 [sender.py:send_exit():593] send defer
+2024-11-22 01:51:26,565 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:26,565 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 0
+2024-11-22 01:51:26,565 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:26,565 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 0
+2024-11-22 01:51:26,566 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 1
+2024-11-22 01:51:26,566 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:26,566 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 1
+2024-11-22 01:51:26,566 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:26,566 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 1
+2024-11-22 01:51:26,566 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 2
+2024-11-22 01:51:26,566 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:26,566 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 2
+2024-11-22 01:51:26,566 INFO    HandlerThread:57119 [system_monitor.py:finish():203] Stopping system monitor
+2024-11-22 01:51:26,567 INFO    HandlerThread:57119 [interfaces.py:finish():200] Joined cpu monitor
+2024-11-22 01:51:26,567 INFO    HandlerThread:57119 [interfaces.py:finish():200] Joined disk monitor
+2024-11-22 01:51:26,567 DEBUG   SystemMonitor:57119 [system_monitor.py:_start():172] Starting system metrics aggregation loop
+2024-11-22 01:51:26,568 DEBUG   SystemMonitor:57119 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2024-11-22 01:51:26,568 DEBUG   SystemMonitor:57119 [system_monitor.py:_start():183] Publishing last batch of metrics
+2024-11-22 01:51:26,662 INFO    HandlerThread:57119 [interfaces.py:finish():200] Joined gpu monitor
+2024-11-22 01:51:26,663 INFO    HandlerThread:57119 [interfaces.py:finish():200] Joined memory monitor
+2024-11-22 01:51:26,663 INFO    HandlerThread:57119 [interfaces.py:finish():200] Joined network monitor
+2024-11-22 01:51:26,663 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:26,663 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 2
+2024-11-22 01:51:26,663 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 3
+2024-11-22 01:51:26,663 DEBUG   SenderThread:57119 [sender.py:send():378] send: stats
+2024-11-22 01:51:26,664 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:26,664 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 3
+2024-11-22 01:51:26,664 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:26,664 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 3
+2024-11-22 01:51:26,664 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 4
+2024-11-22 01:51:26,664 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:26,664 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 4
+2024-11-22 01:51:26,665 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:26,665 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 4
+2024-11-22 01:51:26,665 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 5
+2024-11-22 01:51:26,665 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:26,665 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 5
+2024-11-22 01:51:26,665 DEBUG   SenderThread:57119 [sender.py:send():378] send: summary
+2024-11-22 01:51:26,666 INFO    SenderThread:57119 [sender.py:_save_file():1389] saving file wandb-summary.json with policy end
+2024-11-22 01:51:26,666 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:26,666 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 5
+2024-11-22 01:51:26,666 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 6
+2024-11-22 01:51:26,666 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:26,667 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 6
+2024-11-22 01:51:26,667 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:26,667 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 6
+2024-11-22 01:51:26,671 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: status_report
+2024-11-22 01:51:26,752 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 7
+2024-11-22 01:51:26,752 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:26,752 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 7
+2024-11-22 01:51:26,752 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:26,752 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 7
+2024-11-22 01:51:27,345 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/config.yaml
+2024-11-22 01:51:27,346 INFO    Thread-12 :57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json
+2024-11-22 01:51:27,563 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: poll_exit
+2024-11-22 01:51:27,801 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 8
+2024-11-22 01:51:27,801 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: poll_exit
+2024-11-22 01:51:27,801 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:27,801 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 8
+2024-11-22 01:51:27,802 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:27,802 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 8
+2024-11-22 01:51:27,802 INFO    SenderThread:57119 [job_builder.py:build():432] Attempting to build job artifact
+2024-11-22 01:51:27,803 INFO    SenderThread:57119 [job_builder.py:_get_source_type():565] is repo sourced job
+2024-11-22 01:51:27,803 INFO    SenderThread:57119 [job_builder.py:_get_program_relpath():583] run is notebook based run
+2024-11-22 01:51:27,826 INFO    SenderThread:57119 [job_builder.py:build():541] adding wandb-job metadata file
+2024-11-22 01:51:27,830 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 9
+2024-11-22 01:51:27,830 DEBUG   SenderThread:57119 [sender.py:send():378] send: artifact
+2024-11-22 01:51:27,832 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:27,832 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 9
+2024-11-22 01:51:28,116 INFO    SenderThread:57119 [sender.py:send_artifact():1467] sent artifact job-https___github.com_CateMerfeld_ChemicalDataGeneration.git__..ChemicalDataGeneration_data_preprocessing_cifar10_encoder.ipynb - {'id': 'QXJ0aWZhY3Q6MTM0NDk1NDYyMQ==', 'state': 'COMMITTED', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjQ5Nzg4MzQzNA==', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6MTM0NDk1NDYyMQ==', 'versionIndex': 4}}}
+2024-11-22 01:51:28,116 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:28,116 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 9
+2024-11-22 01:51:28,117 INFO    SenderThread:57119 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-11-22 01:51:28,347 INFO    SenderThread:57119 [dir_watcher.py:_on_file_modified():288] file/dir modified: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/output.log
+2024-11-22 01:51:28,347 INFO    SenderThread:57119 [dir_watcher.py:finish():388] scan: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files
+2024-11-22 01:51:28,348 INFO    SenderThread:57119 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/output.log output.log
+2024-11-22 01:51:28,348 INFO    SenderThread:57119 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-metadata.json wandb-metadata.json
+2024-11-22 01:51:28,348 INFO    SenderThread:57119 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json wandb-summary.json
+2024-11-22 01:51:28,348 INFO    SenderThread:57119 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/config.yaml config.yaml
+2024-11-22 01:51:28,354 INFO    SenderThread:57119 [dir_watcher.py:finish():402] scan save: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/requirements.txt requirements.txt
+2024-11-22 01:51:28,355 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 10
+2024-11-22 01:51:28,357 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:28,357 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 10
+2024-11-22 01:51:28,357 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:28,357 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 10
+2024-11-22 01:51:28,357 INFO    SenderThread:57119 [file_pusher.py:finish():169] shutting down file pusher
+2024-11-22 01:51:28,558 INFO    wandb-upload_1:57119 [upload_job.py:push():130] Uploaded file /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/output.log
+2024-11-22 01:51:28,563 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: poll_exit
+2024-11-22 01:51:28,564 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: poll_exit
+2024-11-22 01:51:28,605 INFO    wandb-upload_0:57119 [upload_job.py:push():130] Uploaded file /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/wandb-summary.json
+2024-11-22 01:51:28,625 INFO    wandb-upload_2:57119 [upload_job.py:push():130] Uploaded file /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/config.yaml
+2024-11-22 01:51:28,626 INFO    wandb-upload_3:57119 [upload_job.py:push():130] Uploaded file /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/files/requirements.txt
+2024-11-22 01:51:28,827 INFO    Thread-11 :57119 [sender.py:transition_state():613] send defer: 11
+2024-11-22 01:51:28,827 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:28,828 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 11
+2024-11-22 01:51:28,828 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:28,828 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 11
+2024-11-22 01:51:28,828 INFO    SenderThread:57119 [file_pusher.py:join():175] waiting for file pusher
+2024-11-22 01:51:28,828 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 12
+2024-11-22 01:51:28,828 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:28,829 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 12
+2024-11-22 01:51:28,829 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:28,829 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 12
+2024-11-22 01:51:28,829 INFO    SenderThread:57119 [file_stream.py:finish():601] file stream finish called
+2024-11-22 01:51:28,906 INFO    SenderThread:57119 [file_stream.py:finish():605] file stream finish is done
+2024-11-22 01:51:28,906 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 13
+2024-11-22 01:51:28,906 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:28,907 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 13
+2024-11-22 01:51:28,907 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:28,907 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 13
+2024-11-22 01:51:28,907 INFO    SenderThread:57119 [sender.py:transition_state():613] send defer: 14
+2024-11-22 01:51:28,907 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: defer
+2024-11-22 01:51:28,907 INFO    HandlerThread:57119 [handler.py:handle_request_defer():184] handle defer: 14
+2024-11-22 01:51:28,908 DEBUG   SenderThread:57119 [sender.py:send():378] send: final
+2024-11-22 01:51:28,908 DEBUG   SenderThread:57119 [sender.py:send():378] send: footer
+2024-11-22 01:51:28,908 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: defer
+2024-11-22 01:51:28,908 INFO    SenderThread:57119 [sender.py:send_request_defer():609] handle sender defer: 14
+2024-11-22 01:51:28,909 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: poll_exit
+2024-11-22 01:51:28,910 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: poll_exit
+2024-11-22 01:51:28,912 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: internal_messages
+2024-11-22 01:51:28,913 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: server_info
+2024-11-22 01:51:28,913 DEBUG   SenderThread:57119 [sender.py:send_request():405] send_request: server_info
+2024-11-22 01:51:28,954 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: get_summary
+2024-11-22 01:51:28,954 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: sampled_history
+2024-11-22 01:51:28,998 DEBUG   HandlerThread:57119 [handler.py:handle_request():158] handle_request: shutdown
+2024-11-22 01:51:28,998 INFO    HandlerThread:57119 [handler.py:finish():882] shutting down handler
+2024-11-22 01:51:29,913 INFO    WriterThread:57119 [datastore.py:close():296] close: /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241122_015118-7u94vhll/run-7u94vhll.wandb
+2024-11-22 01:51:29,960 INFO    SenderThread:57119 [sender.py:finish():1545] shutting down sender
+2024-11-22 01:51:29,960 INFO    SenderThread:57119 [file_pusher.py:finish():169] shutting down file pusher
+2024-11-22 01:51:29,960 INFO    SenderThread:57119 [file_pusher.py:join():175] waiting for file pusher

@@ -1,0 +1,141 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  1e-05
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 5
+Saved best model at epoch 6
+Saved best model at epoch 7
+Saved best model at epoch 8
+Saved best model at epoch 9
+Saved best model at epoch 10
+Epoch[10/500]:
+   Training loss: 0.0018028438819669551
+   Validation loss: 0.0019888344159699044
+-------------------------------------------
+Saved best model at epoch 11
+Saved best model at epoch 12
+Saved best model at epoch 13
+Saved best model at epoch 14
+Saved best model at epoch 15
+Saved best model at epoch 16
+Saved best model at epoch 17
+Saved best model at epoch 18
+Saved best model at epoch 19
+Saved best model at epoch 20
+Epoch[20/500]:
+   Training loss: 0.0008437674090135248
+   Validation loss: 0.0013213089277754383
+-------------------------------------------
+Saved best model at epoch 21
+Saved best model at epoch 22
+Saved best model at epoch 23
+Saved best model at epoch 24
+Saved best model at epoch 25
+Saved best model at epoch 26
+Saved best model at epoch 27
+Saved best model at epoch 28
+Saved best model at epoch 29
+Saved best model at epoch 30
+Epoch[30/500]:
+   Training loss: 0.000429751645160371
+   Validation loss: 0.0010475546204058142
+-------------------------------------------
+Saved best model at epoch 31
+Saved best model at epoch 32
+Saved best model at epoch 33
+Saved best model at epoch 34
+Saved best model at epoch 36
+Saved best model at epoch 37
+Saved best model at epoch 38
+Saved best model at epoch 40
+Epoch[40/500]:
+   Training loss: 0.0002189432473942881
+   Validation loss: 0.0009261822564197549
+-------------------------------------------
+Saved best model at epoch 41
+Saved best model at epoch 42
+Saved best model at epoch 44
+Saved best model at epoch 45
+Saved best model at epoch 46
+Saved best model at epoch 47
+Saved best model at epoch 49
+Saved best model at epoch 50
+Epoch[50/500]:
+   Training loss: 0.00011175390087809204
+   Validation loss: 0.0008393887075969057
+-------------------------------------------
+Saved best model at epoch 51
+Saved best model at epoch 53
+Saved best model at epoch 56
+Saved best model at epoch 59
+Saved best model at epoch 60
+Epoch[60/500]:
+   Training loss: 5.8802547750201937e-05
+   Validation loss: 0.000799812009378608
+-------------------------------------------
+Saved best model at epoch 62
+Saved best model at epoch 66
+Saved best model at epoch 68
+Epoch[70/500]:
+   Training loss: 3.1803530228720455e-05
+   Validation loss: 0.0007846727686713469
+-------------------------------------------
+Saved best model at epoch 72
+Saved best model at epoch 77
+Epoch[80/500]:
+   Training loss: 1.83784899273989e-05
+   Validation loss: 0.0007613837904682442
+-------------------------------------------
+Saved best model at epoch 86
+Saved best model at epoch 90
+Epoch[90/500]:
+   Training loss: 1.2115372240884269e-05
+   Validation loss: 0.0007469407620768227
+-------------------------------------------
+Saved best model at epoch 92
+Saved best model at epoch 93
+Saved best model at epoch 96
+Epoch[100/500]:
+   Training loss: 8.364308690228955e-06
+   Validation loss: 0.0008464248859885022
+-------------------------------------------
+Saved best model at epoch 103
+Epoch[110/500]:
+   Training loss: 7.75426564892541e-06
+   Validation loss: 0.0008950231461737228
+-------------------------------------------
+Saved best model at epoch 113
+Saved best model at epoch 120
+Epoch[120/500]:
+   Training loss: 4.45633748489735e-06
+   Validation loss: 0.0007277720355826508
+-------------------------------------------
+Saved best model at epoch 121
+Saved best model at epoch 125
+Saved best model at epoch 129
+Saved best model at epoch 130
+Epoch[130/500]:
+   Training loss: 3.5047493984452402e-06
+   Validation loss: 0.0007182353294918661
+-------------------------------------------
+Saved best model at epoch 132
+Epoch[140/500]:
+   Training loss: 2.6999640518758928e-06
+   Validation loss: 0.000731297907912752
+-------------------------------------------
+Epoch[150/500]:
+   Training loss: 7.637171638811831e-06
+   Validation loss: 0.0008353790392781472
+-------------------------------------------
+Saved best model at epoch 160
+Epoch[160/500]:
+   Training loss: 1.88619110522509e-06
+   Validation loss: 0.000714132183318649
+-------------------------------------------

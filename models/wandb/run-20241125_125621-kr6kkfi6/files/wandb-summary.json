@@ -1,0 +1,1 @@
+{"Encoder Training Loss": 0.0004217176460310374, "Encoder Validation Loss": 0.0008832593498011882, "_timestamp": 1732557432.20866, "_runtime": 50.94967985153198, "_step": 10, "model_architecture": {"num_layers": 1, "layer_details": [{"layer_type": "Sequential", "num_nodes": null, "activation_function": "Sequential"}]}, "_wandb": {"runtime": 62}}

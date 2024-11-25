@@ -1,0 +1,8 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  64
+epochs  :  1
+learning_rate  :  0.0001
+/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/torch/nn/modules/loss.py:535: UserWarning: Using a target size (torch.Size([64, 8])) that is different to the input size (torch.Size([64, 512])). This will likely lead to incorrect results due to broadcasting. Please ensure they have the same size.

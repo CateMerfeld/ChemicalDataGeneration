@@ -1,0 +1,76 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  128
+epochs  :  100
+learning_rate  :  0.0001
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 5
+Saved best model at epoch 6
+Saved best model at epoch 7
+Saved best model at epoch 8
+Saved best model at epoch 9
+Saved best model at epoch 10
+Epoch[10/100]:
+   Training loss: 0.0004583932762920844
+   Validation loss: 0.0010293844798549177
+-------------------------------------------
+Saved best model at epoch 11
+Saved best model at epoch 12
+Saved best model at epoch 13
+Saved best model at epoch 15
+Saved best model at epoch 20
+Epoch[20/100]:
+   Training loss: 0.00011360330806581754
+   Validation loss: 0.0008225125194784548
+-------------------------------------------
+Saved best model at epoch 21
+Saved best model at epoch 26
+Epoch[30/100]:
+   Training loss: 3.77878042481283e-05
+   Validation loss: 0.0007936340627661833
+-------------------------------------------
+Saved best model at epoch 36
+Epoch[40/100]:
+   Training loss: 2.5461261890652636e-05
+   Validation loss: 0.0007184057475043167
+-------------------------------------------
+Saved best model at epoch 43
+Saved best model at epoch 44
+Saved best model at epoch 45
+Epoch[50/100]:
+   Training loss: 4.8596342821838334e-05
+   Validation loss: 0.0007119664867212506
+-------------------------------------------
+Saved best model at epoch 51
+Saved best model at epoch 52
+Saved best model at epoch 53
+Saved best model at epoch 54
+Epoch[60/100]:
+   Training loss: 1.2223058717687393e-05
+   Validation loss: 0.0007268107777259789
+-------------------------------------------
+Validation loss has not improved in 10 epochs. Stopping training at epoch 64.
+-------------------------------------------
+-------------------------------------------
+Dataset:  MNIST
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=784, out_features=716, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=716, out_features=648, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=648, out_features=580, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=580, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

@@ -1,0 +1,71 @@
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Configure stats pid to 95083
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/.config/wandb/settings
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/ChemicalDataGeneration/models/wandb/settings
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': '/home/cmdunham/ChemicalDataGeneration/models/ims_encoder.ipynb'}
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Applying login settings: {}
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_init.py:_log_setup():520] Logging user logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241126_112124-2p5c607y/logs/debug.log
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_init.py:_log_setup():521] Logging internal logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241126_112124-2p5c607y/logs/debug-internal.log
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_init.py:_jupyter_setup():466] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x7f0391535580>
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_init.py:init():560] calling init triggers
+2024-11-26 11:21:24,787 INFO    MainThread:95083 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'architecture': 'ims_encoder', 'optimizer': 'AdamW', 'loss': 'MSELoss', 'dataset': 'IMS', 'target_embedding': 'OneHot Encoding', 'batch_size': 10000, 'epochs': 1, 'learning_rate': 0.0001}
+2024-11-26 11:21:24,788 INFO    MainThread:95083 [wandb_init.py:init():585] re-initializing run, found existing run on stack: fhwlw740
+2024-11-26 11:21:24,789 INFO    MainThread:95083 [wandb_run.py:_finish():2103] finishing run catemerfeld/ims_encoder_decoder/fhwlw740
+2024-11-26 11:21:24,789 INFO    MainThread:95083 [wandb_run.py:_atexit_cleanup():2343] got exitcode: 0
+2024-11-26 11:21:24,789 INFO    MainThread:95083 [wandb_run.py:_restore():2326] restore
+2024-11-26 11:21:24,790 INFO    MainThread:95083 [wandb_run.py:_restore():2332] restore done
+2024-11-26 11:21:29,352 INFO    MainThread:95083 [wandb_run.py:_footer_history_summary_info():3994] rendering history
+2024-11-26 11:21:29,352 INFO    MainThread:95083 [wandb_run.py:_footer_history_summary_info():4026] rendering summary
+2024-11-26 11:21:29,359 INFO    MainThread:95083 [wandb_run.py:_footer_sync_info():3953] logging synced files
+2024-11-26 11:21:29,383 INFO    MainThread:95083 [wandb_init.py:init():610] starting backend
+2024-11-26 11:21:29,383 INFO    MainThread:95083 [wandb_init.py:init():614] setting up manager
+2024-11-26 11:21:29,388 INFO    MainThread:95083 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-11-26 11:21:29,388 INFO    MainThread:95083 [wandb_init.py:init():622] backend started and connected
+2024-11-26 11:21:29,396 INFO    MainThread:95083 [wandb_run.py:_label_probe_notebook():1328] probe notebook
+2024-11-26 11:21:29,424 INFO    MainThread:95083 [wandb_init.py:init():711] updated telemetry
+2024-11-26 11:21:29,560 INFO    MainThread:95083 [wandb_init.py:init():744] communicating run to backend with 90.0 second timeout
+2024-11-26 11:21:30,735 INFO    MainThread:95083 [wandb_run.py:_on_init():2396] communicating current version
+2024-11-26 11:21:30,794 INFO    MainThread:95083 [wandb_run.py:_on_init():2405] got version response upgrade_message: "wandb version 0.18.7 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2024-11-26 11:21:30,794 INFO    MainThread:95083 [wandb_init.py:init():795] starting run threads in backend
+2024-11-26 11:21:30,919 INFO    MainThread:95083 [wandb_run.py:_console_start():2374] atexit reg
+2024-11-26 11:21:30,919 INFO    MainThread:95083 [wandb_run.py:_redirect():2229] redirect: wrap_raw
+2024-11-26 11:21:30,919 INFO    MainThread:95083 [wandb_run.py:_redirect():2294] Wrapping output streams.
+2024-11-26 11:21:30,919 INFO    MainThread:95083 [wandb_run.py:_redirect():2319] Redirects installed.
+2024-11-26 11:21:30,919 INFO    MainThread:95083 [wandb_init.py:init():838] run started, returning control to user process
+2024-11-26 11:21:48,520 INFO    MainThread:95083 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2024-11-26 11:21:48,520 INFO    MainThread:95083 [wandb_init.py:_pause_backend():431] pausing backend
+2024-11-26 11:23:26,155 INFO    MainThread:95083 [wandb_init.py:_resume_backend():436] resuming backend
+2024-11-26 11:23:26,159 INFO    MainThread:95083 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2024-11-26 11:23:26,159 INFO    MainThread:95083 [wandb_init.py:_pause_backend():431] pausing backend
+2024-11-26 11:23:29,444 INFO    MainThread:95083 [wandb_init.py:_resume_backend():436] resuming backend
+2024-11-26 11:23:29,447 INFO    MainThread:95083 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2024-11-26 11:23:29,447 INFO    MainThread:95083 [wandb_init.py:_pause_backend():431] pausing backend
+2024-11-26 11:23:35,764 INFO    MainThread:95083 [wandb_init.py:_resume_backend():436] resuming backend
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Configure stats pid to 95083
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/.config/wandb/settings
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/ChemicalDataGeneration/models/wandb/settings
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': '/home/cmdunham/ChemicalDataGeneration/models/ims_encoder.ipynb'}
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_setup.py:_flush():76] Applying login settings: {}
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_init.py:_log_setup():520] Logging user logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241126_112335-y56bl28g/logs/debug.log
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_init.py:_log_setup():521] Logging internal logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241126_112335-y56bl28g/logs/debug-internal.log
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_init.py:init():560] calling init triggers
+2024-11-26 11:23:35,811 INFO    MainThread:95083 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'architecture': 'ims_encoder', 'optimizer': 'AdamW', 'loss': 'MSELoss', 'dataset': 'IMS', 'target_embedding': 'OneHot Encoding', 'batch_size': 10000, 'epochs': 1, 'learning_rate': 0.0001}
+2024-11-26 11:23:35,812 INFO    MainThread:95083 [wandb_init.py:init():585] re-initializing run, found existing run on stack: 2p5c607y
+2024-11-26 11:23:35,812 INFO    MainThread:95083 [wandb_run.py:_finish():2103] finishing run catemerfeld/ims_encoder_decoder/2p5c607y
+2024-11-26 11:23:35,813 ERROR   MainThread:95083 [jupyter.py:save_history():437] Run pip install nbformat to save notebook history
+2024-11-26 11:23:35,813 INFO    MainThread:95083 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2024-11-26 11:23:35,813 INFO    MainThread:95083 [wandb_init.py:_jupyter_teardown():448] cleaning up jupyter logic
+2024-11-26 11:23:35,813 INFO    MainThread:95083 [wandb_run.py:_atexit_cleanup():2343] got exitcode: 0
+2024-11-26 11:23:35,813 INFO    MainThread:95083 [wandb_run.py:_restore():2326] restore
+2024-11-26 11:23:35,813 INFO    MainThread:95083 [wandb_run.py:_restore():2332] restore done
+2024-11-26 11:23:39,461 INFO    MainThread:95083 [wandb_run.py:_footer_history_summary_info():3994] rendering history
+2024-11-26 11:23:39,461 INFO    MainThread:95083 [wandb_run.py:_footer_history_summary_info():4026] rendering summary
+2024-11-26 11:23:39,467 INFO    MainThread:95083 [wandb_run.py:_footer_sync_info():3953] logging synced files

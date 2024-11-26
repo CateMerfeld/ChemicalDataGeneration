@@ -1,0 +1,85 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  64
+epochs  :  500
+learning_rate  :  1e-07
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 5
+Saved best model at epoch 6
+Saved best model at epoch 7
+Saved best model at epoch 8
+Saved best model at epoch 9
+Saved best model at epoch 10
+Epoch[10/500]:
+   Training loss: 0.00561182743471572
+   Validation loss: 0.0051469856297099515
+-------------------------------------------
+Saved best model at epoch 11
+Saved best model at epoch 12
+Saved best model at epoch 13
+Saved best model at epoch 14
+Saved best model at epoch 15
+Saved best model at epoch 16
+Saved best model at epoch 17
+Saved best model at epoch 18
+Saved best model at epoch 19
+Saved best model at epoch 20
+Epoch[20/500]:
+   Training loss: 0.0014410438650441012
+   Validation loss: 0.001343695905234199
+-------------------------------------------
+Saved best model at epoch 21
+Saved best model at epoch 22
+Saved best model at epoch 23
+Saved best model at epoch 24
+Saved best model at epoch 25
+Saved best model at epoch 26
+Saved best model at epoch 27
+Saved best model at epoch 28
+Saved best model at epoch 29
+Saved best model at epoch 30
+Epoch[30/500]:
+   Training loss: 0.0006058073189339605
+   Validation loss: 0.0005901297293442847
+-------------------------------------------
+Saved best model at epoch 31
+Saved best model at epoch 32
+Saved best model at epoch 33
+Saved best model at epoch 34
+Saved best model at epoch 35
+Saved best model at epoch 36
+Saved best model at epoch 37
+Saved best model at epoch 38
+Saved best model at epoch 39
+Saved best model at epoch 40
+Epoch[40/500]:
+   Training loss: 0.00037128296212911186
+   Validation loss: 0.0003655301576020128
+-------------------------------------------
+Saved best model at epoch 41
+Saved best model at epoch 42
+Saved best model at epoch 43
+Saved best model at epoch 44
+Saved best model at epoch 45
+Saved best model at epoch 46
+Saved best model at epoch 47
+Saved best model at epoch 48
+Saved best model at epoch 49
+Saved best model at epoch 50
+Epoch[50/500]:
+   Training loss: 0.0002617074849955865
+   Validation loss: 0.00026068456101460593
+-------------------------------------------
+Saved best model at epoch 51
+Saved best model at epoch 52
+Saved best model at epoch 53
+Saved best model at epoch 54
+Saved best model at epoch 55
+Saved best model at epoch 56
+Saved best model at epoch 57
+Saved best model at epoch 58

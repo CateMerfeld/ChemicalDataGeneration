@@ -1,0 +1,41 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  16
+epochs  :  500
+learning_rate  :  0.0001
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 6
+Saved best model at epoch 7
+Epoch[10/500]:
+   Training loss: 9.005348144360804e-05
+   Validation loss: 0.0009793877286884646
+-------------------------------------------
+Epoch[20/500]:
+   Training loss: 6.877194668809533e-05
+   Validation loss: 0.001036126120452869
+-------------------------------------------
+Validation loss has not improved in 15 epochs. Stopping training at epoch 22.
+-------------------------------------------
+-------------------------------------------
+Dataset:  MNIST
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=784, out_features=716, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=716, out_features=648, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=648, out_features=580, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=580, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

@@ -1,0 +1,75 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  0.0001
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 7
+Saved best model at epoch 10
+Epoch[10/500]:
+   Training loss: 0.0003474646636432965
+   Validation loss: 0.0009031042606521288
+-------------------------------------------
+Saved best model at epoch 13
+Saved best model at epoch 18
+Saved best model at epoch 20
+Epoch[20/500]:
+   Training loss: 0.0001472307594169921
+   Validation loss: 0.0007380389166651955
+-------------------------------------------
+Epoch[30/500]:
+   Training loss: 9.121402703910567e-05
+   Validation loss: 0.00097471343911198
+-------------------------------------------
+wandb: ERROR Error while calling W&B API: context deadline exceeded (<Response [500]>)
+Saved best model at epoch 32
+Saved best model at epoch 34
+Epoch[40/500]:
+   Training loss: 6.388200837471376e-05
+   Validation loss: 0.0008521061583173244
+-------------------------------------------
+Saved best model at epoch 42
+Epoch[50/500]:
+   Training loss: 6.51695336263979e-05
+   Validation loss: 0.0009143735371428822
+-------------------------------------------
+Saved best model at epoch 52
+Epoch[60/500]:
+   Training loss: 2.0863629334311626e-05
+   Validation loss: 0.0016949371476639317
+-------------------------------------------
+Saved best model at epoch 65
+Epoch[70/500]:
+   Training loss: 2.4169441165919987e-05
+   Validation loss: 0.0008018682542418798
+-------------------------------------------
+Saved best model at epoch 72
+Epoch[80/500]:
+   Training loss: 3.693422313315925e-05
+   Validation loss: 0.0007541186685200931
+-------------------------------------------
+Validation loss has not improved in 15 epochs. Stopping training at epoch 87.
+-------------------------------------------
+-------------------------------------------
+Dataset:  MNIST
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=784, out_features=716, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=716, out_features=648, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=648, out_features=580, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=580, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

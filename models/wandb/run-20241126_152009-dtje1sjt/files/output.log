@@ -385,3 +385,155 @@ Saved best model at epoch 320
 Epoch[320/500]:
    Training loss: 0.00013346054430581975
    Validation loss: 0.0007895980057141924
+-------------------------------------------
+Saved best model at epoch 324
+Saved best model at epoch 326
+Saved best model at epoch 329
+Epoch[330/500]:
+   Training loss: 0.00012019017490600865
+   Validation loss: 0.0007854522725793864
+-------------------------------------------
+Saved best model at epoch 331
+Saved best model at epoch 333
+Saved best model at epoch 336
+Saved best model at epoch 337
+Saved best model at epoch 338
+Saved best model at epoch 340
+Epoch[340/500]:
+   Training loss: 0.0001077348630560977
+   Validation loss: 0.0007699473724376404
+-------------------------------------------
+Saved best model at epoch 344
+Saved best model at epoch 348
+Epoch[350/500]:
+   Training loss: 9.69150021307105e-05
+   Validation loss: 0.0007649656999639163
+-------------------------------------------
+Saved best model at epoch 351
+Epoch[360/500]:
+   Training loss: 8.721218068549908e-05
+   Validation loss: 0.0007622329218893628
+-------------------------------------------
+Saved best model at epoch 361
+Saved best model at epoch 364
+Saved best model at epoch 367
+Saved best model at epoch 369
+Epoch[370/500]:
+   Training loss: 7.834475637435025e-05
+   Validation loss: 0.0007518016311821891
+-------------------------------------------
+Saved best model at epoch 372
+Saved best model at epoch 373
+Saved best model at epoch 376
+Saved best model at epoch 377
+Saved best model at epoch 378
+Epoch[380/500]:
+   Training loss: 7.065245549943102e-05
+   Validation loss: 0.0007480368186615338
+-------------------------------------------
+Saved best model at epoch 383
+Saved best model at epoch 385
+Saved best model at epoch 388
+Saved best model at epoch 389
+Epoch[390/500]:
+   Training loss: 6.363080193420007e-05
+   Validation loss: 0.0007381880535607846
+-------------------------------------------
+Saved best model at epoch 397
+Saved best model at epoch 398
+Epoch[400/500]:
+   Training loss: 5.736672502608082e-05
+   Validation loss: 0.000735463450592667
+-------------------------------------------
+Saved best model at epoch 401
+Saved best model at epoch 402
+Saved best model at epoch 403
+Saved best model at epoch 404
+Saved best model at epoch 408
+Saved best model at epoch 409
+Epoch[410/500]:
+   Training loss: 5.1734700377562224e-05
+   Validation loss: 0.0007295633408573492
+-------------------------------------------
+Saved best model at epoch 411
+Saved best model at epoch 415
+Saved best model at epoch 419
+Epoch[420/500]:
+   Training loss: 4.6567721825232524e-05
+   Validation loss: 0.0007240859045258583
+-------------------------------------------
+Saved best model at epoch 421
+Saved best model at epoch 426
+Saved best model at epoch 430
+Epoch[430/500]:
+   Training loss: 4.223972973252131e-05
+   Validation loss: 0.0007194466234098602
+-------------------------------------------
+Saved best model at epoch 433
+Epoch[440/500]:
+   Training loss: 3.826841960266274e-05
+   Validation loss: 0.0007144341657853709
+-------------------------------------------
+Saved best model at epoch 441
+Saved best model at epoch 443
+Saved best model at epoch 447
+Epoch[450/500]:
+   Training loss: 3.4617844895628806e-05
+   Validation loss: 0.0007134753935547586
+-------------------------------------------
+Saved best model at epoch 451
+Saved best model at epoch 457
+Epoch[460/500]:
+   Training loss: 3.14570586520709e-05
+   Validation loss: 0.0007092533734124229
+-------------------------------------------
+Saved best model at epoch 461
+Saved best model at epoch 462
+Saved best model at epoch 465
+Saved best model at epoch 466
+Saved best model at epoch 468
+Epoch[470/500]:
+   Training loss: 2.8666283170128797e-05
+   Validation loss: 0.0007086032151799077
+-------------------------------------------
+Saved best model at epoch 473
+Saved best model at epoch 475
+Saved best model at epoch 476
+Saved best model at epoch 479
+Saved best model at epoch 480
+Epoch[480/500]:
+   Training loss: 2.6063603830755146e-05
+   Validation loss: 0.000700880038569318
+-------------------------------------------
+Saved best model at epoch 484
+Saved best model at epoch 485
+Saved best model at epoch 486
+Saved best model at epoch 490
+Epoch[490/500]:
+   Training loss: 2.393046528171729e-05
+   Validation loss: 0.0006972572408498749
+-------------------------------------------
+Saved best model at epoch 496
+Epoch[500/500]:
+   Training loss: 2.1919719553959248e-05
+   Validation loss: 0.000697253116079892
+-------------------------------------------
+-------------------------------------------
+-------------------------------------------
+Dataset:  MNIST
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=784, out_features=716, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=716, out_features=648, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=648, out_features=580, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=580, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

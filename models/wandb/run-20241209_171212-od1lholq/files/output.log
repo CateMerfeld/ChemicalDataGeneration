@@ -512,3 +512,5 @@ Saved best model at epoch 491
 Saved best model at epoch 493
 Validation Loss:  0.0007990827136519717
 Validation Loss:  0.0007990827136519717
+Test Loss:  0.0007324446878199959
+Test Loss:  0.0007324446878199959

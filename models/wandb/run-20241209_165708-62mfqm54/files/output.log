@@ -1,0 +1,119 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  100
+learning_rate  :  1e-06
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 5
+Saved best model at epoch 6
+Saved best model at epoch 7
+Saved best model at epoch 8
+Saved best model at epoch 9
+Saved best model at epoch 10
+Epoch[10/100]:
+   Training loss: 0.00045345689376021403
+   Validation loss: 0.00043988478149724965
+-------------------------------------------
+Saved best model at epoch 11
+Saved best model at epoch 12
+Saved best model at epoch 13
+Saved best model at epoch 16
+Saved best model at epoch 17
+Saved best model at epoch 18
+Saved best model at epoch 20
+Epoch[20/100]:
+   Training loss: 0.00020687085143294295
+   Validation loss: 0.00019168262807742678
+-------------------------------------------
+Saved best model at epoch 23
+Saved best model at epoch 24
+Saved best model at epoch 25
+Saved best model at epoch 30
+Epoch[30/100]:
+   Training loss: 0.00012736918578405866
+   Validation loss: 0.00011566390920616586
+-------------------------------------------
+Saved best model at epoch 33
+Saved best model at epoch 34
+Saved best model at epoch 35
+Saved best model at epoch 38
+Saved best model at epoch 39
+Epoch[40/100]:
+   Training loss: 8.505327579732018e-05
+   Validation loss: 0.0001121418991786037
+-------------------------------------------
+Saved best model at epoch 44
+Saved best model at epoch 45
+Epoch[50/100]:
+   Training loss: 6.083844905390753e-05
+   Validation loss: 7.103630021227782e-05
+-------------------------------------------
+Saved best model at epoch 52
+Saved best model at epoch 54
+Saved best model at epoch 58
+Saved best model at epoch 60
+Epoch[60/100]:
+   Training loss: 4.9441121073836845e-05
+   Validation loss: 5.21516780211108e-05
+-------------------------------------------
+Saved best model at epoch 64
+Saved best model at epoch 67
+Saved best model at epoch 69
+Saved best model at epoch 70
+Epoch[70/100]:
+   Training loss: 3.6946730672847166e-05
+   Validation loss: 4.23970668262443e-05
+-------------------------------------------
+Saved best model at epoch 72
+Saved best model at epoch 74
+Epoch[80/100]:
+   Training loss: 3.529882195910689e-05
+   Validation loss: 4.852948461771591e-05
+-------------------------------------------
+Saved best model at epoch 81
+Saved best model at epoch 84
+Saved best model at epoch 89
+Epoch[90/100]:
+   Training loss: 2.839622303311102e-05
+   Validation loss: 3.619471713842233e-05
+-------------------------------------------
+Saved best model at epoch 92
+Saved best model at epoch 95
+Epoch[100/100]:
+   Training loss: 2.1274216370711668e-05
+   Validation loss: 3.44642196709848e-05
+-------------------------------------------
+-------------------------------------------
+-------------------------------------------
+Dataset:  IMS
+Target Embeddings:  OneHot Encoding
+-------------------------------------------
+-------------------------------------------
+IMStoOneHotEncoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1491, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1491, out_features=1306, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1306, out_features=1121, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1121, out_features=936, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=936, out_features=751, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=751, out_features=566, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=566, out_features=381, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=381, out_features=196, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=196, out_features=8, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

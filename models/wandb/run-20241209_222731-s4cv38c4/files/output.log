@@ -244,3 +244,294 @@ Epoch[180/500]:
 -------------------------------------------
 Saved best model at epoch 181
 Saved best model at epoch 182
+Saved best model at epoch 184
+Saved best model at epoch 186
+Saved best model at epoch 187
+Saved best model at epoch 189
+Epoch[190/500]:
+   Training loss: 3.414622358630892e-05
+   Validation loss: 4.024706792561433e-05
+-------------------------------------------
+Saved best model at epoch 192
+Saved best model at epoch 193
+Saved best model at epoch 196
+Saved best model at epoch 199
+Epoch[200/500]:
+   Training loss: 3.172260104536393e-05
+   Validation loss: 3.872520233409009e-05
+-------------------------------------------
+Saved best model at epoch 202
+Saved best model at epoch 204
+Saved best model at epoch 206
+Saved best model at epoch 207
+Saved best model at epoch 209
+Saved best model at epoch 210
+Epoch[210/500]:
+   Training loss: 2.9567106243617572e-05
+   Validation loss: 3.5599444482488314e-05
+-------------------------------------------
+Saved best model at epoch 212
+Saved best model at epoch 215
+Saved best model at epoch 216
+Epoch[220/500]:
+   Training loss: 2.7644061406742716e-05
+   Validation loss: 3.482994509732666e-05
+-------------------------------------------
+Saved best model at epoch 222
+Saved best model at epoch 223
+Saved best model at epoch 224
+Saved best model at epoch 226
+Saved best model at epoch 227
+Saved best model at epoch 228
+Epoch[230/500]:
+   Training loss: 2.5915888180637824e-05
+   Validation loss: 3.264073120198159e-05
+-------------------------------------------
+Saved best model at epoch 232
+Saved best model at epoch 233
+Saved best model at epoch 234
+Saved best model at epoch 235
+Saved best model at epoch 238
+Saved best model at epoch 240
+Epoch[240/500]:
+   Training loss: 2.4443806907473794e-05
+   Validation loss: 3.0297724183112913e-05
+-------------------------------------------
+Saved best model at epoch 241
+Saved best model at epoch 245
+Saved best model at epoch 246
+Saved best model at epoch 247
+Saved best model at epoch 248
+Saved best model at epoch 250
+Epoch[250/500]:
+   Training loss: 2.29647020955841e-05
+   Validation loss: 2.8930966956177772e-05
+-------------------------------------------
+Saved best model at epoch 251
+Saved best model at epoch 253
+Saved best model at epoch 254
+Saved best model at epoch 256
+Saved best model at epoch 257
+Saved best model at epoch 258
+Saved best model at epoch 259
+Saved best model at epoch 260
+Epoch[260/500]:
+   Training loss: 2.177889863403999e-05
+   Validation loss: 2.7837787868144194e-05
+-------------------------------------------
+Saved best model at epoch 262
+Saved best model at epoch 266
+Saved best model at epoch 268
+Saved best model at epoch 269
+Epoch[270/500]:
+   Training loss: 2.0603271492150012e-05
+   Validation loss: 3.0496523436340794e-05
+-------------------------------------------
+Saved best model at epoch 272
+Saved best model at epoch 273
+Saved best model at epoch 278
+Saved best model at epoch 279
+Epoch[280/500]:
+   Training loss: 1.9498202011613656e-05
+   Validation loss: 2.614156763597905e-05
+-------------------------------------------
+Saved best model at epoch 281
+Saved best model at epoch 282
+Saved best model at epoch 286
+Saved best model at epoch 288
+Saved best model at epoch 290
+Epoch[290/500]:
+   Training loss: 1.849387320188299e-05
+   Validation loss: 2.4635080676646262e-05
+-------------------------------------------
+Saved best model at epoch 291
+Saved best model at epoch 292
+Saved best model at epoch 296
+Saved best model at epoch 297
+Saved best model at epoch 300
+Epoch[300/500]:
+   Training loss: 1.767858733013341e-05
+   Validation loss: 2.3739281875256484e-05
+-------------------------------------------
+Saved best model at epoch 301
+Saved best model at epoch 304
+Saved best model at epoch 307
+Saved best model at epoch 309
+Epoch[310/500]:
+   Training loss: 1.6855551436954364e-05
+   Validation loss: 2.300608469669959e-05
+-------------------------------------------
+Saved best model at epoch 314
+Saved best model at epoch 316
+Saved best model at epoch 317
+Epoch[320/500]:
+   Training loss: 1.608926994853929e-05
+   Validation loss: 2.2482329780296854e-05
+-------------------------------------------
+Saved best model at epoch 321
+Saved best model at epoch 324
+Saved best model at epoch 325
+Saved best model at epoch 327
+Saved best model at epoch 328
+Saved best model at epoch 329
+Epoch[330/500]:
+   Training loss: 1.537775526632584e-05
+   Validation loss: 2.1870629107775913e-05
+-------------------------------------------
+Saved best model at epoch 331
+Saved best model at epoch 332
+Saved best model at epoch 336
+Saved best model at epoch 338
+Saved best model at epoch 339
+Epoch[340/500]:
+   Training loss: 1.473930154256264e-05
+   Validation loss: 2.1278756301806675e-05
+-------------------------------------------
+Saved best model at epoch 341
+Saved best model at epoch 345
+Saved best model at epoch 348
+Saved best model at epoch 349
+Saved best model at epoch 350
+Epoch[350/500]:
+   Training loss: 1.4141872903258075e-05
+   Validation loss: 2.0199260901641726e-05
+-------------------------------------------
+Saved best model at epoch 352
+Saved best model at epoch 355
+Saved best model at epoch 358
+Saved best model at epoch 359
+Epoch[360/500]:
+   Training loss: 1.3528629645555331e-05
+   Validation loss: 1.995630647743069e-05
+-------------------------------------------
+Saved best model at epoch 363
+Saved best model at epoch 366
+Saved best model at epoch 367
+Epoch[370/500]:
+   Training loss: 1.308136273384826e-05
+   Validation loss: 1.9420730499687437e-05
+-------------------------------------------
+Saved best model at epoch 371
+Saved best model at epoch 373
+Saved best model at epoch 375
+Saved best model at epoch 377
+Saved best model at epoch 379
+Epoch[380/500]:
+   Training loss: 1.2526585467009222e-05
+   Validation loss: 1.8794155260852206e-05
+-------------------------------------------
+Saved best model at epoch 387
+Saved best model at epoch 389
+Epoch[390/500]:
+   Training loss: 1.2098134188666748e-05
+   Validation loss: 1.833672082845059e-05
+-------------------------------------------
+Saved best model at epoch 391
+Saved best model at epoch 395
+Saved best model at epoch 398
+Saved best model at epoch 399
+Epoch[400/500]:
+   Training loss: 1.1641013314004593e-05
+   Validation loss: 1.7903784316982198e-05
+-------------------------------------------
+Saved best model at epoch 402
+Saved best model at epoch 403
+Saved best model at epoch 404
+Saved best model at epoch 407
+Saved best model at epoch 409
+Epoch[410/500]:
+   Training loss: 1.1230229122371377e-05
+   Validation loss: 1.772799565409169e-05
+-------------------------------------------
+Saved best model at epoch 414
+Saved best model at epoch 419
+Epoch[420/500]:
+   Training loss: 1.0875402759591274e-05
+   Validation loss: 1.711946022698518e-05
+-------------------------------------------
+Saved best model at epoch 423
+Saved best model at epoch 425
+Epoch[430/500]:
+   Training loss: 1.0422190005566356e-05
+   Validation loss: 1.7638001194513733e-05
+-------------------------------------------
+Saved best model at epoch 431
+Saved best model at epoch 432
+Saved best model at epoch 433
+Saved best model at epoch 434
+Saved best model at epoch 436
+Epoch[440/500]:
+   Training loss: 1.0101379387141639e-05
+   Validation loss: 1.6314568931608754e-05
+-------------------------------------------
+Saved best model at epoch 442
+Saved best model at epoch 449
+Epoch[450/500]:
+   Training loss: 9.7750922567227e-06
+   Validation loss: 1.6409395689426423e-05
+-------------------------------------------
+Saved best model at epoch 452
+Saved best model at epoch 453
+Saved best model at epoch 454
+Saved best model at epoch 457
+Epoch[460/500]:
+   Training loss: 9.465876072581965e-06
+   Validation loss: 1.5744058872306942e-05
+-------------------------------------------
+Saved best model at epoch 463
+Saved best model at epoch 466
+Saved best model at epoch 470
+Epoch[470/500]:
+   Training loss: 9.187274085016051e-06
+   Validation loss: 1.5314941844602298e-05
+-------------------------------------------
+Saved best model at epoch 478
+Saved best model at epoch 480
+Epoch[480/500]:
+   Training loss: 8.90547187012499e-06
+   Validation loss: 1.5212872223800927e-05
+-------------------------------------------
+Saved best model at epoch 481
+Saved best model at epoch 486
+Saved best model at epoch 487
+Saved best model at epoch 489
+Saved best model at epoch 490
+Epoch[490/500]:
+   Training loss: 8.632345359847787e-06
+   Validation loss: 1.4732793352064179e-05
+-------------------------------------------
+Saved best model at epoch 498
+Saved best model at epoch 499
+Epoch[500/500]:
+   Training loss: 8.385105074989303e-06
+   Validation loss: 1.4633540225641528e-05
+-------------------------------------------
+-------------------------------------------
+-------------------------------------------
+Dataset:  IMS
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1548, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1548, out_features=1420, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1420, out_features=1292, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1292, out_features=1164, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=1164, out_features=1036, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=1036, out_features=908, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=908, out_features=780, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=780, out_features=652, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=652, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

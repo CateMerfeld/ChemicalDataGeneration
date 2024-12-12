@@ -4,19 +4,31 @@ import numpy as np
 
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader
 
 import wandb
-import os
 from sklearn.decomposition import PCA
-import GPUtil
 import itertools
-import io
-
-from collections import Counter
 
 def flatten_and_bin(predicted_embeddings_batches):
-    # Function to flatten the list of prediction batches and make each prediction binary
+    """
+    Flatten prediction batches and convert to binary format.
+
+    This function takes a list of batches containing predicted embeddings,
+    flattens them, and converts each embedding into a binary vector where 
+    the index of the maximum value is set to 1, and all other indices are 0.
+
+    Parameters:
+    ----------
+    predicted_embeddings_batches : list of list of torch.Tensor
+        Batches of predicted embeddings, with each embedding represented as a tensor.
+
+    Returns:
+    -------
+    list of list of int
+        A list of binary vectors corresponding to each embedding, with a 1 at 
+        the index of the maximum value.
+    """
     binary_preds_list = []
     
     for batch in predicted_embeddings_batches:
@@ -32,6 +44,22 @@ def flatten_and_bin(predicted_embeddings_batches):
 
 
 def run_with_wandb(config, **kwargs):
+    """
+    Initialize a WandB run with the given configuration.
+
+    This function updates the provided configuration with additional keyword 
+    arguments, initializes a WandB run, sets the number of threads for PyTorch, 
+    and determines the device (GPU or CPU) to be used for computations.
+
+    Parameters:
+    ----------
+    config : dict
+        Configuration dictionary containing WandB settings and other parameters.
+        Must include 'wandb_entity', 'wandb_project', and 'threads'.
+
+    **kwargs : keyword arguments
+        Additional configuration parameters to be added to the `config`.
+    """
     config.update(kwargs)
 
     wandb.init(entity=config['wandb_entity'],

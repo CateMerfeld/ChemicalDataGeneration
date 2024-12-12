@@ -30,3 +30,15 @@ Saved best model at epoch 21
 Saved best model at epoch 22
 Saved best model at epoch 24
 Saved best model at epoch 25
+Saved best model at epoch 28
+Epoch[30/500]:
+   Training loss: 2.4208299920236293e-05
+   Validation loss: 2.3364147829130978e-05
+-------------------------------------------
+Saved best model at epoch 33
+Saved best model at epoch 35
+Saved best model at epoch 36
+Epoch[40/500]:
+   Training loss: 2.010730574667795e-05
+   Validation loss: 3.622968853474519e-05
+-------------------------------------------

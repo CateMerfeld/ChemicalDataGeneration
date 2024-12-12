@@ -64,3 +64,12 @@ Saved best model at epoch 60
 Epoch[60/500]:
    Training loss: 7.210425417467555e-06
    Validation loss: 1.1119283353499714e-05
+-------------------------------------------
+Saved best model at epoch 63
+Saved best model at epoch 65
+Saved best model at epoch 67
+Saved best model at epoch 70
+Epoch[70/500]:
+   Training loss: 6.002122780579138e-06
+   Validation loss: 9.882748709932503e-06
+-------------------------------------------

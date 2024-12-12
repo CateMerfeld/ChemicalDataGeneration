@@ -77,12 +77,70 @@ def run_with_wandb(config, **kwargs):
 
 
 def update_wandb_kwargs(wandb_kwargs, updates):
+    """
+    Update a dictionary of WandB keyword arguments with new values.
+
+    Parameters:
+    ----------
+    wandb_kwargs : dict
+        The original dictionary of WandB keyword arguments to be updated.
+
+    updates : dict
+        A dictionary containing new values to update in `wandb_kwargs`.
+
+    Returns:
+    -------
+    dict
+        The updated dictionary of WandB keyword arguments.
+    """
     for key in updates.keys():
         wandb_kwargs[key] = updates[key]
     return wandb_kwargs
 
 
 def train_one_epoch(train_dataset, device, model, criterion, optimizer, epoch, combo):
+  """
+    Train the model for one epoch on the given training dataset.
+
+    This function performs forward and backward passes for each batch in the 
+    training dataset, computes the loss, and updates the model weights. 
+    It also collects predicted embeddings and name encodings at the last epoch.
+
+    Parameters:
+    ----------
+    train_dataset : iterable
+        An iterable dataset that yields batches of data, name encodings, true 
+        embeddings, and additional information.
+
+    device : torch.device
+        The device (CPU or GPU) on which to perform the training.
+
+    model : torch.nn.Module
+        The model to be trained.
+
+    criterion : callable
+        The loss function used to compute the loss.
+
+    optimizer : torch.optim.Optimizer
+        The optimizer used to update the model weights.
+
+    epoch : int
+        The current epoch number.
+
+    combo : dict
+        A dictionary containing configuration settings, including 'epochs'.
+
+    Returns:
+    -------
+    float
+        The average training loss for the epoch. If it's the last epoch, 
+        also returns the predicted embeddings and name encodings.
+
+    tuple (float, list, list)
+        At last epoch (either final or early stopping), returns a tuple containing the average loss, 
+        a list of predicted embeddings, and a list of corresponding name encodings.
+
+  """
   epoch_training_loss = 0
 
   predicted_embeddings = []
@@ -126,7 +184,10 @@ def preds_to_emb_pca_plot(
         mass_spec_encoder_embeddings=False, mass_spec_chems=False
         ):
     """
-    Generate and plot a PCA visualization of predicted embeddings against corresponding ChemNet embeddings.
+    Generate and return data for PCA visualization of predicted embeddings alongside ChemNet embeddings.
+
+    This function flattens the predicted embeddings and their corresponding chemical names, 
+    optionally includes mass spectrometry embeddings, and prepares data for PCA plotting.
 
     Parameters:
     ----------
@@ -142,15 +203,19 @@ def preds_to_emb_pca_plot(
     emb_df : pandas.DataFrame
         A DataFrame containing true embeddings, with 'Embedding Floats' as one of its columns.
 
-    log_wandb : boolean 
-        True - log plot to wandb. False - do not log plot to wandb.
+    mass_spec_encoder_embeddings : bool, optional
+        If True, includes mass spectrometry encoder embeddings in the output.
+
+    mass_spec_chems : list of str, optional
+        A list of chemical names corresponding to mass spectrometry embeddings.
 
     Returns:
     -------
-    A tuple containing:
-    - true_embeddings (pd.DataFrame): DataFrame of true embeddings used for comparison.
-    - predicted_embeddings_flattened (list): Flattened list of predicted embeddings.
-    - chem_names (list): List of chemical names corresponding to the predicted embeddings.
+    tuple
+        A tuple containing:
+        - true_embeddings (pd.DataFrame): DataFrame of true embeddings used for comparison.
+        - predicted_embeddings_flattened (list): Flattened list of predicted embeddings.
+        - chem_names (list): List of chemical names corresponding to the predicted embeddings.
     """
 
     # Currently, preds and name encodings are lists of [n_batches, batch_size], flattening to lists of [n_samples]
@@ -179,6 +244,36 @@ def preds_to_emb_pca_plot(
     return (true_embeddings, predicted_embeddings_flattened, chem_names)
 
 def predict_embeddings(dataset, model, device, criterion):
+    """
+    Generate predicted embeddings and compute average loss on the given dataset.
+
+    This function evaluates the model on the provided dataset, computes the predicted 
+    embeddings, and calculates the average loss by comparing predictions to true embeddings.
+
+    Parameters:
+    ----------
+    dataset : iterable
+        An iterable dataset that yields batches of data, name encodings, true embeddings, 
+        and spectra indices.
+
+    model : torch.nn.Module
+        The model to be evaluated.
+
+    device : torch.device
+        The device (CPU or GPU) on which to perform the evaluations.
+
+    criterion : callable
+        The loss function used to compute the loss between predicted and true embeddings.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - predicted_embeddings (list): List of predicted embeddings for each batch.
+        - output_name_encodings (list): List of name encodings for the predicted embeddings.
+        - average_loss (float): The average loss over all batches.
+        - input_spectra_indices (list): List of spectra indices corresponding to the input data.
+    """
     total_loss = 0
 
     model.eval() # Set model to evaluation mode
@@ -342,6 +437,56 @@ def plot_pca(
     input_type, embedding_type='ChemNet',
     show_wandb_run_name=True, log_wandb=True, 
     ):
+    """
+    Perform PCA on chemical embeddings and plot the transformed data.
+
+    This function generates a PCA scatter plot for ChemNet embeddings, 
+    including IMS and mass spectrometry embeddings if provided.
+
+    Parameters:
+    ----------
+    all_embeddings : pd.DataFrame
+        DataFrame containing ChemNet embeddings for all chemicals, with each column 
+        representing one chemical's embedding.
+
+    ims_embeddings : pd.DataFrame
+        DataFrame containing IMS (ion mobility spectrometry) embeddings, must include 
+        a 'Label' column with chemical names.
+
+    mass_spec_embeddings : pd.DataFrame, optional
+        DataFrame containing mass spectrometry embeddings, similar structure to `ims_embeddings`.
+        Default is None.
+
+    log_wandb : bool, optional
+        If True, logs the generated plot to Weights & Biases (wandb). Default is False.
+
+    chemnet_embeddings_to_plot : pd.DataFrame, optional
+        DataFrame containing ChemNet embeddings specifically to be plotted.
+
+    input_type : str
+        The type of input data used for embeddings.
+
+    embedding_type : str, optional
+        The type of embedding being visualized.
+
+    mse_insert : float, optional
+        Mean Squared Error value to display on the plot.
+
+    insert_position : list of float, optional
+        Location in axis coordinates for MSE text insertion. Default is [0.05, 0.05].
+
+    show_wandb_run_name : bool, optional
+        If True, displays the current WandB run name on the plot. Default is True.
+
+    Returns:
+    -------
+    None
+        Displays the PCA scatter plot with ChemNet, IMS, and mass spec embeddings.
+
+    Notes:
+    -----
+    - PCA is performed on the transpose of `all_embeddings` to align with IMS and mass spec data.
+    """
     dataset = DataLoader(
         data, 
         batch_size=batch_size, 
@@ -395,6 +540,65 @@ def train_model(
         encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, 
         embedding_type='ChemNet', show_wandb_run_name=True
         ):
+    
+    """
+    Train a model with specified hyperparameters and log results using Weights & Biases.
+
+    Parameters:
+    ----------
+    model_type : str
+        The type of model to be trained (e.g., 'Encoder').
+
+    train_data : Dataset
+        The dataset used for training the model.
+
+    val_data : Dataset
+        The dataset used for validating the model during training.
+
+    test_data : Dataset
+        The dataset used for evaluating the model after training.
+
+    device : torch.device
+        The device (CPU or GPU) on which to perform the training.
+
+    config : dict
+        Configuration settings for the training process.
+
+    wandb_kwargs : dict
+        Arguments for logging to Weights & Biases.
+
+    all_embeddings_df : pd.DataFrame
+        DataFrame containing all embeddings for chemicals.
+
+    ims_embeddings_df : pd.DataFrame
+        DataFrame containing IMS (ion mobility spectrometry) embeddings.
+
+    model_hyperparams : dict
+        Dictionary of hyperparameters for the model, with keys as parameter names and values as lists of options.
+
+    sorted_chem_names : list of str
+        List of sorted chemical names corresponding to the embeddings.
+
+    encoder_path : str
+        File path to save the best model state.
+
+    save_emb_pca_to_wandb : bool, optional
+        If True, saves PCA plots of embeddings to Weights & Biases. Default is True.
+
+    early_stop_threshold : int, optional
+        Number of epochs without improvement in validation loss before stopping training. Default is 10.
+
+    embedding_type : str, optional
+        The type of embedding being used (e.g., 'ChemNet'). Default is 'ChemNet'.
+
+    show_wandb_run_name : bool, optional
+        If True, displays the current WandB run name on the plot. Default is True.
+
+    Returns:
+    -------
+    dict
+        The best hyperparameters found during training.
+    """
 
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
     lowest_val_loss = np.inf
@@ -538,6 +742,35 @@ def train_model(
     return best_hyperparams
 
 def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
+    """
+    Create tensors from the provided spectra dataset and embedding DataFrame.
+
+    Parameters:
+    ----------
+    spectra_dataset : pd.DataFrame
+        DataFrame containing spectral data and chemical labels. Assumes specific 
+        columns for processing based on the `carl` flag.
+
+    embedding_df : pd.DataFrame
+        DataFrame containing embeddings for chemicals, with 'Embedding Floats' 
+        column corresponding to chemical names.
+
+    device : torch.device
+        The device (CPU or GPU) on which to store the tensors.
+
+    carl : bool, optional
+        If True, processes the dataset assuming it has a different structure 
+        (specifically without an 'Unnamed: 0' column). Default is False.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
+        - spectra_tensor (torch.Tensor): Tensor of spectral data.
+        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
+        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
+    """
     # drop first two cols ('Unnamed:0' and 'index') and last 9 cols ('Label' and OneHot encodings) to get just spectra
     if carl: # carl dataset has no 'Unnamed: 0' column
         spectra = spectra_dataset.iloc[:,1:-9]
@@ -553,6 +786,3 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
     spectra_indices_tensor = torch.Tensor(spectra_dataset['index'].to_numpy()).to(device)
 
     return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
-
-def test(someword):
-    print(someword)

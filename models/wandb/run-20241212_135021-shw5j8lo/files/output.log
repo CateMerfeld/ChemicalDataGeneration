@@ -73,3 +73,212 @@ Epoch[70/500]:
    Training loss: 6.002122780579138e-06
    Validation loss: 9.882748709932503e-06
 -------------------------------------------
+Saved best model at epoch 72
+Saved best model at epoch 75
+Epoch[80/500]:
+   Training loss: 5.564281819710784e-06
+   Validation loss: 1.3131036873928758e-05
+-------------------------------------------
+Saved best model at epoch 86
+Saved best model at epoch 87
+Saved best model at epoch 89
+Epoch[90/500]:
+   Training loss: 5.235006133883001e-06
+   Validation loss: 1.2241063522332031e-05
+-------------------------------------------
+Saved best model at epoch 92
+Epoch[100/500]:
+   Training loss: 4.770648854548511e-06
+   Validation loss: 9.380927066076609e-06
+-------------------------------------------
+Epoch[110/500]:
+   Training loss: 4.244410642725937e-06
+   Validation loss: 8.506556936979371e-06
+-------------------------------------------
+Saved best model at epoch 112
+Saved best model at epoch 117
+Saved best model at epoch 118
+Epoch[120/500]:
+   Training loss: 3.2476058519429876e-06
+   Validation loss: 9.875393483068153e-06
+-------------------------------------------
+Epoch[130/500]:
+   Training loss: 3.9154724565270375e-06
+   Validation loss: 9.671869181656136e-06
+-------------------------------------------
+Saved best model at epoch 131
+Epoch[140/500]:
+   Training loss: 2.472674144321231e-06
+   Validation loss: 8.5471764376313e-06
+-------------------------------------------
+Saved best model at epoch 141
+Saved best model at epoch 143
+Saved best model at epoch 147
+Epoch[150/500]:
+   Training loss: 3.301720288642503e-06
+   Validation loss: 7.97965196399324e-06
+-------------------------------------------
+Saved best model at epoch 151
+Saved best model at epoch 154
+Saved best model at epoch 159
+Saved best model at epoch 160
+Epoch[160/500]:
+   Training loss: 3.2744878750204087e-06
+   Validation loss: 7.1805135789794615e-06
+-------------------------------------------
+Epoch[170/500]:
+   Training loss: 2.8966619248100956e-06
+   Validation loss: 7.302809234451697e-06
+-------------------------------------------
+Saved best model at epoch 174
+Saved best model at epoch 176
+Epoch[180/500]:
+   Training loss: 2.851098459426518e-06
+   Validation loss: 7.272243551072726e-06
+-------------------------------------------
+Saved best model at epoch 188
+Epoch[190/500]:
+   Training loss: 1.5975291820578262e-06
+   Validation loss: 6.8493834728400316e-06
+-------------------------------------------
+Saved best model at epoch 193
+Epoch[200/500]:
+   Training loss: 1.455090554375053e-06
+   Validation loss: 6.969153702681198e-06
+-------------------------------------------
+Saved best model at epoch 209
+Epoch[210/500]:
+   Training loss: 1.3680730773570015e-06
+   Validation loss: 6.643240305629465e-06
+-------------------------------------------
+Saved best model at epoch 212
+Saved best model at epoch 214
+Saved best model at epoch 220
+Epoch[220/500]:
+   Training loss: 1.6254556824945464e-06
+   Validation loss: 6.0424560283139345e-06
+-------------------------------------------
+Saved best model at epoch 230
+Epoch[230/500]:
+   Training loss: 1.407138109974017e-06
+   Validation loss: 6.034300226150043e-06
+-------------------------------------------
+Epoch[240/500]:
+   Training loss: 2.5592326561113534e-06
+   Validation loss: 6.4483286967536176e-06
+-------------------------------------------
+Epoch[250/500]:
+   Training loss: 1.0072208548187915e-06
+   Validation loss: 6.2652565680785945e-06
+-------------------------------------------
+Saved best model at epoch 251
+Saved best model at epoch 256
+Saved best model at epoch 258
+Epoch[260/500]:
+   Training loss: 9.266091946755933e-07
+   Validation loss: 5.861120585713553e-06
+-------------------------------------------
+Saved best model at epoch 264
+Saved best model at epoch 269
+Saved best model at epoch 270
+Epoch[270/500]:
+   Training loss: 1.1303881195929542e-06
+   Validation loss: 5.573218058515785e-06
+-------------------------------------------
+Saved best model at epoch 272
+Epoch[280/500]:
+   Training loss: 7.642151385974426e-07
+   Validation loss: 5.676974158932118e-06
+-------------------------------------------
+Saved best model at epoch 282
+Epoch[290/500]:
+   Training loss: 6.596018280025168e-07
+   Validation loss: 5.505430754653687e-06
+-------------------------------------------
+Epoch[300/500]:
+   Training loss: 1.007742493693088e-06
+   Validation loss: 6.300142770756217e-06
+-------------------------------------------
+Saved best model at epoch 304
+Saved best model at epoch 306
+Epoch[310/500]:
+   Training loss: 5.866396060226723e-07
+   Validation loss: 5.423399524936691e-06
+-------------------------------------------
+Saved best model at epoch 313
+Saved best model at epoch 314
+Epoch[320/500]:
+   Training loss: 5.906882038052675e-07
+   Validation loss: 5.30203192427753e-06
+-------------------------------------------
+Saved best model at epoch 326
+Saved best model at epoch 329
+Epoch[330/500]:
+   Training loss: 1.6632826838760546e-06
+   Validation loss: 5.682123639590094e-06
+-------------------------------------------
+Epoch[340/500]:
+   Training loss: 1.0713580368289e-06
+   Validation loss: 5.978640439914098e-06
+-------------------------------------------
+Epoch[350/500]:
+   Training loss: 6.559182569776935e-07
+   Validation loss: 6.052671988223373e-06
+-------------------------------------------
+Epoch[360/500]:
+   Training loss: 9.008829590012174e-07
+   Validation loss: 5.096394513453925e-06
+-------------------------------------------
+Epoch[370/500]:
+   Training loss: 3.005283548837365e-07
+   Validation loss: 5.722288449397659e-06
+-------------------------------------------
+Saved best model at epoch 372
+Epoch[380/500]:
+   Training loss: 4.580954798115198e-07
+   Validation loss: 5.211589558343892e-06
+-------------------------------------------
+Epoch[390/500]:
+   Training loss: 6.162682649591828e-07
+   Validation loss: 5.570690070321527e-06
+-------------------------------------------
+Epoch[400/500]:
+   Training loss: 2.5070935151081844e-07
+   Validation loss: 5.487239590905924e-06
+-------------------------------------------
+Epoch[410/500]:
+   Training loss: 2.123520150625358e-07
+   Validation loss: 5.234972549282042e-06
+-------------------------------------------
+Epoch[420/500]:
+   Training loss: 2.883563784192947e-07
+   Validation loss: 4.968057251165325e-06
+-------------------------------------------
+Epoch[430/500]:
+   Training loss: 1.931493778414455e-07
+   Validation loss: 5.02192096428728e-06
+-------------------------------------------
+Epoch[440/500]:
+   Training loss: 7.032591537252028e-07
+   Validation loss: 5.154696349219217e-06
+-------------------------------------------
+Saved best model at epoch 441
+Epoch[450/500]:
+   Training loss: 3.0749466516595185e-07
+   Validation loss: 4.885071130056318e-06
+-------------------------------------------
+Epoch[460/500]:
+   Training loss: 1.123381394617404e-06
+   Validation loss: 6.053781187898011e-06
+-------------------------------------------
+Epoch[470/500]:
+   Training loss: 2.5312138683755203e-07
+   Validation loss: 5.109306249249408e-06
+-------------------------------------------
+Epoch[480/500]:
+   Training loss: 1.7798551146366146e-07
+   Validation loss: 5.2162876309529965e-06
+-------------------------------------------
+Epoch[490/500]:
+   Training loss: 1.0360507510773588e-07
+   Validation loss: 5.111978217451658e-06

@@ -682,8 +682,9 @@ def train_model(
                 val_average_loss = epoch_val_loss/len(val_dataset)
 
                 if val_average_loss < lowest_val_model_loss:
-                    # check if val loss is improving
+                    # check if val loss is improving for this model
                     epochs_without_validation_improvement = 0
+                    lowest_val_model_loss = val_average_loss
 
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state

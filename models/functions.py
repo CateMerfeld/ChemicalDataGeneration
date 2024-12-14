@@ -650,8 +650,8 @@ def train_model(
         final_lr = combo['learning_rate']
 
         if lr_scheduler:
-            # Initialize the learning rate scheduler with patience of 5 epochs less than the early stop threshold
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(encoder_optimizer, mode='min', patience=early_stop_threshold-5, factor=0.1, verbose=True)
+            # Initialize the learning rate scheduler with patience of 5 epochs 
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(encoder_optimizer, mode='min', patience=5, factor=0.1, verbose=True)
 
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 

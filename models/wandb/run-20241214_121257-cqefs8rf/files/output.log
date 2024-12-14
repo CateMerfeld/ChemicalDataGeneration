@@ -168,3 +168,69 @@ Epoch[400/500]:
 Epoch[410/500]:
    Training loss: 1.3244730664622492e-05
    Validation loss: 1.8886793786178117e-05
+-------------------------------------------
+Epoch[420/500]:
+   Training loss: 1.2749263278442648e-05
+   Validation loss: 1.857466214922734e-05
+-------------------------------------------
+Epoch[430/500]:
+   Training loss: 1.2268713993640017e-05
+   Validation loss: 1.7739991480523493e-05
+-------------------------------------------
+Epoch[440/500]:
+   Training loss: 1.1880037904704062e-05
+   Validation loss: 1.7325073926109515e-05
+-------------------------------------------
+Epoch[450/500]:
+   Training loss: 1.149226140868141e-05
+   Validation loss: 1.7176917609652985e-05
+-------------------------------------------
+Epoch[460/500]:
+   Training loss: 1.1128531968483797e-05
+   Validation loss: 1.6482135485038552e-05
+-------------------------------------------
+Epoch[470/500]:
+   Training loss: 1.0720544569718228e-05
+   Validation loss: 1.645436507476069e-05
+-------------------------------------------
+Epoch[480/500]:
+   Training loss: 1.04382431720236e-05
+   Validation loss: 1.582298922789176e-05
+-------------------------------------------
+Epoch[490/500]:
+   Training loss: 1.0141615235069738e-05
+   Validation loss: 1.5579479450338864e-05
+-------------------------------------------
+Epoch[500/500]:
+   Training loss: 9.838082017021817e-06
+   Validation loss: 1.5462897820349288e-05
+-------------------------------------------
+-------------------------------------------
+-------------------------------------------
+Dataset:  IMS
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1548, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1548, out_features=1420, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1420, out_features=1292, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1292, out_features=1164, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=1164, out_features=1036, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=1036, out_features=908, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=908, out_features=780, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=780, out_features=652, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=652, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

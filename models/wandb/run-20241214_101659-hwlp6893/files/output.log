@@ -1,0 +1,209 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  1e-07
+Epoch[10/500]:
+   Training loss: 0.0025061843065735247
+   Validation loss: 0.0022212941639736528
+-------------------------------------------
+Epoch[20/500]:
+   Training loss: 0.0005831929054004523
+   Validation loss: 0.0005582224598897326
+-------------------------------------------
+Epoch[30/500]:
+   Training loss: 0.0003085955899867448
+   Validation loss: 0.00030145978254542317
+-------------------------------------------
+Epoch[40/500]:
+   Training loss: 0.0002023761400608293
+   Validation loss: 0.00020134117411199157
+-------------------------------------------
+Epoch[50/500]:
+   Training loss: 0.0001463797808938128
+   Validation loss: 0.000149589518820182
+-------------------------------------------
+Epoch[60/500]:
+   Training loss: 0.00011258338986318575
+   Validation loss: 0.00011644656934032386
+-------------------------------------------
+Epoch[70/500]:
+   Training loss: 8.99624729497914e-05
+   Validation loss: 9.423290093528867e-05
+-------------------------------------------
+Epoch[80/500]:
+   Training loss: 7.419093118504054e-05
+   Validation loss: 7.916292570528106e-05
+-------------------------------------------
+Epoch[90/500]:
+   Training loss: 6.257789427720187e-05
+   Validation loss: 6.764430115473605e-05
+-------------------------------------------
+Epoch[100/500]:
+   Training loss: 5.3721040852194616e-05
+   Validation loss: 6.065572492177345e-05
+-------------------------------------------
+Epoch[110/500]:
+   Training loss: 4.686022421900581e-05
+   Validation loss: 5.2629376619765465e-05
+-------------------------------------------
+Epoch[120/500]:
+   Training loss: 4.136735617607308e-05
+   Validation loss: 4.672877571073482e-05
+-------------------------------------------
+Epoch[130/500]:
+   Training loss: 3.690230175552583e-05
+   Validation loss: 4.2389813100287245e-05
+-------------------------------------------
+Epoch[140/500]:
+   Training loss: 3.31621758445537e-05
+   Validation loss: 3.894732756258424e-05
+-------------------------------------------
+Epoch[150/500]:
+   Training loss: 2.9926784171103192e-05
+   Validation loss: 3.690010570400365e-05
+-------------------------------------------
+Epoch[160/500]:
+   Training loss: 2.7244297473909307e-05
+   Validation loss: 3.254684927391093e-05
+-------------------------------------------
+Epoch[170/500]:
+   Training loss: 2.4848851901548467e-05
+   Validation loss: 3.0443470299407386e-05
+-------------------------------------------
+Epoch[180/500]:
+   Training loss: 2.2884684037856783e-05
+   Validation loss: 2.938490169216932e-05
+-------------------------------------------
+Epoch[190/500]:
+   Training loss: 2.118663363434448e-05
+   Validation loss: 2.924536860271881e-05
+-------------------------------------------
+Epoch[200/500]:
+   Training loss: 1.9656252944460614e-05
+   Validation loss: 2.6122002188050578e-05
+-------------------------------------------
+Epoch[210/500]:
+   Training loss: 1.830839371664452e-05
+   Validation loss: 2.3825400900485528e-05
+-------------------------------------------
+Epoch[220/500]:
+   Training loss: 1.7114001989685115e-05
+   Validation loss: 2.2946575690976434e-05
+-------------------------------------------
+Epoch[230/500]:
+   Training loss: 1.6033953747611477e-05
+   Validation loss: 2.1361104723711895e-05
+-------------------------------------------
+Epoch[240/500]:
+   Training loss: 1.4939244853051993e-05
+   Validation loss: 2.0371333495608396e-05
+-------------------------------------------
+Epoch[250/500]:
+   Training loss: 1.4146113764599407e-05
+   Validation loss: 1.9685801524066596e-05
+-------------------------------------------
+Epoch[260/500]:
+   Training loss: 1.3377192181405344e-05
+   Validation loss: 1.910338103429914e-05
+-------------------------------------------
+Epoch[270/500]:
+   Training loss: 1.2672389170472805e-05
+   Validation loss: 1.811309850601337e-05
+-------------------------------------------
+Epoch[280/500]:
+   Training loss: 1.1986846513200106e-05
+   Validation loss: 1.755483780312198e-05
+-------------------------------------------
+Epoch[290/500]:
+   Training loss: 1.1388583305891903e-05
+   Validation loss: 1.6971121969935793e-05
+-------------------------------------------
+Epoch[300/500]:
+   Training loss: 1.0796847382338196e-05
+   Validation loss: 1.658990519874335e-05
+-------------------------------------------
+Epoch[310/500]:
+   Training loss: 1.0277095361226018e-05
+   Validation loss: 1.602567961944307e-05
+-------------------------------------------
+Epoch[320/500]:
+   Training loss: 9.850470305994618e-06
+   Validation loss: 1.5673355534808063e-05
+-------------------------------------------
+Epoch[330/500]:
+   Training loss: 9.357254424502281e-06
+   Validation loss: 1.525889830673052e-05
+-------------------------------------------
+Epoch[340/500]:
+   Training loss: 8.972309695733335e-06
+   Validation loss: 1.4484696536512808e-05
+-------------------------------------------
+Epoch[350/500]:
+   Training loss: 8.606480652440748e-06
+   Validation loss: 1.4866753435304919e-05
+-------------------------------------------
+Epoch[360/500]:
+   Training loss: 8.24129046498294e-06
+   Validation loss: 1.562705806179565e-05
+-------------------------------------------
+Epoch[370/500]:
+   Training loss: 7.864005416835984e-06
+   Validation loss: 1.3529201462676674e-05
+-------------------------------------------
+Epoch[380/500]:
+   Training loss: 7.586233102774233e-06
+   Validation loss: 1.3359233770219801e-05
+-------------------------------------------
+Epoch[390/500]:
+   Training loss: 7.343354271305134e-06
+   Validation loss: 1.3085233378311731e-05
+-------------------------------------------
+Epoch[400/500]:
+   Training loss: 7.037340127800432e-06
+   Validation loss: 1.2824205840949052e-05
+-------------------------------------------
+Epoch[410/500]:
+   Training loss: 6.8090474004682165e-06
+   Validation loss: 1.262088098202255e-05
+-------------------------------------------
+Epoch[420/500]:
+   Training loss: 6.618753659827679e-06
+   Validation loss: 1.696241804291605e-05
+-------------------------------------------
+Epoch[430/500]:
+   Training loss: 6.352469085091975e-06
+   Validation loss: 1.2301197719172455e-05
+-------------------------------------------
+Validation loss has not improved in 10 epochs. Stopping training at epoch 432.
+-------------------------------------------
+-------------------------------------------
+Dataset:  IMS
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1548, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1548, out_features=1420, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1420, out_features=1292, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1292, out_features=1164, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=1164, out_features=1036, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=1036, out_features=908, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=908, out_features=780, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=780, out_features=652, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=652, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

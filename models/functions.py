@@ -302,38 +302,54 @@ def predict_embeddings(dataset, model, device, criterion):
     return predicted_embeddings, output_name_encodings, average_loss, input_spectra_indices
 
 def plot_emb_pca(
-        all_embeddings, ims_embeddings, input_type, embedding_type=None, mass_spec_embeddings = None, log_wandb=False, 
+        all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=False, 
         chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True):
     """
-    Perform PCA on chemical embeddings and plot the transformed data, including IMS and Mass Spec embeddings if provided.
+    This function performs Principal Component Analysis (PCA) on chemical embeddings and visualizes the results
+    in a 2D scatter plot. It overlays additional data from ion mobility spectrometry (IMS) and mass spectrometry 
+    if provided. The plot includes legends for different markers and can display the mean squared error (MSE) 
+    and Weights & Biases (WandB) run name.
 
     Parameters:
     ----------
     all_embeddings : pd.DataFrame
-        A dataframe containing ChemNet embeddings for all chemicals. 
-        Each column represents one chemical's ChemNet embedding.
+        DataFrame containing all chemical embeddings to be plotted.
+
     ims_embeddings : pd.DataFrame
-        A dataframe containing IMS (ion mobility spectrometry) embeddings. Must include a 'Label' column
-        with chemical names and additional columns for embedding features.
+        DataFrame containing IMS embeddings, including a 'Label' column for chemical names.
+
+    results_type : str
+        A string indicating the type of results being plotted (train, val or test), used for title annotation.
+
+    input_type : str
+        A string indicating the type of input data (IMS, Carl or MNIST), used for legend annotation.
+
+    embedding_type : str, optional
+        A string specifying the type of embedding being plotted (ChemNet or OneHot). Default is 'ChemNet'.
+
     mass_spec_embeddings : pd.DataFrame, optional
-        A dataframe containing mass spectrometry embeddings. Similar structure to `ims_embeddings`.
-        Default is None, meaning mass spec embeddings are not included.
+        DataFrame containing mass spectrometry embeddings, including a 'Label' column. Default is None.
+
     log_wandb : bool, optional
-        If True, logs the generated plot to Weights and Biases (wandb). Default is True.
+        If True, logs the plot to Weights & Biases (WandB). Default is False.
+
     chemnet_embeddings_to_plot : pd.DataFrame, optional
-        A dataframe containing ChemNet embeddings for all chemicals TO BE PLOTTED. 
-        Each column represents one chemical's ChemNet embedding.
+        DataFrame containing specific ChemNet embeddings to plot. Default is None, which means all embeddings will be used.
+
+    mse_insert : float, optional
+        The mean squared error value to display in the plot. Default is None.
+
+    insert_position : list of float, optional
+        A list specifying the position to insert the MSE text in the plot, given as [x, y] in axis coordinates. Default is [0.05, 0.05].
+
+    show_wandb_run_name : bool, optional
+        If True, includes the current WandB run name in the plot. Default is True.
 
     Returns:
     -------
     None
-        Displays the PCA scatter plot with ChemNet, IMS, and Mass Spec embeddings. 
-        Optionally logs the plot to wandb if `log_wandb` is True.
-
-    Notes:
-    -----
-    - PCA is performed on the transpose of `all_embeddings` so that embeddings for ims and mass spec data can be plotted to the same space.
-    """ 
+        The function displays a PCA plot and optionally logs it to WandB.
+    """
     pca = PCA(n_components=2)
     pca.fit(all_embeddings.T)
 
@@ -386,7 +402,7 @@ def plot_emb_pca(
 
     marker_legends = [
     plt.Line2D([0], [0], marker='o', color='w', label=embedding_type, markerfacecolor='black', markersize=6),
-    plt.Line2D([0], [0], marker='o', color='w', label="IMS", markerfacecolor='none', markeredgecolor='black', markersize=6),
+    plt.Line2D([0], [0], marker='o', color='w', label=input_type, markerfacecolor='none', markeredgecolor='black', markersize=6),
     ]
     
     if mass_spec_embeddings is not None:
@@ -421,9 +437,9 @@ def plot_emb_pca(
     plt.xticks([])
     plt.yticks([])
     if embedding_type != 'ChemNet':
-        plt.title(f'{embedding_type} vs. {input_type} Encoder Output PCA', fontsize=18)
+        plt.title(f'{embedding_type} vs. {results_type} Encoder Output PCA', fontsize=18)
     else:
-        plt.title(f'ChemNet vs. {input_type} Encoder Output PCA', fontsize=18)
+        plt.title(f'ChemNet vs. {results_type} Encoder Output PCA', fontsize=18)
 
     if log_wandb:
         plt.savefig('tmp_plot.png', format='png', dpi=300)
@@ -433,7 +449,7 @@ def plot_emb_pca(
 
 def plot_pca(
     data, batch_size, model, device, encoder_criterion, sorted_chem_names, 
-    all_embeddings_df, ims_embeddings_df, 
+    all_embeddings_df, ims_embeddings_df, results_type, 
     input_type, embedding_type='ChemNet',
     show_wandb_run_name=True, log_wandb=True, 
     ):
@@ -462,12 +478,15 @@ def plot_pca(
 
     chemnet_embeddings_to_plot : pd.DataFrame, optional
         DataFrame containing ChemNet embeddings specifically to be plotted.
+    
+    results_type: str
+        Type of results - train, val, or test
 
     input_type : str
-        The type of input data used for embeddings.
+        The type of input data - IMS, Carl, MNIST, etc
 
     embedding_type : str, optional
-        The type of embedding being visualized.
+        The type of embedding being visualized - ChemNet, OneHot, etc. Default is ChemNet.
 
     mse_insert : float, optional
         Mean Squared Error value to display on the plot.
@@ -501,7 +520,7 @@ def plot_pca(
     preds_df['Label'] = chem_names
     
     plot_emb_pca(
-        all_embeddings_df, preds_df, input_type=input_type, 
+        all_embeddings_df, preds_df, results_type=results_type, input_type=input_type,
         embedding_type=embedding_type, log_wandb=log_wandb, 
         chemnet_embeddings_to_plot=true_embeddings, mse_insert=avg_loss,
         show_wandb_run_name=show_wandb_run_name
@@ -537,8 +556,8 @@ class Encoder(nn.Module):
 def train_model(
         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
-        encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, 
-        embedding_type='ChemNet', show_wandb_run_name=True
+        encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, input_type='IMS',
+        embedding_type='ChemNet', show_wandb_run_name=True, lr_scheduler = False
         ):
     
     """
@@ -588,8 +607,11 @@ def train_model(
     early_stop_threshold : int, optional
         Number of epochs without improvement in validation loss before stopping training. Default is 10.
 
+    input_type : str, optional
+        The type of input being used (IMS, Carl, MNIST). Default is 'ChemNet'.
+
     embedding_type : str, optional
-        The type of embedding being used (e.g., 'ChemNet'). Default is 'ChemNet'.
+        The type of embedding being used (ChemNet, OneHot). Default is 'ChemNet'.
 
     show_wandb_run_name : bool, optional
         If True, displays the current WandB run name on the plot. Default is True.
@@ -625,6 +647,12 @@ def train_model(
         encoder_optimizer = torch.optim.AdamW(encoder.parameters(), lr = combo['learning_rate'])
         encoder_criterion = nn.MSELoss()
 
+        final_lr = combo['learning_rate']
+
+        if lr_scheduler:
+            # Initialize the learning rate scheduler with patience of 5 epochs less than the early stop threshold
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(encoder_optimizer, mode='min', patience=early_stop_threshold-5, factor=0.1, verbose=True)
+
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
         run_with_wandb(config, **wandb_kwargs)
@@ -651,12 +679,12 @@ def train_model(
                         plot_pca(
                             train_data, combo['batch_size'], encoder, device, 
                             encoder_criterion, sorted_chem_names, all_embeddings_df, 
-                            ims_embeddings_df, 'Train', embedding_type, show_wandb_run_name
+                            ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
                             )
                         plot_pca(
                             test_data, combo['batch_size'], encoder, device, 
                             encoder_criterion, sorted_chem_names, all_embeddings_df,
-                            ims_embeddings_df, 'Test', embedding_type, show_wandb_run_name
+                            ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
                             )
                 else:
                     average_loss = train_one_epoch(
@@ -681,31 +709,31 @@ def train_model(
                 # divide by number of batches to calculate average loss
                 val_average_loss = epoch_val_loss/len(val_dataset)
 
+                if lr_scheduler:
+                    scheduler.step(val_loss)  # Pass the validation loss to the scheduler
+                    # get the new learning rate (to give to wandb)
+                    final_lr = encoder_optimizer.param_groups[0]['lr']
+
                 if val_average_loss < lowest_val_model_loss:
                     # check if val loss is improving for this model
                     epochs_without_validation_improvement = 0
                     lowest_val_model_loss = val_average_loss
+                    best_epoch = epoch + 1  # Store the best epoch
 
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
-                        best_epoch = epoch + 1  # Store the best epoch
                         # Save the model state
                         torch.save(encoder.state_dict(), encoder_path)
                         print(f'Saved best model at epoch {best_epoch}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
+                    else:
+                        print(f'Model best validation loss at {best_epoch}')
                 
                 else:
                     epochs_without_validation_improvement += 1
-                
-                # format small losses in scientific notation for readability
-                # if average_loss < .0001:
-                #     average_loss = format(average_loss, '.2e')
-                # if val_average_loss < .0001:
-                #     val_average_loss = format(val_average_loss, '.2e')
 
                 # log losses to wandb, format losses in scientific notation for readability
-                # wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
                 wandb.log({"Encoder Training Loss": format(average_loss, '.2e'), "Encoder Validation Loss": format(val_average_loss, '.2e')})
 
                 if (epoch + 1) % 10 == 0:
@@ -716,15 +744,16 @@ def train_model(
             else:
                 print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
                 wandb.log({'Early Stopping Ecoch':epoch})
+                wandb.log({'Learning Rate at Final Epoch':final_lr})
                 plot_pca(
                     train_data, combo['batch_size'], encoder, device, 
                     encoder_criterion, sorted_chem_names, all_embeddings_df, 
-                    ims_embeddings_df, 'Train', embedding_type, show_wandb_run_name
+                    ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
                     )
                 plot_pca(
                     test_data, combo['batch_size'], encoder, device, 
                     encoder_criterion, sorted_chem_names, all_embeddings_df,
-                    ims_embeddings_df, 'Test', embedding_type, show_wandb_run_name
+                    ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
                     )
                 break
         # if save_emb_pca_to_wandb:

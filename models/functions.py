@@ -697,8 +697,16 @@ def train_model(
                 
                 else:
                     epochs_without_validation_improvement += 1
-                # log losses to wandb
-                wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
+                
+                # format small losses in scientific notation for readability
+                # if average_loss < .0001:
+                #     average_loss = format(average_loss, '.2e')
+                # if val_average_loss < .0001:
+                #     val_average_loss = format(val_average_loss, '.2e')
+
+                # log losses to wandb, format losses in scientific notation for readability
+                # wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
+                wandb.log({"Encoder Training Loss": format(average_loss, '.2e'), "Encoder Validation Loss": format(val_average_loss, '.2e')})
 
                 if (epoch + 1) % 10 == 0:
                     print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))

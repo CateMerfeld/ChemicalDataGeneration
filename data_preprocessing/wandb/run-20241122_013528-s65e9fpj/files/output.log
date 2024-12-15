@@ -1,0 +1,64 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  100
+learning_rate  :  0.0001
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 5
+Saved best model at epoch 6
+Saved best model at epoch 8
+Epoch[10/100]:
+   Training loss: 0.00030891368302489897
+   Validation loss: 0.0011040802377608363
+-------------------------------------------
+Saved best model at epoch 11
+Saved best model at epoch 12
+Saved best model at epoch 14
+Saved best model at epoch 16
+Saved best model at epoch 20
+Epoch[20/100]:
+   Training loss: 0.0001440190743176574
+   Validation loss: 0.0006657187097775608
+-------------------------------------------
+Saved best model at epoch 27
+Epoch[30/100]:
+   Training loss: 8.406766659200775e-05
+   Validation loss: 0.000737571303041014
+-------------------------------------------
+Saved best model at epoch 38
+Epoch[40/100]:
+   Training loss: 6.679647147420727e-05
+   Validation loss: 0.0007425547153902341
+-------------------------------------------
+Epoch[50/100]:
+   Training loss: 5.964778928888127e-05
+   Validation loss: 0.0006303738157836283
+-------------------------------------------
+Epoch[60/100]:
+   Training loss: 1.8730568367560402e-05
+   Validation loss: 0.000578239040275245
+-------------------------------------------
+Epoch[70/100]:
+   Training loss: 4.841940182222249e-05
+   Validation loss: 0.0006505826592638868
+-------------------------------------------
+Saved best model at epoch 72
+Epoch[80/100]:
+   Training loss: 8.296461779013804e-05
+   Validation loss: 0.0005938609925640244
+-------------------------------------------
+Saved best model at epoch 82
+Saved best model at epoch 83
+Epoch[90/100]:
+   Training loss: 5.185779029334358e-05
+   Validation loss: 0.000624169578332407
+-------------------------------------------
+Epoch[100/100]:
+   Training loss: 8.552105785914228e-05
+   Validation loss: 0.0006822354620375207
+-------------------------------------------

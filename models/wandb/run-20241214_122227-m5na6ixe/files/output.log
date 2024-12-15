@@ -1,0 +1,19 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  1e-05
+Model best validation loss at 1
+Saved best model at epoch 1
+Model best validation loss at 2
+Saved best model at epoch 2
+Model best validation loss at 3
+Saved best model at epoch 3
+Model best validation loss at 4
+Saved best model at epoch 4
+Model best validation loss at 5
+Saved best model at epoch 5
+Model best validation loss at 6
+Saved best model at epoch 6

@@ -1,0 +1,28 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  128
+epochs  :  50
+learning_rate  :  0.0001
+Epoch[10/50]:
+   Training loss: 0.015664633758366107
+   Validation loss: 0.02386475582089689
+-------------------------------------------
+Epoch[20/50]:
+   Training loss: 0.006584599493071437
+   Validation loss: 0.02547050965210748
+-------------------------------------------
+Epoch[30/50]:
+   Training loss: 0.0028177630407735703
+   Validation loss: 0.02565125109893935
+-------------------------------------------
+Epoch[40/50]:
+   Training loss: 0.0014480554875917733
+   Validation loss: 0.02621811850085145
+-------------------------------------------
+Epoch[50/50]:
+   Training loss: 0.0007920285824220628
+   Validation loss: 0.025716543848079348
+-------------------------------------------
+wandb: ERROR Dropped streaming file chunk (see wandb/debug-internal.log)

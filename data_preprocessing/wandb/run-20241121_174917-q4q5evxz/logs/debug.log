@@ -1,0 +1,84 @@
+2024-11-21 17:49:17,518 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2024-11-21 17:49:17,518 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Configure stats pid to 46051
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/.config/wandb/settings
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/settings
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': '/home/cmdunham/ChemicalDataGeneration/data_preprocessing/cifar10_encoder.ipynb'}
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Applying login settings: {}
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_init.py:_log_setup():520] Logging user logs to /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241121_174917-q4q5evxz/logs/debug.log
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_init.py:_log_setup():521] Logging internal logs to /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241121_174917-q4q5evxz/logs/debug-internal.log
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_init.py:init():560] calling init triggers
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'learning_rate': 0.001, 'epochs': 100, 'batch_size': 32, 'model_architecture': 'encoder', 'optimizer': 'AdamW', 'loss': 'MSELoss'}
+2024-11-21 17:49:17,519 INFO    MainThread:46051 [wandb_init.py:init():585] re-initializing run, found existing run on stack: v5ijdkaw
+2024-11-21 17:49:17,520 INFO    MainThread:46051 [wandb_run.py:_finish():2103] finishing run catemerfeld/ims_encoder_decoder/v5ijdkaw
+2024-11-21 17:49:17,520 ERROR   MainThread:46051 [jupyter.py:save_history():437] Run pip install nbformat to save notebook history
+2024-11-21 17:49:17,520 INFO    MainThread:46051 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2024-11-21 17:49:17,520 INFO    MainThread:46051 [wandb_init.py:_jupyter_teardown():448] cleaning up jupyter logic
+2024-11-21 17:49:17,520 INFO    MainThread:46051 [wandb_run.py:_atexit_cleanup():2343] got exitcode: 0
+2024-11-21 17:49:17,520 INFO    MainThread:46051 [wandb_run.py:_restore():2326] restore
+2024-11-21 17:49:17,520 INFO    MainThread:46051 [wandb_run.py:_restore():2332] restore done
+2024-11-21 17:50:00,409 INFO    MainThread:46051 [wandb_init.py:init():610] starting backend
+2024-11-21 17:50:00,409 INFO    MainThread:46051 [wandb_init.py:init():614] setting up manager
+2024-11-21 17:50:00,415 INFO    MainThread:46051 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-11-21 17:50:00,415 INFO    MainThread:46051 [wandb_init.py:init():622] backend started and connected
+2024-11-21 17:50:00,423 INFO    MainThread:46051 [wandb_run.py:_label_probe_notebook():1328] probe notebook
+2024-11-21 17:50:00,424 INFO    MainThread:46051 [wandb_init.py:init():711] updated telemetry
+2024-11-21 17:50:00,500 INFO    MainThread:46051 [wandb_init.py:init():744] communicating run to backend with 90.0 second timeout
+2024-11-21 17:50:21,701 WARNING MainThread:46051 [wandb_init.py:init():1168] interrupted
+Traceback (most recent call last):
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/wandb_init.py", line 1164, in init
+    return wi.init()
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/wandb_init.py", line 747, in init
+    result = run_init_handle.wait(
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 283, in wait
+    found, abandoned = self._slot._get_and_clear(timeout=wait_timeout)
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 130, in _get_and_clear
+    if self._wait(timeout=timeout):
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 126, in _wait
+    return self._event.wait(timeout=timeout)
+  File "/usr/lib/python3.8/threading.py", line 558, in wait
+    signaled = self._cond.wait(timeout)
+  File "/usr/lib/python3.8/threading.py", line 306, in wait
+    gotit = waiter.acquire(True, timeout)
+KeyboardInterrupt
+2024-11-21 17:50:59,952 INFO    MainThread:46051 [wandb_settings.py:_apply_login():1895] Applying login settings: {}
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Configure stats pid to 46051
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/.config/wandb/settings
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/settings
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': '/home/cmdunham/ChemicalDataGeneration/data_preprocessing/cifar10_encoder.ipynb'}
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_setup.py:_flush():76] Applying login settings: {}
+2024-11-21 17:50:59,955 INFO    MainThread:46051 [wandb_init.py:_log_setup():520] Logging user logs to /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241121_175059-6z263ei6/logs/debug.log
+2024-11-21 17:50:59,956 INFO    MainThread:46051 [wandb_init.py:_log_setup():521] Logging internal logs to /home/cmdunham/ChemicalDataGeneration/data_preprocessing/wandb/run-20241121_175059-6z263ei6/logs/debug-internal.log
+2024-11-21 17:50:59,956 INFO    MainThread:46051 [wandb_init.py:_jupyter_setup():466] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x7fa4158c1d60>
+2024-11-21 17:50:59,956 INFO    MainThread:46051 [wandb_init.py:init():560] calling init triggers
+2024-11-21 17:50:59,956 INFO    MainThread:46051 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'learning_rate': 0.001, 'epochs': 100, 'batch_size': 32, 'model_architecture': 'encoder', 'optimizer': 'AdamW', 'loss': 'MSELoss'}
+2024-11-21 17:50:59,956 INFO    MainThread:46051 [wandb_init.py:init():610] starting backend
+2024-11-21 17:50:59,956 INFO    MainThread:46051 [wandb_init.py:init():614] setting up manager
+2024-11-21 17:50:59,958 INFO    MainThread:46051 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-11-21 17:50:59,958 INFO    MainThread:46051 [wandb_init.py:init():622] backend started and connected
+2024-11-21 17:50:59,964 INFO    MainThread:46051 [wandb_run.py:_label_probe_notebook():1328] probe notebook
+2024-11-21 17:50:59,964 INFO    MainThread:46051 [wandb_init.py:init():711] updated telemetry
+2024-11-21 17:51:00,045 INFO    MainThread:46051 [wandb_init.py:init():744] communicating run to backend with 90.0 second timeout
+2024-11-21 17:51:35,262 WARNING MainThread:46051 [wandb_init.py:init():1168] interrupted
+Traceback (most recent call last):
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/wandb_init.py", line 1164, in init
+    return wi.init()
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/wandb_init.py", line 747, in init
+    result = run_init_handle.wait(
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 283, in wait
+    found, abandoned = self._slot._get_and_clear(timeout=wait_timeout)
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 130, in _get_and_clear
+    if self._wait(timeout=timeout):
+  File "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/lib/python3.8/site-packages/wandb/sdk/lib/mailbox.py", line 126, in _wait
+    return self._event.wait(timeout=timeout)
+  File "/usr/lib/python3.8/threading.py", line 558, in wait
+    signaled = self._cond.wait(timeout)
+  File "/usr/lib/python3.8/threading.py", line 306, in wait
+    gotit = waiter.acquire(True, timeout)
+KeyboardInterrupt

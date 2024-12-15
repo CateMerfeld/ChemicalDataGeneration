@@ -710,7 +710,7 @@ def train_model(
                 val_average_loss = epoch_val_loss/len(val_dataset)
 
                 if lr_scheduler:
-                    scheduler.step(val_loss)  # Pass the validation loss to the scheduler
+                    scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
                     # get the new learning rate (to give to wandb)
                     final_lr = encoder_optimizer.param_groups[0]['lr']
 

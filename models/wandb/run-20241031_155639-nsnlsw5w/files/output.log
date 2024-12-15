@@ -1,0 +1,26 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  30
+learning_rate  :  0.01
+--------------------------
+--------------------------
+Epoch[10/30]:
+   Training loss: 154638.54851988467
+   Validation loss: 154550.0943898168
+-------------------------------------------
+Epoch[20/30]:
+   Training loss: 3.546242144869761e+25
+   Validation loss: 1.2755486311157087e+20
+-------------------------------------------
+Epoch[30/30]:
+   Training loss: 153838.74127565158
+   Validation loss: 154397.51139042297
+-------------------------------------------
+Weighted cosine similarity between true spectra and output spectra is:  0.96
+Weighted cosine similarity between true spectra and output spectra is:  1.0
+Weighted cosine similarity between true spectra and output spectra is:  0.82
+Weighted cosine similarity between true spectra and output spectra is:  0.88
+Weighted cosine similarity between true spectra and output spectra is:  0.91

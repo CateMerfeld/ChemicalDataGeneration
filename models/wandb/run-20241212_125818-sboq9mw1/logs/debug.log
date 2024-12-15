@@ -1,0 +1,235 @@
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Configure stats pid to 224248
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/.config/wandb/settings
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/ChemicalDataGeneration/models/wandb/settings
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': '/home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb'}
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Applying login settings: {}
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_init.py:_log_setup():520] Logging user logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241212_125818-sboq9mw1/logs/debug.log
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_init.py:_log_setup():521] Logging internal logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241212_125818-sboq9mw1/logs/debug-internal.log
+2024-12-12 12:58:18,837 INFO    MainThread:224248 [wandb_init.py:_jupyter_setup():466] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x7f823f25dd60>
+2024-12-12 12:58:18,838 INFO    MainThread:224248 [wandb_init.py:init():560] calling init triggers
+2024-12-12 12:58:18,838 INFO    MainThread:224248 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'architecture': 'ims_encoder', 'optimizer': 'AdamW', 'loss': 'MSELoss', 'dataset': 'IMS', 'target_embedding': 'ChemNet', 'batch_size': 32, 'epochs': 500, 'learning_rate': 0.0001}
+2024-12-12 12:58:18,838 INFO    MainThread:224248 [wandb_init.py:init():610] starting backend
+2024-12-12 12:58:18,838 INFO    MainThread:224248 [wandb_init.py:init():614] setting up manager
+2024-12-12 12:58:18,842 INFO    MainThread:224248 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-12-12 12:58:18,842 INFO    MainThread:224248 [wandb_init.py:init():622] backend started and connected
+2024-12-12 12:58:18,850 INFO    MainThread:224248 [wandb_run.py:_label_probe_notebook():1328] probe notebook
+2024-12-12 12:58:18,851 INFO    MainThread:224248 [wandb_init.py:init():711] updated telemetry
+2024-12-12 12:58:19,531 INFO    MainThread:224248 [wandb_init.py:init():744] communicating run to backend with 90.0 second timeout
+2024-12-12 12:58:19,824 INFO    MainThread:224248 [wandb_run.py:_on_init():2396] communicating current version
+2024-12-12 12:58:19,880 INFO    MainThread:224248 [wandb_run.py:_on_init():2405] got version response upgrade_message: "wandb version 0.19.0 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2024-12-12 12:58:19,880 INFO    MainThread:224248 [wandb_init.py:init():795] starting run threads in backend
+2024-12-12 12:58:20,213 INFO    MainThread:224248 [wandb_run.py:_console_start():2374] atexit reg
+2024-12-12 12:58:20,213 INFO    MainThread:224248 [wandb_run.py:_redirect():2229] redirect: wrap_raw
+2024-12-12 12:58:20,213 INFO    MainThread:224248 [wandb_run.py:_redirect():2294] Wrapping output streams.
+2024-12-12 12:58:20,213 INFO    MainThread:224248 [wandb_run.py:_redirect():2319] Redirects installed.
+2024-12-12 12:58:20,214 INFO    MainThread:224248 [wandb_init.py:init():838] run started, returning control to user process
+2024-12-12 12:58:21,923 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:58:22,362 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:58:22,363 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:36,088 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:36,091 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:36,185 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:36,185 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:36,820 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:36,822 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:36,916 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:36,916 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:37,679 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:37,682 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:37,775 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:37,775 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:37,971 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:37,975 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:38,070 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:38,070 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:38,587 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:38,590 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:38,682 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:38,682 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:40,394 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:40,397 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:40,492 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:40,492 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:47,556 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:47,558 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:47,658 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:47,658 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:59,341 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:59,344 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:59,440 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:59,440 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 12:59:59,856 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 12:59:59,859 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 12:59:59,944 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 12:59:59,944 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:01,350 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:01,354 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:01,457 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:01,457 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:01,850 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:01,854 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:01,960 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:01,960 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:03,246 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:03,251 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:03,349 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:03,349 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:03,443 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:03,450 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:03,563 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:03,563 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:03,790 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:03,792 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:03,888 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:03,888 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:03,976 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:03,979 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:04,125 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:04,125 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:04,168 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:04,171 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:04,261 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:04,262 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:04,705 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:04,708 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:04,808 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:04,808 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:11,018 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:11,020 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:11,116 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:11,116 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:16,803 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:16,806 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:16,894 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:16,894 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:21,928 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:21,930 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:22,033 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:22,033 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:22,482 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:22,484 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:22,574 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:22,574 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:25,027 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:25,030 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:25,127 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:25,127 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:26,958 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:26,960 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:27,051 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:27,051 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:28,029 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:28,032 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:28,124 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:28,124 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:28,384 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:28,386 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:28,492 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:28,492 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:28,496 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:28,497 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:28,586 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:28,586 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:28,694 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:28,696 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:28,785 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:28,785 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:28,824 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:28,831 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:28,948 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:28,948 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:31,778 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:31,780 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:31,873 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:31,873 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:32,230 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:32,232 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:32,336 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:32,336 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:32,856 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:32,859 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:32,961 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:32,961 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:33,505 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:33,507 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:33,604 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:33,604 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:33,825 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:33,827 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:33,922 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:33,922 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:34,374 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:34,376 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:34,465 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:34,465 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:35,128 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:35,130 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:35,225 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:35,225 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:36,857 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:36,860 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:36,965 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:36,965 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:37,080 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:37,083 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:37,180 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:37,180 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:37,287 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:37,289 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:37,376 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:37,376 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:37,402 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:37,403 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:37,499 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:37,499 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:37,568 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:37,569 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:37,729 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:37,729 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:00:38,207 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:00:38,209 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:00:38,306 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:00:38,306 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:01:51,168 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:01:51,170 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:01:51,274 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:01:51,274 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:01:51,934 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:01:51,935 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:01:52,033 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:01:52,033 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:01:53,463 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:01:53,464 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:01:53,577 INFO    MainThread:224248 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:01:53,577 INFO    MainThread:224248 [wandb_init.py:_pause_backend():431] pausing backend
+2024-12-12 13:01:55,849 INFO    MainThread:224248 [wandb_init.py:_resume_backend():436] resuming backend
+2024-12-12 13:01:55,927 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Configure stats pid to 224248
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/.config/wandb/settings
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/ChemicalDataGeneration/models/wandb/settings
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': '/home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb'}
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_setup.py:_flush():76] Applying login settings: {}
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_init.py:_log_setup():520] Logging user logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241212_130155-cub5qnqs/logs/debug.log
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_init.py:_log_setup():521] Logging internal logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20241212_130155-cub5qnqs/logs/debug-internal.log
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_init.py:init():560] calling init triggers
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'architecture': 'carl_encoder', 'optimizer': 'AdamW', 'loss': 'MSELoss', 'dataset': 'carls', 'target_embedding': 'ChemNet', 'batch_size': 32, 'epochs': 500, 'learning_rate': 0.0001}
+2024-12-12 13:01:55,928 INFO    MainThread:224248 [wandb_init.py:init():585] re-initializing run, found existing run on stack: sboq9mw1
+2024-12-12 13:01:55,929 INFO    MainThread:224248 [wandb_run.py:_finish():2103] finishing run catemerfeld/ims_encoder_decoder/sboq9mw1
+2024-12-12 13:01:55,929 ERROR   MainThread:224248 [jupyter.py:save_history():437] Run pip install nbformat to save notebook history
+2024-12-12 13:01:55,929 INFO    MainThread:224248 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/carl_encoder.ipynb
+2024-12-12 13:01:56,021 INFO    MainThread:224248 [wandb_init.py:_jupyter_teardown():447] saved code and history: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2024-12-12 13:01:56,021 INFO    MainThread:224248 [wandb_init.py:_jupyter_teardown():448] cleaning up jupyter logic
+2024-12-12 13:01:56,021 INFO    MainThread:224248 [wandb_run.py:_atexit_cleanup():2343] got exitcode: 0
+2024-12-12 13:01:56,021 INFO    MainThread:224248 [wandb_run.py:_restore():2326] restore
+2024-12-12 13:01:56,021 INFO    MainThread:224248 [wandb_run.py:_restore():2332] restore done
+2024-12-12 13:01:59,643 INFO    MainThread:224248 [wandb_run.py:_footer_history_summary_info():3994] rendering history
+2024-12-12 13:01:59,643 INFO    MainThread:224248 [wandb_run.py:_footer_history_summary_info():4026] rendering summary
+2024-12-12 13:01:59,646 INFO    MainThread:224248 [wandb_run.py:_footer_sync_info():3953] logging synced files

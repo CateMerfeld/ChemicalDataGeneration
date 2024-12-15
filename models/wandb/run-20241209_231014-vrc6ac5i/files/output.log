@@ -1,0 +1,53 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  10000
+epochs  :  1
+learning_rate  :  0.001
+0
+1
+2
+3
+4
+5
+6
+7
+0
+1
+2
+3
+4
+5
+6
+7
+Saved best model at epoch 1
+-------------------------------------------
+-------------------------------------------
+Dataset:  MNIST
+Target Embeddings:  OneHot Encodings
+-------------------------------------------
+-------------------------------------------
+MNISTtoOneHotEncoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=784, out_features=698, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=698, out_features=612, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=612, out_features=526, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=526, out_features=440, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=440, out_features=354, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=354, out_features=268, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=268, out_features=182, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=182, out_features=96, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=96, out_features=8, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

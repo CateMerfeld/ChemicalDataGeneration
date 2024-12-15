@@ -1,0 +1,62 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  8
+epochs  :  500
+learning_rate  :  1e-05
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 8
+Saved best model at epoch 10
+Epoch[10/500]:
+   Training loss: 1.4359128887835568e-06
+   Validation loss: 0.0005999608131258156
+-------------------------------------------
+Saved best model at epoch 13
+Saved best model at epoch 19
+Epoch[20/500]:
+   Training loss: 1.0702483532675268e-06
+   Validation loss: 0.000590071442661925
+-------------------------------------------
+Saved best model at epoch 28
+Epoch[30/500]:
+   Training loss: 5.332018354074832e-07
+   Validation loss: 0.000593628983057163
+-------------------------------------------
+Saved best model at epoch 36
+Saved best model at epoch 38
+Epoch[40/500]:
+   Training loss: 4.3852409008946134e-07
+   Validation loss: 0.000585093173132594
+-------------------------------------------
+Saved best model at epoch 45
+Epoch[50/500]:
+   Training loss: 3.517453278937853e-07
+   Validation loss: 0.0005844875831856593
+-------------------------------------------
+Epoch[60/500]:
+   Training loss: 2.502926527180116e-07
+   Validation loss: 0.0005899855072708593
+-------------------------------------------
+Validation loss has not improved in 15 epochs. Stopping training at epoch 60.
+-------------------------------------------
+-------------------------------------------
+Dataset:  MNIST
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=784, out_features=716, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=716, out_features=648, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=648, out_features=580, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=580, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

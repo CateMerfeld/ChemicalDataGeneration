@@ -1,0 +1,79 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  100
+learning_rate  :  1e-05
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 4
+Saved best model at epoch 6
+Saved best model at epoch 9
+Saved best model at epoch 10
+Epoch[10/100]:
+   Training loss: 0.00019586358890203153
+   Validation loss: 8.435464606930446e-05
+-------------------------------------------
+Saved best model at epoch 15
+Saved best model at epoch 20
+Epoch[20/100]:
+   Training loss: 0.00012618802944670468
+   Validation loss: 4.8415215818542084e-05
+-------------------------------------------
+Epoch[30/100]:
+   Training loss: 0.00011527127494386234
+   Validation loss: 0.00013045624730866306
+-------------------------------------------
+Saved best model at epoch 31
+Saved best model at epoch 33
+Epoch[40/100]:
+   Training loss: 0.00010149551311583933
+   Validation loss: 4.494083989606938e-05
+-------------------------------------------
+Saved best model at epoch 44
+Epoch[50/100]:
+   Training loss: 7.1895740404255e-05
+   Validation loss: 9.073107889987804e-05
+-------------------------------------------
+Saved best model at epoch 52
+Saved best model at epoch 56
+Saved best model at epoch 60
+Epoch[60/100]:
+   Training loss: 6.253184510662193e-05
+   Validation loss: 2.6012112700073955e-05
+-------------------------------------------
+Epoch[70/100]:
+   Training loss: 5.959329004937862e-05
+   Validation loss: 0.00011097628988185816
+-------------------------------------------
+Validation loss has not improved in 15 epochs. Stopping training at epoch 75.
+-------------------------------------------
+-------------------------------------------
+Dataset:  IMS
+Target Embeddings:  OneHot Encoding
+-------------------------------------------
+-------------------------------------------
+IMStoOneHotEncoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1491, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1491, out_features=1306, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1306, out_features=1121, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1121, out_features=936, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=936, out_features=751, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=751, out_features=566, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=566, out_features=381, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=381, out_features=196, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=196, out_features=8, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

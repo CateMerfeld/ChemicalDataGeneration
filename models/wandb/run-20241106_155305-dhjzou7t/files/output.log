@@ -1,0 +1,83 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  128
+epochs  :  100
+learning_rate  :  0.001
+--------------------------
+--------------------------
+Epoch[10/100]:
+   Training loss: 160654.82611104456
+   Validation loss: 125574.38550646552
+-------------------------------------------
+Epoch[20/100]:
+   Training loss: 125213.58146786655
+   Validation loss: 124949.99895608836
+-------------------------------------------
+Epoch[30/100]:
+   Training loss: 125061.95241000838
+   Validation loss: 125204.8026333513
+-------------------------------------------
+Epoch[40/100]:
+   Training loss: 124871.2981365297
+   Validation loss: 124711.33058324353
+-------------------------------------------
+Epoch[50/100]:
+   Training loss: 124907.90729441184
+   Validation loss: 124890.33327720905
+-------------------------------------------
+Epoch[60/100]:
+   Training loss: 124867.8106282942
+   Validation loss: 124727.7880859375
+-------------------------------------------
+Epoch[70/100]:
+   Training loss: 125508.73777401773
+   Validation loss: 125050.6987809806
+-------------------------------------------
+Epoch[80/100]:
+   Training loss: 126218.28259014135
+   Validation loss: 126049.3311557112
+-------------------------------------------
+Epoch[90/100]:
+   Training loss: 125710.5634695436
+   Validation loss: 126494.1583041487
+-------------------------------------------
+Epoch[100/100]:
+   Training loss: 124863.48799487902
+   Validation loss: 124743.9820851293
+-------------------------------------------
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  1.0
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.98
+Weighted cosine similarity between true spectra and output spectra is:  0.96
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  1.0
+Weighted cosine similarity between true spectra and output spectra is:  0.98
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  1.0
+Weighted cosine similarity between true spectra and output spectra is:  0.98
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.98
+Weighted cosine similarity between true spectra and output spectra is:  0.96
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.99
+Weighted cosine similarity between true spectra and output spectra is:  0.96
+Weighted cosine similarity between true spectra and output spectra is:  0.96
+Weighted cosine similarity between true spectra and output spectra is:  0.96
+Weighted cosine similarity between true spectra and output spectra is:  0.77

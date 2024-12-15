@@ -1,0 +1,82 @@
+
+Using device: cuda
+Total training loss: 12.312936416186858
+Num training batches:  1044
+Total validation loss:  0.13726996624609455
+Num validation batches:  116
+Epoch[1/10]:
+   Training loss: 0.011794000398646415
+   Validation loss: 0.0011833617779835738
+-------------------------------------------
+Total training loss: 0.6295180210872786
+Num training batches:  1044
+Total validation loss:  0.04124013731779996
+Num validation batches:  116
+Epoch[2/10]:
+   Training loss: 0.0006029866102368569
+   Validation loss: 0.00035551842515344796
+-------------------------------------------
+Total training loss: 0.29710380073811393
+Num training batches:  1044
+Total validation loss:  0.03619046417588834
+Num validation batches:  116
+Epoch[3/10]:
+   Training loss: 0.0002845821846150517
+   Validation loss: 0.00031198676013696844
+-------------------------------------------
+Total training loss: 0.18961793358903378
+Num training batches:  1044
+Total validation loss:  0.01710330064088339
+Num validation batches:  116
+Epoch[4/10]:
+   Training loss: 0.00018162637316957258
+   Validation loss: 0.00014744224690416716
+-------------------------------------------
+Total training loss: 0.13910089715500362
+Num training batches:  1044
+Total validation loss:  0.015354014954937156
+Num validation batches:  116
+Epoch[5/10]:
+   Training loss: 0.0001332384072365935
+   Validation loss: 0.00013236219788738927
+-------------------------------------------
+Total training loss: 0.11395502290542936
+Num training batches:  1044
+Total validation loss:  0.04537893191445619
+Num validation batches:  116
+Epoch[6/10]:
+   Training loss: 0.00010915232079064115
+   Validation loss: 0.00039119768891772574
+-------------------------------------------
+Total training loss: 0.10524237194113084
+Num training batches:  1044
+Total validation loss:  0.010455074367200723
+Num validation batches:  116
+Epoch[7/10]:
+   Training loss: 0.00010080686967541268
+   Validation loss: 9.012995144138555e-05
+-------------------------------------------
+Total training loss: 0.08886715814151103
+Num training batches:  1044
+Total validation loss:  0.00970822547969874
+Num validation batches:  116
+Epoch[8/10]:
+   Training loss: 8.512179898612168e-05
+   Validation loss: 8.369159896292018e-05
+-------------------------------------------
+Total training loss: 0.07454720578971319
+Num training batches:  1044
+Total validation loss:  0.007081320367433364
+Num validation batches:  116
+Epoch[9/10]:
+   Training loss: 7.140536953037662e-05
+   Validation loss: 6.104586523649451e-05
+-------------------------------------------
+Total training loss: 0.08846863162398222
+Num training batches:  1044
+Total validation loss:  0.005305005608533975
+Num validation batches:  116
+Epoch[10/10]:
+   Training loss: 8.474006860534695e-05
+   Validation loss: 4.5732806970120475e-05
+-------------------------------------------

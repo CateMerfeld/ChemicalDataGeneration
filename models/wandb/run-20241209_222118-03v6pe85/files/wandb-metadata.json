@@ -1,0 +1,211 @@
+{
+    "os": "Linux-5.15.0-125-generic-x86_64-with-glibc2.29",
+    "python": "3.8.10",
+    "heartbeatAt": "2024-12-10T03:21:23.778066",
+    "startedAt": "2024-12-10T03:21:18.974141",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/cmdunham/ChemicalDataGeneration/models/mnist_encoder.ipynb",
+    "codePathLocal": "mnist_encoder.ipynb",
+    "git": {
+        "remote": "https://github.com/CateMerfeld/ChemicalDataGeneration.git",
+        "commit": "d8ad8109048d91bf0f8011b1fc72fda7ab89000f"
+    },
+    "email": "catemerfeld@gmail.com",
+    "root": "/home/cmdunham/ChemicalDataGeneration",
+    "host": "paffenroth23-1",
+    "username": "cmdunham",
+    "executable": "/home/cmdunham/ChemicalDataGeneration/chem_data_gen/bin/python",
+    "cpu_count": 16,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 2044.349625,
+        "min": 1800.0,
+        "max": 4000.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 4539.56,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 2154.83,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 4000.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        },
+        {
+            "current": 1800.0,
+            "min": 1800.0,
+            "max": 4000.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 438.5479202270508,
+            "used": 235.32383346557617
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "gpu_count": 2,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 4090",
+            "memory_total": 25757220864
+        },
+        {
+            "name": "NVIDIA GeForce RTX 4090",
+            "memory_total": 25757220864
+        }
+    ],
+    "memory": {
+        "total": 125.60020446777344
+    }
+}

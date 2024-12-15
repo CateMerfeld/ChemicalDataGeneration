@@ -1,0 +1,103 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  16
+epochs  :  100
+learning_rate  :  1e-06
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 5
+Saved best model at epoch 6
+Saved best model at epoch 8
+Saved best model at epoch 9
+Saved best model at epoch 10
+Epoch[10/100]:
+   Training loss: 0.0003013240650939575
+   Validation loss: 0.00024944048266359884
+-------------------------------------------
+Saved best model at epoch 12
+Saved best model at epoch 15
+Saved best model at epoch 16
+Saved best model at epoch 17
+Saved best model at epoch 19
+Epoch[20/100]:
+   Training loss: 0.00012364195724752424
+   Validation loss: 0.00013636986847331175
+-------------------------------------------
+Saved best model at epoch 22
+Saved best model at epoch 24
+Saved best model at epoch 26
+Epoch[30/100]:
+   Training loss: 6.978815649663757e-05
+   Validation loss: 9.003509387572081e-05
+-------------------------------------------
+Saved best model at epoch 32
+Saved best model at epoch 35
+Saved best model at epoch 37
+Epoch[40/100]:
+   Training loss: 5.3044910497794146e-05
+   Validation loss: 6.939547679259478e-05
+-------------------------------------------
+Saved best model at epoch 45
+Saved best model at epoch 47
+Saved best model at epoch 48
+Saved best model at epoch 50
+Epoch[50/100]:
+   Training loss: 3.5556509961102355e-05
+   Validation loss: 3.6508220611447645e-05
+-------------------------------------------
+Saved best model at epoch 57
+Saved best model at epoch 59
+Epoch[60/100]:
+   Training loss: 3.3189195224651044e-05
+   Validation loss: 3.8231551054999815e-05
+-------------------------------------------
+Saved best model at epoch 66
+Epoch[70/100]:
+   Training loss: 2.568448606169577e-05
+   Validation loss: 7.129950289662508e-05
+-------------------------------------------
+Saved best model at epoch 71
+Saved best model at epoch 73
+Saved best model at epoch 76
+Epoch[80/100]:
+   Training loss: 2.0372890836973667e-05
+   Validation loss: 3.7068375809274025e-05
+-------------------------------------------
+Epoch[90/100]:
+   Training loss: 2.144498785324423e-05
+   Validation loss: 3.2324156151631086e-05
+-------------------------------------------
+Validation loss has not improved in 15 epochs. Stopping training at epoch 91.
+-------------------------------------------
+-------------------------------------------
+Dataset:  IMS
+Target Embeddings:  OneHot Encoding
+-------------------------------------------
+-------------------------------------------
+IMStoOneHotEncoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1491, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1491, out_features=1306, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1306, out_features=1121, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1121, out_features=936, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=936, out_features=751, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=751, out_features=566, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=566, out_features=381, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=381, out_features=196, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=196, out_features=8, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

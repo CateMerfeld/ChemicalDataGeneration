@@ -28,3 +28,4 @@ Epoch[30/500]:
    Training loss: 1.5108762595443828e-05
    Validation loss: 1.532883205113239e-05
 -------------------------------------------
+Saved best model at epoch 31

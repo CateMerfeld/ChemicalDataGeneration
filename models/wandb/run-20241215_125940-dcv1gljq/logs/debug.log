@@ -28,3 +28,14 @@ config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 
 2024-12-15 12:59:42,093 INFO    MainThread:272364 [wandb_run.py:_redirect():2294] Wrapping output streams.
 2024-12-15 12:59:42,093 INFO    MainThread:272364 [wandb_run.py:_redirect():2319] Redirects installed.
 2024-12-15 12:59:42,094 INFO    MainThread:272364 [wandb_init.py:init():838] run started, returning control to user process
+2024-12-15 13:22:04,104 INFO    MainThread:272364 [wandb_run.py:_finish():2103] finishing run catemerfeld/ims_encoder_decoder/dcv1gljq
+2024-12-15 13:22:04,104 ERROR   MainThread:272364 [jupyter.py:save_history():437] Run pip install nbformat to save notebook history
+2024-12-15 13:22:04,104 INFO    MainThread:272364 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/ims_encoder.ipynb
+2024-12-15 13:22:04,236 INFO    MainThread:272364 [wandb_init.py:_jupyter_teardown():447] saved code and history: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_ims_encoder.ipynb>
+2024-12-15 13:22:04,236 INFO    MainThread:272364 [wandb_init.py:_jupyter_teardown():448] cleaning up jupyter logic
+2024-12-15 13:22:04,236 INFO    MainThread:272364 [wandb_run.py:_atexit_cleanup():2343] got exitcode: 0
+2024-12-15 13:22:04,237 INFO    MainThread:272364 [wandb_run.py:_restore():2326] restore
+2024-12-15 13:22:04,237 INFO    MainThread:272364 [wandb_run.py:_restore():2332] restore done
+2024-12-15 13:22:14,863 INFO    MainThread:272364 [wandb_run.py:_footer_history_summary_info():3994] rendering history
+2024-12-15 13:22:14,864 INFO    MainThread:272364 [wandb_run.py:_footer_history_summary_info():4026] rendering summary
+2024-12-15 13:22:14,871 INFO    MainThread:272364 [wandb_run.py:_footer_sync_info():3953] logging synced files

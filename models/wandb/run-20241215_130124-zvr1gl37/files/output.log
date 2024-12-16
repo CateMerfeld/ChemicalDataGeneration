@@ -1,0 +1,83 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  16
+epochs  :  500
+learning_rate  :  1e-05
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 7
+Saved best model at epoch 9
+Epoch[10/500]:
+   Training loss: 3.074916331447313e-05
+   Validation loss: 1.3056292115255364e-05
+-------------------------------------------
+Saved best model at epoch 15
+Epoch[20/500]:
+   Training loss: 1.8763818528409626e-05
+   Validation loss: 2.2718125258566284e-05
+-------------------------------------------
+Epoch 00021: reducing learning rate of group 0 to 1.0000e-06.
+Saved best model at epoch 22
+Saved best model at epoch 23
+Saved best model at epoch 24
+Saved best model at epoch 26
+Saved best model at epoch 28
+Saved best model at epoch 29
+Saved best model at epoch 30
+Epoch[30/500]:
+   Training loss: 6.488814341984593e-07
+   Validation loss: 4.59277600896896e-06
+-------------------------------------------
+Saved best model at epoch 31
+Saved best model at epoch 32
+Saved best model at epoch 34
+Saved best model at epoch 35
+Saved best model at epoch 37
+Saved best model at epoch 39
+Epoch[40/500]:
+   Training loss: 1.9669169953799419e-07
+   Validation loss: 4.4619278547899235e-06
+-------------------------------------------
+Saved best model at epoch 44
+Saved best model at epoch 46
+Saved best model at epoch 47
+Saved best model at epoch 48
+Epoch[50/500]:
+   Training loss: 1.4342147441783383e-07
+   Validation loss: 3.6019766955617813e-06
+-------------------------------------------
+Epoch 00054: reducing learning rate of group 0 to 1.0000e-07.
+Validation loss has not improved in 10 epochs. Stopping training at epoch 58.
+-------------------------------------------
+-------------------------------------------
+Dataset:  carls
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1548, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1548, out_features=1420, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1420, out_features=1292, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1292, out_features=1164, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=1164, out_features=1036, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=1036, out_features=908, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=908, out_features=780, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=780, out_features=652, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=652, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

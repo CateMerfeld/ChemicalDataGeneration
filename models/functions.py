@@ -437,9 +437,9 @@ def plot_emb_pca(
     plt.xticks([])
     plt.yticks([])
     if embedding_type != 'ChemNet':
-        plt.title(f'{embedding_type} vs. {results_type} Encoder Output PCA', fontsize=18)
+        plt.title(f'{embedding_type} vs. Encoder {results_type} Output PCA', fontsize=18)
     else:
-        plt.title(f'ChemNet vs. {results_type} Encoder Output PCA', fontsize=18)
+        plt.title(f'ChemNet vs. Encoder {results_type} Output PCA', fontsize=18)
 
     if log_wandb:
         plt.savefig('tmp_plot.png', format='png', dpi=300)
@@ -733,8 +733,8 @@ def train_model(
                 else:
                     epochs_without_validation_improvement += 1
 
-                # log losses to wandb, format losses in scientific notation for readability
-                wandb.log({"Encoder Training Loss": format(average_loss, '.2e'), "Encoder Validation Loss": format(val_average_loss, '.2e')})
+                # log losses to wandb
+                wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
 
                 if (epoch + 1) % 10 == 0:
                     print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))

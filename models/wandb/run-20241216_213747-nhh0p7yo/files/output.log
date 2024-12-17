@@ -1,0 +1,56 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  64
+epochs  :  500
+learning_rate  :  1e-05
+Saved best model at epoch 1
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 5
+Saved best model at epoch 6
+Saved best model at epoch 7
+Saved best model at epoch 9
+Saved best model at epoch 10
+Epoch[10/500]:
+   Training loss: 1.915830373660559e-05
+   Validation loss: 0.006593671172373744
+-------------------------------------------
+Saved best model at epoch 11
+Saved best model at epoch 12
+Saved best model at epoch 17
+Saved best model at epoch 19
+Epoch[20/500]:
+   Training loss: 1.2219062269495896e-05
+   Validation loss: 0.006006265291592826
+-------------------------------------------
+Saved best model at epoch 21
+Saved best model at epoch 24
+Saved best model at epoch 25
+Epoch[30/500]:
+   Training loss: 1.1010536751406518e-05
+   Validation loss: 0.004825665585039147
+-------------------------------------------
+Epoch 00031: reducing learning rate of group 0 to 1.0000e-06.
+Saved best model at epoch 32
+Saved best model at epoch 33
+Saved best model at epoch 34
+Saved best model at epoch 36
+Saved best model at epoch 40
+Epoch[40/500]:
+   Training loss: 1.872194161759407e-07
+   Validation loss: 0.003730007202607851
+-------------------------------------------
+Saved best model at epoch 41
+Saved best model at epoch 42
+Saved best model at epoch 43
+Saved best model at epoch 45
+Selected GPU ID: 0
+  Name: NVIDIA GeForce RTX 4090
+  Memory Free: 21734.0 MB
+  Memory Used: 2483.0 MB
+  GPU Load: 0.00%
+Current device ID:  cuda:0
+PyTorch current device ID: 0
+PyTorch current device name: NVIDIA GeForce RTX 4090

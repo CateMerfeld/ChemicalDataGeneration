@@ -9,6 +9,11 @@ from torch.utils.data import DataLoader
 import wandb
 from sklearn.decomposition import PCA
 import itertools
+import GPUtil
+
+import dask.dataframe as dd
+import pandas as pd
+import torch
 
 def flatten_and_bin(predicted_embeddings_batches):
     """
@@ -718,17 +723,17 @@ def train_model(
                     # check if val loss is improving for this model
                     epochs_without_validation_improvement = 0
                     lowest_val_model_loss = val_average_loss
-                    best_epoch = epoch + 1  # Store the best epoch
+                    # best_epoch = epoch + 1  # Store the best epoch
 
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
                         # Save the model state
                         torch.save(encoder.state_dict(), encoder_path)
-                        print(f'Saved best model at epoch {best_epoch}')
+                        print(f'Saved best model at epoch {epoch}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {best_epoch}')
+                        print(f'Model best validation loss at {epoch}')
                 
                 else:
                     epochs_without_validation_improvement += 1
@@ -812,8 +817,11 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
     # drop first two cols ('Unnamed:0' and 'index') and last 9 cols ('Label' and OneHot encodings) to get just spectra
     if carl: # carl dataset has no 'Unnamed: 0' column
         spectra = spectra_dataset.iloc[:,1:-9]
+        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
     else:
         spectra = spectra_dataset.iloc[:,2:-9]
+        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
+        
     chem_encodings = spectra_dataset.iloc[:,-8:]
 
     # create tensors of spectra, true embeddings, and chemical name encodings for train and val
@@ -824,3 +832,179 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
     spectra_indices_tensor = torch.Tensor(spectra_dataset['index'].to_numpy()).to(device)
 
     return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
+
+def create_dataset_tensors_with_dask(spectra_file, embedding_df, device, carl=False):
+    """
+    Create tensors from the provided spectra dataset and embedding DataFrame using Dask.
+
+    Parameters:
+    ----------
+    spectra_file : str
+        Path to the CSV file containing spectral data and chemical labels.
+
+    embedding_df : pd.DataFrame
+        DataFrame containing embeddings for chemicals.
+
+    device : torch.device
+        The device (CPU or GPU) on which to store the tensors.
+
+    carl : bool, optional
+        If True, processes the dataset assuming it has a different structure.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - embeddings_tensor (torch.Tensor)
+        - spectra_tensor (torch.Tensor)
+        - chem_encodings_tensor (torch.Tensor)
+        - spectra_indices_tensor (torch.Tensor)
+    """
+    # Load the dataset as a Dask DataFrame
+    spectra_dd = dd.read_csv(spectra_file)
+
+    # Compute the necessary tensors
+    if carl:
+        spectra = spectra_dd.iloc[:, 1:-9]
+    else:
+        spectra = spectra_dd.iloc[:, 2:-9]
+
+    chem_labels = spectra_dd['Label'].compute().tolist()
+    embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
+
+    # Create tensors directly from Dask DataFrame
+    spectra_tensor = torch.tensor(spectra.compute().values, dtype=torch.float32).to(device)
+    chem_encodings = spectra_dd.iloc[:, -8:].compute()
+    chem_encodings_tensor = torch.tensor(chem_encodings.values, dtype=torch.float32).to(device)
+    spectra_indices_tensor = torch.tensor(spectra_dd['index'].compute().values, dtype=torch.float32).to(device)
+
+    # Convert embeddings to tensor
+    embeddings_tensor = torch.tensor(embeddings, dtype=torch.float32).to(device)
+
+    return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
+
+def create_dataset_tensors_from_chunks(spectra_dataset, embedding_df, device, chunk_size=None, carl=False):
+    """
+    Create tensors from the provided spectra dataset and embedding DataFrame.
+
+    Parameters:
+    ----------
+    spectra_dataset : pd.DataFrame
+        DataFrame containing spectral data and chemical labels. Assumes specific 
+        columns for processing based on the `carl` flag.
+
+    embedding_df : pd.DataFrame
+        DataFrame containing embeddings for chemicals, with 'Embedding Floats' 
+        column corresponding to chemical names.
+
+    device : torch.device
+        The device (CPU or GPU) on which to store the tensors.
+
+    carl : bool, optional
+        If True, processes the dataset assuming it has a different structure 
+        (specifically without an 'Unnamed: 0' column). Default is False.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
+        - spectra_tensor (torch.Tensor): Tensor of spectral data.
+        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
+        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
+    """
+    embeddings_list = []
+    spectra_list = []
+    chem_encodings_list = []
+    indices_list = []
+
+    # Process the dataset in chunks
+    for chunk in pd.read_csv(spectra_dataset, chunksize=chunk_size):
+        if carl:
+            spectra = chunk.iloc[:, 1:-9]
+            chem_labels = list(chunk['Label'])
+            embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
+        else:
+            spectra = chunk.iloc[:, 2:-9]
+            chem_labels = list(chunk['Label'])
+            embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
+
+        # Convert to tensors
+        embeddings_tensor = torch.Tensor(embeddings).to(device)
+        spectra_tensor = torch.Tensor(spectra.values).to(device)
+        chem_encodings = chunk.iloc[:, -8:]
+        chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
+        spectra_indices_tensor = torch.Tensor(chunk['index'].to_numpy()).to(device)
+
+        # Append to lists
+        embeddings_list.append(embeddings_tensor)
+        spectra_list.append(spectra_tensor)
+        chem_encodings_list.append(chem_encodings_tensor)
+        indices_list.append(spectra_indices_tensor)
+
+    # Concatenate all tensors
+    embeddings_tensor = torch.cat(embeddings_list).to(device)
+    spectra_tensor = torch.cat(spectra_list).to(device)
+    chem_encodings_tensor = torch.cat(chem_encodings_list).to(device)
+    spectra_indices_tensor = torch.cat(indices_list).to(device)
+
+    return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
+
+
+class Generator(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.encoder = nn.Sequential(
+      nn.Linear(512,652),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(652,780),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(780, 908),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(908, 1036),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1036, 1164),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1164, 1292),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1292, 1420),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1420, 1548),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1548, 1676),
+    )
+
+  def forward(self, x):
+    x = self.encoder(x)
+    return x
+  
+def set_up_gpu():
+    if torch.cuda.is_available():
+        # Get the list of GPUs
+        gpus = GPUtil.getGPUs()
+
+        # Find the GPU with the most free memory
+        best_gpu = max(gpus, key=lambda gpu: gpu.memoryFree)
+
+        # Print details about the selected GPU
+        print(f"Selected GPU ID: {best_gpu.id}")
+        print(f"  Name: {best_gpu.name}")
+        print(f"  Memory Free: {best_gpu.memoryFree} MB")
+        print(f"  Memory Used: {best_gpu.memoryUsed} MB")
+        print(f"  GPU Load: {best_gpu.load * 100:.2f}%")
+
+        # Set the device for later use
+        device = torch.device(f'cuda:{best_gpu.id}')
+        print('Current device ID: ', device)
+
+        # Set the current device in PyTorch
+        torch.cuda.set_device(best_gpu.id)
+    else:
+        device = torch.device('cpu')
+        print('Using CPU')
+
+    # Confirm the currently selected device in PyTorch
+    print("PyTorch current device ID:", torch.cuda.current_device())
+    print("PyTorch current device name:", torch.cuda.get_device_name(torch.cuda.current_device()))
+
+    return device

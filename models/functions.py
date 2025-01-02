@@ -307,7 +307,7 @@ def predict_embeddings(dataset, model, device, criterion):
     return predicted_embeddings, output_name_encodings, average_loss, input_spectra_indices
 
 def plot_emb_pca(
-        all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=False, 
+        all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=True, 
         chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True):
     """
     This function performs Principal Component Analysis (PCA) on chemical embeddings and visualizes the results
@@ -557,7 +557,8 @@ class Encoder(nn.Module):
   def forward(self, x):
     x = self.encoder(x)
     return x
-  
+
+
 def train_model(
         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
@@ -613,7 +614,7 @@ def train_model(
         Number of epochs without improvement in validation loss before stopping training. Default is 10.
 
     input_type : str, optional
-        The type of input being used (IMS, Carl, MNIST). Default is 'ChemNet'.
+        The type of input being used (IMS, Carl, MNIST). Default is 'IMS'.
 
     embedding_type : str, optional
         The type of embedding being used (ChemNet, OneHot). Default is 'ChemNet'.
@@ -642,21 +643,25 @@ def train_model(
         lowest_val_model_loss = np.inf
         
         if model_type == 'Encoder':
-            encoder = Encoder().to(device)
+            model = Encoder().to(device)
+
+        if model_type == 'Generator':
+            model = Generator().to(device)
+
         epochs_without_validation_improvement = 0
         combo = dict(zip(keys, combo))
 
         train_dataset = DataLoader(train_data, batch_size=combo['batch_size'], shuffle=True)
         val_dataset = DataLoader(val_data, batch_size=combo['batch_size'], shuffle=False)
 
-        encoder_optimizer = torch.optim.AdamW(encoder.parameters(), lr = combo['learning_rate'])
-        encoder_criterion = nn.MSELoss()
+        optimizer = torch.optim.AdamW(model.parameters(), lr = combo['learning_rate'])
+        criterion = nn.MSELoss()
 
         final_lr = combo['learning_rate']
 
         if lr_scheduler:
             # Initialize the learning rate scheduler with patience of 5 epochs 
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(encoder_optimizer, mode='min', patience=5, factor=0.1, verbose=True)
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
 
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
@@ -670,44 +675,44 @@ def train_model(
 
         for epoch in range(combo['epochs']):
             if epochs_without_validation_improvement < early_stop_threshold:
-                encoder.train(True)
+                model.train(True)
 
                 # do a pass over the data
                 # at last epoch get predicted embeddings and chem names
                 if (epoch + 1) == combo['epochs']:
                     average_loss, _, _ = train_one_epoch(
-                    train_dataset, device, encoder, encoder_criterion, encoder_optimizer, epoch, combo
+                    train_dataset, device, model, criterion, optimizer, epoch, combo
                     )
                     # save output pca to weights and biases
                     if save_emb_pca_to_wandb:
                         # plot_pca gets predictions from trained model and plots them
                         plot_pca(
-                            train_data, combo['batch_size'], encoder, device, 
-                            encoder_criterion, sorted_chem_names, all_embeddings_df, 
+                            train_data, combo['batch_size'], model, device, 
+                            criterion, sorted_chem_names, all_embeddings_df, 
                             ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
                             )
                         plot_pca(
-                            test_data, combo['batch_size'], encoder, device, 
-                            encoder_criterion, sorted_chem_names, all_embeddings_df,
+                            test_data, combo['batch_size'], model, device, 
+                            criterion, sorted_chem_names, all_embeddings_df,
                             ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
                             )
                 else:
                     average_loss = train_one_epoch(
-                    train_dataset, device, encoder, encoder_criterion, encoder_optimizer, epoch, combo
+                    train_dataset, device, model, criterion, optimizer, epoch, combo
                     )
 
                 epoch_val_loss = 0  
                 # evaluate model on validation data
-                encoder.eval() # Set model to evaluation mode
+                model.eval() # Set model to evaluation mode
                 with torch.no_grad():
                     for val_batch, val_name_encodings, val_true_embeddings, _ in val_dataset:
                         val_batch = val_batch.to(device)
                         val_name_encodings = val_name_encodings.to(device)
                         val_true_embeddings = val_true_embeddings.to(device)
 
-                        val_batch_predicted_embeddings = encoder(val_batch)
+                        val_batch_predicted_embeddings = model(val_batch)
 
-                        val_loss = encoder_criterion(val_batch_predicted_embeddings, val_true_embeddings)
+                        val_loss = criterion(val_batch_predicted_embeddings, val_true_embeddings)
                         # accumulate epoch validation loss
                         epoch_val_loss += val_loss.item()
 
@@ -717,7 +722,7 @@ def train_model(
                 if lr_scheduler:
                     scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
                     # get the new learning rate (to give to wandb)
-                    final_lr = encoder_optimizer.param_groups[0]['lr']
+                    final_lr = optimizer.param_groups[0]['lr']
 
                 if val_average_loss < lowest_val_model_loss:
                     # check if val loss is improving for this model
@@ -728,7 +733,7 @@ def train_model(
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
                         # Save the model state
-                        torch.save(encoder.state_dict(), encoder_path)
+                        torch.save(model.state_dict(), encoder_path)
                         print(f'Saved best model at epoch {epoch}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
@@ -738,10 +743,14 @@ def train_model(
                 else:
                     epochs_without_validation_improvement += 1
 
-                # log losses to wandb
-                wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
+                if model == 'Encoder':
+                    # log losses to wandb
+                    wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
+                elif model == 'Generator':
+                    # log losses to wandb
+                    wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
-                if (epoch + 1) % 10 == 0:
+                if (epoch + 1) % 10 == 0 or epoch == 0:
                     print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
@@ -751,13 +760,13 @@ def train_model(
                 wandb.log({'Early Stopping Ecoch':epoch})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 plot_pca(
-                    train_data, combo['batch_size'], encoder, device, 
-                    encoder_criterion, sorted_chem_names, all_embeddings_df, 
+                    train_data, combo['batch_size'], model, device, 
+                    criterion, sorted_chem_names, all_embeddings_df, 
                     ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
                     )
                 plot_pca(
-                    test_data, combo['batch_size'], encoder, device, 
-                    encoder_criterion, sorted_chem_names, all_embeddings_df,
+                    test_data, combo['batch_size'], model, device, 
+                    criterion, sorted_chem_names, all_embeddings_df,
                     ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
                     )
                 break
@@ -772,7 +781,7 @@ def train_model(
         print('Target Embeddings: ', wandb_kwargs['target_embedding'])
         print('-------------------------------------------')
         print('-------------------------------------------')
-        print(encoder)
+        print(model)
         print('-------------------------------------------')
         print('-------------------------------------------')
 
@@ -783,6 +792,235 @@ def train_model(
         print('   ', key, ' : ', best_hyperparams[key])
     
     return best_hyperparams
+# def train_model(
+#         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
+#         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
+#         encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, input_type='IMS',
+#         embedding_type='ChemNet', show_wandb_run_name=True, lr_scheduler = False
+#         ):
+    
+#     """
+#     Train a model with specified hyperparameters and log results using Weights & Biases.
+
+#     Parameters:
+#     ----------
+#     model_type : str
+#         The type of model to be trained (e.g., 'Encoder').
+
+#     train_data : Dataset
+#         The dataset used for training the model.
+
+#     val_data : Dataset
+#         The dataset used for validating the model during training.
+
+#     test_data : Dataset
+#         The dataset used for evaluating the model after training.
+
+#     device : torch.device
+#         The device (CPU or GPU) on which to perform the training.
+
+#     config : dict
+#         Configuration settings for the training process.
+
+#     wandb_kwargs : dict
+#         Arguments for logging to Weights & Biases.
+
+#     all_embeddings_df : pd.DataFrame
+#         DataFrame containing all embeddings for chemicals.
+
+#     ims_embeddings_df : pd.DataFrame
+#         DataFrame containing IMS (ion mobility spectrometry) embeddings.
+
+#     model_hyperparams : dict
+#         Dictionary of hyperparameters for the model, with keys as parameter names and values as lists of options.
+
+#     sorted_chem_names : list of str
+#         List of sorted chemical names corresponding to the embeddings.
+
+#     encoder_path : str
+#         File path to save the best model state.
+
+#     save_emb_pca_to_wandb : bool, optional
+#         If True, saves PCA plots of embeddings to Weights & Biases. Default is True.
+
+#     early_stop_threshold : int, optional
+#         Number of epochs without improvement in validation loss before stopping training. Default is 10.
+
+#     input_type : str, optional
+#         The type of input being used (IMS, Carl, MNIST). Default is 'IMS'.
+
+#     embedding_type : str, optional
+#         The type of embedding being used (ChemNet, OneHot). Default is 'ChemNet'.
+
+#     show_wandb_run_name : bool, optional
+#         If True, displays the current WandB run name on the plot. Default is True.
+
+#     Returns:
+#     -------
+#     dict
+#         The best hyperparameters found during training.
+#     """
+
+#     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
+#     lowest_val_loss = np.inf
+
+#     keys = model_hyperparams.keys()
+#     values = model_hyperparams.values()
+
+#     # Generate all parameter combinations from model_config using itertools.product
+#     combinations = itertools.product(*values)
+
+#     # Iterate through each parameter combination and run model 
+#     for combo in combinations:
+#         # creating different var for model loss to use for early stopping
+#         lowest_val_model_loss = np.inf
+        
+#         if model_type == 'Encoder':
+#             encoder = Encoder().to(device)
+
+#         if model_type == 'Generator':
+#             generator = Generator().to(device)
+
+#         epochs_without_validation_improvement = 0
+#         combo = dict(zip(keys, combo))
+
+#         train_dataset = DataLoader(train_data, batch_size=combo['batch_size'], shuffle=True)
+#         val_dataset = DataLoader(val_data, batch_size=combo['batch_size'], shuffle=False)
+
+#         encoder_optimizer = torch.optim.AdamW(encoder.parameters(), lr = combo['learning_rate'])
+#         encoder_criterion = nn.MSELoss()
+
+#         final_lr = combo['learning_rate']
+
+#         if lr_scheduler:
+#             # Initialize the learning rate scheduler with patience of 5 epochs 
+#             scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(encoder_optimizer, mode='min', patience=5, factor=0.1, verbose=True)
+
+#         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
+
+#         run_with_wandb(config, **wandb_kwargs)
+
+#         print('--------------------------')
+#         print('--------------------------')
+#         print('New run with hyperparameters:')
+#         for key in combo:
+#             print(key, ' : ', combo[key])
+
+#         for epoch in range(combo['epochs']):
+#             if epochs_without_validation_improvement < early_stop_threshold:
+#                 encoder.train(True)
+
+#                 # do a pass over the data
+#                 # at last epoch get predicted embeddings and chem names
+#                 if (epoch + 1) == combo['epochs']:
+#                     average_loss, _, _ = train_one_epoch(
+#                     train_dataset, device, encoder, encoder_criterion, encoder_optimizer, epoch, combo
+#                     )
+#                     # save output pca to weights and biases
+#                     if save_emb_pca_to_wandb:
+#                         # plot_pca gets predictions from trained model and plots them
+#                         plot_pca(
+#                             train_data, combo['batch_size'], encoder, device, 
+#                             encoder_criterion, sorted_chem_names, all_embeddings_df, 
+#                             ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
+#                             )
+#                         plot_pca(
+#                             test_data, combo['batch_size'], encoder, device, 
+#                             encoder_criterion, sorted_chem_names, all_embeddings_df,
+#                             ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
+#                             )
+#                 else:
+#                     average_loss = train_one_epoch(
+#                     train_dataset, device, encoder, encoder_criterion, encoder_optimizer, epoch, combo
+#                     )
+
+#                 epoch_val_loss = 0  
+#                 # evaluate model on validation data
+#                 encoder.eval() # Set model to evaluation mode
+#                 with torch.no_grad():
+#                     for val_batch, val_name_encodings, val_true_embeddings, _ in val_dataset:
+#                         val_batch = val_batch.to(device)
+#                         val_name_encodings = val_name_encodings.to(device)
+#                         val_true_embeddings = val_true_embeddings.to(device)
+
+#                         val_batch_predicted_embeddings = encoder(val_batch)
+
+#                         val_loss = encoder_criterion(val_batch_predicted_embeddings, val_true_embeddings)
+#                         # accumulate epoch validation loss
+#                         epoch_val_loss += val_loss.item()
+
+#                 # divide by number of batches to calculate average loss
+#                 val_average_loss = epoch_val_loss/len(val_dataset)
+
+#                 if lr_scheduler:
+#                     scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
+#                     # get the new learning rate (to give to wandb)
+#                     final_lr = encoder_optimizer.param_groups[0]['lr']
+
+#                 if val_average_loss < lowest_val_model_loss:
+#                     # check if val loss is improving for this model
+#                     epochs_without_validation_improvement = 0
+#                     lowest_val_model_loss = val_average_loss
+#                     # best_epoch = epoch + 1  # Store the best epoch
+
+#                     if val_average_loss < lowest_val_loss:
+#                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
+#                         # Save the model state
+#                         torch.save(encoder.state_dict(), encoder_path)
+#                         print(f'Saved best model at epoch {epoch}')
+#                         lowest_val_loss = val_average_loss
+#                         best_hyperparams = combo
+#                     else:
+#                         print(f'Model best validation loss at {epoch}')
+                
+#                 else:
+#                     epochs_without_validation_improvement += 1
+
+#                 # log losses to wandb
+#                 wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
+
+#                 if (epoch + 1) % 10 == 0:
+#                     print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
+#                     print(f'   Training loss: {average_loss}')
+#                     print(f'   Validation loss: {val_average_loss}')
+#                     print('-------------------------------------------')
+#             else:
+#                 print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
+#                 wandb.log({'Early Stopping Ecoch':epoch})
+#                 wandb.log({'Learning Rate at Final Epoch':final_lr})
+#                 plot_pca(
+#                     train_data, combo['batch_size'], encoder, device, 
+#                     encoder_criterion, sorted_chem_names, all_embeddings_df, 
+#                     ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
+#                     )
+#                 plot_pca(
+#                     test_data, combo['batch_size'], encoder, device, 
+#                     encoder_criterion, sorted_chem_names, all_embeddings_df,
+#                     ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
+#                     )
+#                 break
+#         # if save_emb_pca_to_wandb:
+#         #     # true_embeddings, predicted_embeddings_flattened, chem_names = 
+#         #     preds_to_emb_pca_plot(predicted_embeddings, output_name_encodings, sorted_chem_names, embedding_df)
+
+#         # at last epoch print model architecture details (this will also show up in wandb log)
+#         print('-------------------------------------------')
+#         print('-------------------------------------------')
+#         print('Dataset: ', wandb_kwargs['dataset'])
+#         print('Target Embeddings: ', wandb_kwargs['target_embedding'])
+#         print('-------------------------------------------')
+#         print('-------------------------------------------')
+#         print(encoder)
+#         print('-------------------------------------------')
+#         print('-------------------------------------------')
+
+#         wandb.finish()
+
+#     print('Hyperparameters for best model: ')
+#     for key in best_hyperparams:
+#         print('   ', key, ' : ', best_hyperparams[key])
+    
+#     return best_hyperparams
 
 def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
     """
@@ -832,6 +1070,48 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
     spectra_indices_tensor = torch.Tensor(spectra_dataset['index'].to_numpy()).to(device)
 
     return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
+
+def create_dataset_tensors_for_generator(carl_dataset, embedding_preds_df, device):
+    """
+    Create tensors from the provided CARL dataset and embedding DataFrame.
+
+    Parameters:
+    ----------
+    spectra_dataset : pd.DataFrame
+        DataFrame containing CARL data and chemical labels. Assumes specific 
+        columns for processing based on the `carl` flag.
+
+    embedding_df : pd.DataFrame
+        DataFrame containing encoder predicted embeddings.
+
+    device : torch.device
+        The device (CPU or GPU) on which to store the tensors.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
+        - spectra_tensor (torch.Tensor): Tensor of spectral data.
+        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
+        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the CARLS.
+    """
+    # drop first col ('index') and last 10 cols ('Label', OneHot encodings and bkg_idx) to get just CARLS and predicted embeddings
+    carls = carl_dataset.iloc[:,1:-10]
+    # embeddings df doesn't have 'Label' col, so dropping last 9 cols instead of last 10
+    embedding_preds = embedding_preds_df.iloc[:,1:-9]
+
+    chem_encodings = carl_dataset.iloc[:,-8:]
+
+    # create tensors of spectra, true embeddings, and chemical name encodings for train and val
+    chem_labels = list(carl_dataset['Label'])
+    # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
+    embeddings_preds_tensor = torch.Tensor(embedding_preds.values).to(device)
+    carl_tensor = torch.Tensor(carls.values).to(device)
+    chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
+    carl_indices_tensor = torch.Tensor(carl_dataset['index'].to_numpy()).to(device)
+
+    return embeddings_preds_tensor, carl_tensor, chem_encodings_tensor, carl_indices_tensor
 
 def create_dataset_tensors_with_dask(spectra_file, embedding_df, device, carl=False):
     """

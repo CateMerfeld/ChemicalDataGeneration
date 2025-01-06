@@ -1,0 +1,1 @@
+{"Generator Training Loss": 124444.38174718463, "Generator Validation Loss": 129445.22545280818, "_timestamp": 1735848683.4002929, "_runtime": 474.737744808197, "_step": 19, "Early Stopping Ecoch": 18, "Learning Rate at Final Epoch": 0.0001, "_wandb": {"runtime": 492}}

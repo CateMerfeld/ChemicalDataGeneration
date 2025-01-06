@@ -15,6 +15,8 @@ import dask.dataframe as dd
 import pandas as pd
 import torch
 
+import random
+
 def flatten_and_bin(predicted_embeddings_batches):
     """
     Flatten prediction batches and convert to binary format.
@@ -47,6 +49,9 @@ def flatten_and_bin(predicted_embeddings_batches):
     
     return binary_preds_list
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
 def run_with_wandb(config, **kwargs):
     """
@@ -80,6 +85,10 @@ def run_with_wandb(config, **kwargs):
         device = torch.device('cpu')
     print(f'Using device: {device}')
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
 
 def update_wandb_kwargs(wandb_kwargs, updates):
     """
@@ -102,6 +111,9 @@ def update_wandb_kwargs(wandb_kwargs, updates):
         wandb_kwargs[key] = updates[key]
     return wandb_kwargs
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
 def train_one_epoch(train_dataset, device, model, criterion, optimizer, epoch, combo):
   """
@@ -182,7 +194,10 @@ def train_one_epoch(train_dataset, device, model, criterion, optimizer, epoch, c
   else:
     return average_loss
   
-
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
 def preds_to_emb_pca_plot(
         predicted_embeddings, output_name_encodings, 
         sorted_chem_names, emb_df, 
@@ -248,6 +263,10 @@ def preds_to_emb_pca_plot(
     
     return (true_embeddings, predicted_embeddings_flattened, chem_names)
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
 def predict_embeddings(dataset, model, device, criterion):
     """
     Generate predicted embeddings and compute average loss on the given dataset.
@@ -292,9 +311,9 @@ def predict_embeddings(dataset, model, device, criterion):
             true_embeddings = true_embeddings.to(device)
 
             batch_predicted_embeddings = model(batch)
-            predicted_embeddings.append(batch_predicted_embeddings)
-            output_name_encodings.append(name_encodings)
-            input_spectra_indices.append(spectra_indices)
+            predicted_embeddings.append(batch_predicted_embeddings.to('cpu').detach().numpy())
+            output_name_encodings.append(name_encodings.to('cpu').detach().numpy())
+            input_spectra_indices.append(spectra_indices.to('cpu').detach().numpy())
 
             # print(batch_predicted_embeddings.shape, true_embeddings.shape)
 
@@ -306,6 +325,10 @@ def predict_embeddings(dataset, model, device, criterion):
     average_loss = total_loss/len(dataset)
     return predicted_embeddings, output_name_encodings, average_loss, input_spectra_indices
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
 def plot_emb_pca(
         all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=True, 
         chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True):
@@ -452,6 +475,10 @@ def plot_emb_pca(
 
     plt.show()
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
 def plot_pca(
     data, batch_size, model, device, encoder_criterion, sorted_chem_names, 
     all_embeddings_df, ims_embeddings_df, results_type, 
@@ -530,7 +557,63 @@ def plot_pca(
         chemnet_embeddings_to_plot=true_embeddings, mse_insert=avg_loss,
         show_wandb_run_name=show_wandb_run_name
         )
-    
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def plot_carl_real_synthetic_comparison(true_carl, synthetic_carl, results_type, chem_label, log_wandb=True, show_wandb_run_name=True):
+    _, axes = plt.subplots(1, 2, figsize=(14, 8))
+
+    # Flatten the axes array for easy iteration
+    axes = axes.flatten()
+
+    # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
+    numbers = range(184, (len(true_carl)//2)+184)
+    # y axis should run from min of both carls to max of both carls
+    min_y = min(true_carl+synthetic_carl) + 10
+    max_y = max(true_carl+synthetic_carl) + 10
+
+    axes[0].plot(numbers, true_carl[:len(numbers)], label='Positive')
+    axes[0].plot(numbers, true_carl[len(numbers):], label='Negative')
+    axes[0].set_title(f'True {results_type} {chem_label} CARL', fontsize=20)
+    axes[0].set_xlabel('Drift Time', fontsize=16)
+    axes[0].set_ylabel('Ion Intensity', fontsize=16)
+    axes[0].set_ylim(min_y, max_y)
+    axes[0].legend(fontsize=14)
+
+    axes[1].plot(numbers, synthetic_carl[:len(numbers)], label='Positive')
+    axes[1].plot(numbers, synthetic_carl[len(numbers):], label='Negative')
+    axes[1].set_title(f'Synthetic {results_type} {chem_label} CARL', fontsize=20)
+    axes[1].set_xlabel('Drift Time', fontsize=16)
+    axes[1].set_ylabel('Ion Intensity', fontsize=16)
+    axes[1].set_ylim(min_y, max_y)
+    axes[1].legend(fontsize=14)
+
+    if show_wandb_run_name == True:
+        run_name = wandb.run.name
+        # Add wandb run text in the corner
+        xlim = plt.xlim()
+        ylim = plt.ylim()
+        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
+                ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
+                f'WandB run: {run_name}', 
+                fontsize=8,
+                verticalalignment='bottom',  # Align text to the top
+                horizontalalignment='right',  # Align text to the right
+                bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
+
+    if log_wandb:
+        plt.savefig('tmp_plot.png', format='png', dpi=300)
+        wandb.log({'Comparison of Real and Synthetic CARLs': wandb.Image('tmp_plot.png')})
+
+    plt.tight_layout()
+    plt.show()
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
 class Encoder(nn.Module):
   def __init__(self):
     super().__init__()
@@ -558,6 +641,9 @@ class Encoder(nn.Module):
     x = self.encoder(x)
     return x
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
 def train_model(
         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
@@ -792,6 +878,511 @@ def train_model(
         print('   ', key, ' : ', best_hyperparams[key])
     
     return best_hyperparams
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
+    """
+    Create tensors from the provided spectra dataset and embedding DataFrame.
+
+    Parameters:
+    ----------
+    spectra_dataset : pd.DataFrame
+        DataFrame containing spectral data and chemical labels. Assumes specific 
+        columns for processing based on the `carl` flag.
+
+    embedding_df : pd.DataFrame
+        DataFrame containing embeddings for chemicals, with 'Embedding Floats' 
+        column corresponding to chemical names.
+
+    device : torch.device
+        The device (CPU or GPU) on which to store the tensors.
+
+    carl : bool, optional
+        If True, processes the dataset assuming it has a different structure 
+        (specifically without an 'Unnamed: 0' column). Default is False.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
+        - spectra_tensor (torch.Tensor): Tensor of spectral data.
+        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
+        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
+    """
+    # drop first two cols ('Unnamed:0' and 'index') and last 9 cols ('Label' and OneHot encodings) to get just spectra
+    if carl: # carl dataset has no 'Unnamed: 0' column
+        spectra = spectra_dataset.iloc[:,1:-9]
+        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
+    else:
+        spectra = spectra_dataset.iloc[:,2:-9]
+        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
+        
+    chem_encodings = spectra_dataset.iloc[:,-8:]
+
+    # create tensors of spectra, true embeddings, and chemical name encodings for train and val
+    chem_labels = list(spectra_dataset['Label'])
+    embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
+    spectra_tensor = torch.Tensor(spectra.values).to(device)
+    chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
+    spectra_indices_tensor = torch.Tensor(spectra_dataset['index'].to_numpy()).to(device)
+
+    return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def create_dataset_tensors_for_generator(carl_dataset, embedding_preds_df, device):
+    """
+    Create tensors from the provided CARL dataset and embedding DataFrame.
+
+    Parameters:
+    ----------
+    spectra_dataset : pd.DataFrame
+        DataFrame containing CARL data and chemical labels. Assumes specific 
+        columns for processing based on the `carl` flag.
+
+    embedding_df : pd.DataFrame
+        DataFrame containing encoder predicted embeddings.
+
+    device : torch.device
+        The device (CPU or GPU) on which to store the tensors.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
+        - spectra_tensor (torch.Tensor): Tensor of spectral data.
+        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
+        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the CARLS.
+    """
+    # drop first col ('index') and last 9 cols ('Label', OneHot encodings) to get just CARLS and predicted embeddings
+    carls = carl_dataset.iloc[:,1:-9]
+    # embeddings df doesn't have 'Label' col, so dropping last 8 cols instead of last 9
+    embedding_preds = embedding_preds_df.iloc[:,1:-8]
+
+    chem_encodings = carl_dataset.iloc[:,-8:]
+
+    embeddings_preds_tensor = torch.Tensor(embedding_preds.values).to(device)
+    carl_tensor = torch.Tensor(carls.values).to(device)
+    chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
+    # torch.Tensor changes the vals after decimal but I need those to stay the same so using torch.tensor instead
+    carl_indices_tensor = torch.tensor(carl_dataset['index']).to(device)
+
+    return embeddings_preds_tensor, carl_tensor, chem_encodings_tensor, carl_indices_tensor
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
+def create_dataset_tensors_with_dask(spectra_file, embedding_df, device, carl=False):
+    """
+    Create tensors from the provided spectra dataset and embedding DataFrame using Dask.
+
+    Parameters:
+    ----------
+    spectra_file : str
+        Path to the CSV file containing spectral data and chemical labels.
+
+    embedding_df : pd.DataFrame
+        DataFrame containing embeddings for chemicals.
+
+    device : torch.device
+        The device (CPU or GPU) on which to store the tensors.
+
+    carl : bool, optional
+        If True, processes the dataset assuming it has a different structure.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - embeddings_tensor (torch.Tensor)
+        - spectra_tensor (torch.Tensor)
+        - chem_encodings_tensor (torch.Tensor)
+        - spectra_indices_tensor (torch.Tensor)
+    """
+    # Load the dataset as a Dask DataFrame
+    spectra_dd = dd.read_csv(spectra_file)
+
+    # Compute the necessary tensors
+    if carl:
+        spectra = spectra_dd.iloc[:, 1:-9]
+    else:
+        spectra = spectra_dd.iloc[:, 2:-9]
+
+    chem_labels = spectra_dd['Label'].compute().tolist()
+    embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
+
+    # Create tensors directly from Dask DataFrame
+    spectra_tensor = torch.tensor(spectra.compute().values, dtype=torch.float32).to(device)
+    chem_encodings = spectra_dd.iloc[:, -8:].compute()
+    chem_encodings_tensor = torch.tensor(chem_encodings.values, dtype=torch.float32).to(device)
+    spectra_indices_tensor = torch.tensor(spectra_dd['index'].compute().values, dtype=torch.float32).to(device)
+
+    # Convert embeddings to tensor
+    embeddings_tensor = torch.tensor(embeddings, dtype=torch.float32).to(device)
+
+    return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
+def create_dataset_tensors_from_chunks(spectra_dataset, embedding_df, device, chunk_size=None, carl=False):
+    """
+    Create tensors from the provided spectra dataset and embedding DataFrame.
+
+    Parameters:
+    ----------
+    spectra_dataset : pd.DataFrame
+        DataFrame containing spectral data and chemical labels. Assumes specific 
+        columns for processing based on the `carl` flag.
+
+    embedding_df : pd.DataFrame
+        DataFrame containing embeddings for chemicals, with 'Embedding Floats' 
+        column corresponding to chemical names.
+
+    device : torch.device
+        The device (CPU or GPU) on which to store the tensors.
+
+    carl : bool, optional
+        If True, processes the dataset assuming it has a different structure 
+        (specifically without an 'Unnamed: 0' column). Default is False.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
+        - spectra_tensor (torch.Tensor): Tensor of spectral data.
+        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
+        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
+    """
+    embeddings_list = []
+    spectra_list = []
+    chem_encodings_list = []
+    indices_list = []
+
+    # Process the dataset in chunks
+    for chunk in pd.read_csv(spectra_dataset, chunksize=chunk_size):
+        if carl:
+            spectra = chunk.iloc[:, 1:-9]
+            chem_labels = list(chunk['Label'])
+            embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
+        else:
+            spectra = chunk.iloc[:, 2:-9]
+            chem_labels = list(chunk['Label'])
+            embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
+
+        # Convert to tensors
+        embeddings_tensor = torch.Tensor(embeddings).to(device)
+        spectra_tensor = torch.Tensor(spectra.values).to(device)
+        chem_encodings = chunk.iloc[:, -8:]
+        chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
+        spectra_indices_tensor = torch.Tensor(chunk['index'].to_numpy()).to(device)
+
+        # Append to lists
+        embeddings_list.append(embeddings_tensor)
+        spectra_list.append(spectra_tensor)
+        chem_encodings_list.append(chem_encodings_tensor)
+        indices_list.append(spectra_indices_tensor)
+
+    # Concatenate all tensors
+    embeddings_tensor = torch.cat(embeddings_list).to(device)
+    spectra_tensor = torch.cat(spectra_list).to(device)
+    chem_encodings_tensor = torch.cat(chem_encodings_list).to(device)
+    spectra_indices_tensor = torch.cat(indices_list).to(device)
+
+    return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
+
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
+class Generator(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.encoder = nn.Sequential(
+      nn.Linear(512,652),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(652,780),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(780, 908),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(908, 1036),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1036, 1164),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1164, 1292),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1292, 1420),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1420, 1548),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1548, 1676),
+    )
+
+  def forward(self, x):
+    x = self.encoder(x)
+    return x
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+   
+def set_up_gpu():
+    if torch.cuda.is_available():
+        # Get the list of GPUs
+        gpus = GPUtil.getGPUs()
+
+        # Find the GPU with the most free memory
+        best_gpu = max(gpus, key=lambda gpu: gpu.memoryFree)
+
+        # Print details about the selected GPU
+        print(f"Selected GPU ID: {best_gpu.id}")
+        print(f"  Name: {best_gpu.name}")
+        print(f"  Memory Free: {best_gpu.memoryFree} MB")
+        print(f"  Memory Used: {best_gpu.memoryUsed} MB")
+        print(f"  GPU Load: {best_gpu.load * 100:.2f}%")
+
+        # Set the device for later use
+        device = torch.device(f'cuda:{best_gpu.id}')
+        print('Current device ID: ', device)
+
+        # Set the current device in PyTorch
+        torch.cuda.set_device(best_gpu.id)
+    else:
+        device = torch.device('cpu')
+        print('Using CPU')
+
+    # Confirm the currently selected device in PyTorch
+    print("PyTorch current device ID:", torch.cuda.current_device())
+    print("PyTorch current device name:", torch.cuda.get_device_name(torch.cuda.current_device()))
+
+    return device
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def train_generator(
+        train_data, val_data, test_data, device, config, wandb_kwargs, 
+        model_hyperparams, sorted_chem_names, generator_path, 
+        save_plots_to_wandb = True, early_stop_threshold=10, 
+        show_wandb_run_name=True, lr_scheduler = False, num_plots = 1
+        ):
+
+    # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
+    lowest_val_loss = np.inf
+
+    keys = model_hyperparams.keys()
+    values = model_hyperparams.values()
+
+    # Generate all parameter combinations from model_config using itertools.product
+    combinations = itertools.product(*values)
+
+    # Iterate through each parameter combination and run model 
+    for combo in combinations:
+        # creating different var for model loss to use for early stopping
+        lowest_val_model_loss = np.inf
+        
+        model = f.Generator().to(device)
+
+        epochs_without_validation_improvement = 0
+        combo = dict(zip(keys, combo))
+
+        train_dataset = DataLoader(train_data, batch_size=combo['batch_size'], shuffle=True)
+        val_dataset = DataLoader(val_data, batch_size=combo['batch_size'], shuffle=False)
+
+        optimizer = torch.optim.AdamW(model.parameters(), lr = combo['learning_rate'])
+        criterion = nn.MSELoss()
+
+        final_lr = combo['learning_rate']
+
+        if lr_scheduler:
+            # Initialize the learning rate scheduler with patience of 5 epochs 
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
+
+        wandb_kwargs = f.update_wandb_kwargs(wandb_kwargs, combo)
+
+        f.run_with_wandb(config, **wandb_kwargs)
+
+        print('--------------------------')
+        print('--------------------------')
+        print('New run with hyperparameters:')
+        for key in combo:
+            print(key, ' : ', combo[key])
+
+        for epoch in range(combo['epochs']):
+            if epochs_without_validation_improvement < early_stop_threshold:
+                model.train(True)
+
+                # do a pass over the data
+                # at last epoch get predicted embeddings and chem names
+                if (epoch + 1) == combo['epochs']:
+                    average_loss, _, _ = f.train_one_epoch(
+                    train_dataset, device, model, criterion, optimizer, epoch, combo
+                    )
+                    # save output pca to weights and biases
+                    if save_plots_to_wandb:
+                        # get predictions from trained model and plot them
+                        train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
+                        train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
+                        test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
+                        test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
+                        
+                        for _ in range(num_plots):
+                            random_carl = random.randint(0, len(test_data))
+                            train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
+                            test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
+                            train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
+                            test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
+                            # train_true_carls = [carl.cpu().detach().numpy() for carl in train_data.tensors[2]]
+                            train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
+                            test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
+                            f.plot_carl_real_synthetic_comparison(
+                                train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', 
+                                train_chem, save_plots_to_wandb, show_wandb_run_name)
+                            f.plot_carl_real_synthetic_comparison(
+                                test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', 
+                                test_chem, save_plots_to_wandb, show_wandb_run_name)
+            
+                else:
+                    average_loss = f.train_one_epoch(
+                    train_dataset, device, model, criterion, optimizer, epoch, combo
+                    )
+
+                epoch_val_loss = 0  
+                # evaluate model on validation data
+                model.eval() # Set model to evaluation mode
+                with torch.no_grad():
+                    for val_batch, val_name_encodings, val_true_embeddings, _ in val_dataset:
+                        val_batch = val_batch.to(device)
+                        val_name_encodings = val_name_encodings.to(device)
+                        val_true_embeddings = val_true_embeddings.to(device)
+
+                        val_batch_predicted_embeddings = model(val_batch)
+
+                        val_loss = criterion(val_batch_predicted_embeddings, val_true_embeddings)
+                        # accumulate epoch validation loss
+                        epoch_val_loss += val_loss.item()
+
+                # divide by number of batches to calculate average loss
+                val_average_loss = epoch_val_loss/len(val_dataset)
+
+                if lr_scheduler:
+                    scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
+                    # get the new learning rate (to give to wandb)
+                    final_lr = optimizer.param_groups[0]['lr']
+
+                if val_average_loss < lowest_val_model_loss:
+                    # check if val loss is improving for this model
+                    epochs_without_validation_improvement = 0
+                    lowest_val_model_loss = val_average_loss
+                    # best_epoch = epoch + 1  # Store the best epoch
+
+                    if val_average_loss < lowest_val_loss:
+                        # if current epoch of current model is best performing (of all epochs and models so far), save model state
+                        # Save the model state
+                        torch.save(model.state_dict(), generator_path)
+                        print(f'Saved best model at epoch {epoch}')
+                        lowest_val_loss = val_average_loss
+                        best_hyperparams = combo
+                    else:
+                        print(f'Model best validation loss at {epoch}')
+                
+                else:
+                    epochs_without_validation_improvement += 1
+
+                # log losses to wandb
+                wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
+
+                if (epoch + 1) % 10 == 0 or epoch == 0:
+                    print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
+                    print(f'   Training loss: {average_loss}')
+                    print(f'   Validation loss: {val_average_loss}')
+                    print('-------------------------------------------')
+            else:
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
+                wandb.log({'Early Stopping Ecoch':epoch})
+                wandb.log({'Learning Rate at Final Epoch':final_lr})
+                train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
+                train_predicted_carls, train_output_name_encodings, _, _ = f.predict_embeddings(train_dataset, model, device, criterion)
+                test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
+                test_predicted_carls, test_output_name_encodings, _, _ = f.predict_embeddings(test_dataset, model, device, criterion)
+                
+                for _ in range(num_plots):
+                    random_carl = random.randint(0, len(test_data))
+                    train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
+                    test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
+                    train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
+                    test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
+                    train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
+                    test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
+                    plot_carl_real_synthetic_comparison(train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', train_chem)
+                    plot_carl_real_synthetic_comparison(test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', test_chem)
+                
+                break
+
+        # at last epoch print model architecture details (this will also show up in wandb log)
+        print('-------------------------------------------')
+        print('-------------------------------------------')
+        print('Dataset: ', wandb_kwargs['dataset'])
+        print('Target Embeddings: ', wandb_kwargs['target_embedding'])
+        print('-------------------------------------------')
+        print('-------------------------------------------')
+        print(model)
+        print('-------------------------------------------')
+        print('-------------------------------------------')
+
+        wandb.finish()
+
+    print('Hyperparameters for best model: ')
+    for key in best_hyperparams:
+        print('   ', key, ' : ', best_hyperparams[key])
+    
+    return best_hyperparams
+
+# ------------------------------------------------------------------------------------------    
+# ------------------------------------------------------------------------------------------    
+# ------------------------------------------------------------------------------------------    
+
+def predict_carls(dataset, model, device, criterion):
+    total_loss = 0
+
+    model.eval() # Set model to evaluation mode
+    predicted_carls = []
+    output_name_encodings = []
+    input_carl_indices = []
+
+    with torch.no_grad():
+        for batch, name_encodings, true_carls, carl_indices in dataset:
+            batch = batch.to(device)
+            true_carls = true_carls.to(device)
+
+            batch_predicted_carls = model(batch)
+            predicted_carls.append(batch_predicted_carls)
+            output_name_encodings.append(name_encodings)
+            input_carl_indices.append(carl_indices)
+
+            # print(batch_predicted_embeddings.shape, true_embeddings.shape)
+
+            loss = criterion(batch_predicted_carls, true_carls)
+            # accumulate loss
+            total_loss += loss.item()
+
+    # divide by number of batches to calculate average loss
+    average_loss = total_loss/len(dataset)
+    return predicted_carls, output_name_encodings, average_loss, input_carl_indices
+
+
 # def train_model(
 #         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
 #         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
@@ -1021,270 +1612,3 @@ def train_model(
 #         print('   ', key, ' : ', best_hyperparams[key])
     
 #     return best_hyperparams
-
-def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
-    """
-    Create tensors from the provided spectra dataset and embedding DataFrame.
-
-    Parameters:
-    ----------
-    spectra_dataset : pd.DataFrame
-        DataFrame containing spectral data and chemical labels. Assumes specific 
-        columns for processing based on the `carl` flag.
-
-    embedding_df : pd.DataFrame
-        DataFrame containing embeddings for chemicals, with 'Embedding Floats' 
-        column corresponding to chemical names.
-
-    device : torch.device
-        The device (CPU or GPU) on which to store the tensors.
-
-    carl : bool, optional
-        If True, processes the dataset assuming it has a different structure 
-        (specifically without an 'Unnamed: 0' column). Default is False.
-
-    Returns:
-    -------
-    tuple
-        A tuple containing:
-        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
-        - spectra_tensor (torch.Tensor): Tensor of spectral data.
-        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
-        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
-    """
-    # drop first two cols ('Unnamed:0' and 'index') and last 9 cols ('Label' and OneHot encodings) to get just spectra
-    if carl: # carl dataset has no 'Unnamed: 0' column
-        spectra = spectra_dataset.iloc[:,1:-9]
-        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-    else:
-        spectra = spectra_dataset.iloc[:,2:-9]
-        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-        
-    chem_encodings = spectra_dataset.iloc[:,-8:]
-
-    # create tensors of spectra, true embeddings, and chemical name encodings for train and val
-    chem_labels = list(spectra_dataset['Label'])
-    embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-    spectra_tensor = torch.Tensor(spectra.values).to(device)
-    chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
-    spectra_indices_tensor = torch.Tensor(spectra_dataset['index'].to_numpy()).to(device)
-
-    return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
-
-def create_dataset_tensors_for_generator(carl_dataset, embedding_preds_df, device):
-    """
-    Create tensors from the provided CARL dataset and embedding DataFrame.
-
-    Parameters:
-    ----------
-    spectra_dataset : pd.DataFrame
-        DataFrame containing CARL data and chemical labels. Assumes specific 
-        columns for processing based on the `carl` flag.
-
-    embedding_df : pd.DataFrame
-        DataFrame containing encoder predicted embeddings.
-
-    device : torch.device
-        The device (CPU or GPU) on which to store the tensors.
-
-    Returns:
-    -------
-    tuple
-        A tuple containing:
-        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
-        - spectra_tensor (torch.Tensor): Tensor of spectral data.
-        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
-        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the CARLS.
-    """
-    # drop first col ('index') and last 10 cols ('Label', OneHot encodings and bkg_idx) to get just CARLS and predicted embeddings
-    carls = carl_dataset.iloc[:,1:-10]
-    # embeddings df doesn't have 'Label' col, so dropping last 9 cols instead of last 10
-    embedding_preds = embedding_preds_df.iloc[:,1:-9]
-
-    chem_encodings = carl_dataset.iloc[:,-8:]
-
-    # create tensors of spectra, true embeddings, and chemical name encodings for train and val
-    chem_labels = list(carl_dataset['Label'])
-    # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-    embeddings_preds_tensor = torch.Tensor(embedding_preds.values).to(device)
-    carl_tensor = torch.Tensor(carls.values).to(device)
-    chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
-    carl_indices_tensor = torch.Tensor(carl_dataset['index'].to_numpy()).to(device)
-
-    return embeddings_preds_tensor, carl_tensor, chem_encodings_tensor, carl_indices_tensor
-
-def create_dataset_tensors_with_dask(spectra_file, embedding_df, device, carl=False):
-    """
-    Create tensors from the provided spectra dataset and embedding DataFrame using Dask.
-
-    Parameters:
-    ----------
-    spectra_file : str
-        Path to the CSV file containing spectral data and chemical labels.
-
-    embedding_df : pd.DataFrame
-        DataFrame containing embeddings for chemicals.
-
-    device : torch.device
-        The device (CPU or GPU) on which to store the tensors.
-
-    carl : bool, optional
-        If True, processes the dataset assuming it has a different structure.
-
-    Returns:
-    -------
-    tuple
-        A tuple containing:
-        - embeddings_tensor (torch.Tensor)
-        - spectra_tensor (torch.Tensor)
-        - chem_encodings_tensor (torch.Tensor)
-        - spectra_indices_tensor (torch.Tensor)
-    """
-    # Load the dataset as a Dask DataFrame
-    spectra_dd = dd.read_csv(spectra_file)
-
-    # Compute the necessary tensors
-    if carl:
-        spectra = spectra_dd.iloc[:, 1:-9]
-    else:
-        spectra = spectra_dd.iloc[:, 2:-9]
-
-    chem_labels = spectra_dd['Label'].compute().tolist()
-    embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
-
-    # Create tensors directly from Dask DataFrame
-    spectra_tensor = torch.tensor(spectra.compute().values, dtype=torch.float32).to(device)
-    chem_encodings = spectra_dd.iloc[:, -8:].compute()
-    chem_encodings_tensor = torch.tensor(chem_encodings.values, dtype=torch.float32).to(device)
-    spectra_indices_tensor = torch.tensor(spectra_dd['index'].compute().values, dtype=torch.float32).to(device)
-
-    # Convert embeddings to tensor
-    embeddings_tensor = torch.tensor(embeddings, dtype=torch.float32).to(device)
-
-    return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
-
-def create_dataset_tensors_from_chunks(spectra_dataset, embedding_df, device, chunk_size=None, carl=False):
-    """
-    Create tensors from the provided spectra dataset and embedding DataFrame.
-
-    Parameters:
-    ----------
-    spectra_dataset : pd.DataFrame
-        DataFrame containing spectral data and chemical labels. Assumes specific 
-        columns for processing based on the `carl` flag.
-
-    embedding_df : pd.DataFrame
-        DataFrame containing embeddings for chemicals, with 'Embedding Floats' 
-        column corresponding to chemical names.
-
-    device : torch.device
-        The device (CPU or GPU) on which to store the tensors.
-
-    carl : bool, optional
-        If True, processes the dataset assuming it has a different structure 
-        (specifically without an 'Unnamed: 0' column). Default is False.
-
-    Returns:
-    -------
-    tuple
-        A tuple containing:
-        - embeddings_tensor (torch.Tensor): Tensor of true embeddings for the chemicals.
-        - spectra_tensor (torch.Tensor): Tensor of spectral data.
-        - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
-        - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
-    """
-    embeddings_list = []
-    spectra_list = []
-    chem_encodings_list = []
-    indices_list = []
-
-    # Process the dataset in chunks
-    for chunk in pd.read_csv(spectra_dataset, chunksize=chunk_size):
-        if carl:
-            spectra = chunk.iloc[:, 1:-9]
-            chem_labels = list(chunk['Label'])
-            embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
-        else:
-            spectra = chunk.iloc[:, 2:-9]
-            chem_labels = list(chunk['Label'])
-            embeddings = [embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]
-
-        # Convert to tensors
-        embeddings_tensor = torch.Tensor(embeddings).to(device)
-        spectra_tensor = torch.Tensor(spectra.values).to(device)
-        chem_encodings = chunk.iloc[:, -8:]
-        chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
-        spectra_indices_tensor = torch.Tensor(chunk['index'].to_numpy()).to(device)
-
-        # Append to lists
-        embeddings_list.append(embeddings_tensor)
-        spectra_list.append(spectra_tensor)
-        chem_encodings_list.append(chem_encodings_tensor)
-        indices_list.append(spectra_indices_tensor)
-
-    # Concatenate all tensors
-    embeddings_tensor = torch.cat(embeddings_list).to(device)
-    spectra_tensor = torch.cat(spectra_list).to(device)
-    chem_encodings_tensor = torch.cat(chem_encodings_list).to(device)
-    spectra_indices_tensor = torch.cat(indices_list).to(device)
-
-    return embeddings_tensor, spectra_tensor, chem_encodings_tensor, spectra_indices_tensor
-
-
-class Generator(nn.Module):
-  def __init__(self):
-    super().__init__()
-    self.encoder = nn.Sequential(
-      nn.Linear(512,652),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(652,780),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(780, 908),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(908, 1036),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1036, 1164),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1164, 1292),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1292, 1420),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1420, 1548),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1548, 1676),
-    )
-
-  def forward(self, x):
-    x = self.encoder(x)
-    return x
-  
-def set_up_gpu():
-    if torch.cuda.is_available():
-        # Get the list of GPUs
-        gpus = GPUtil.getGPUs()
-
-        # Find the GPU with the most free memory
-        best_gpu = max(gpus, key=lambda gpu: gpu.memoryFree)
-
-        # Print details about the selected GPU
-        print(f"Selected GPU ID: {best_gpu.id}")
-        print(f"  Name: {best_gpu.name}")
-        print(f"  Memory Free: {best_gpu.memoryFree} MB")
-        print(f"  Memory Used: {best_gpu.memoryUsed} MB")
-        print(f"  GPU Load: {best_gpu.load * 100:.2f}%")
-
-        # Set the device for later use
-        device = torch.device(f'cuda:{best_gpu.id}')
-        print('Current device ID: ', device)
-
-        # Set the current device in PyTorch
-        torch.cuda.set_device(best_gpu.id)
-    else:
-        device = torch.device('cpu')
-        print('Using CPU')
-
-    # Confirm the currently selected device in PyTorch
-    print("PyTorch current device ID:", torch.cuda.current_device())
-    print("PyTorch current device name:", torch.cuda.get_device_name(torch.cuda.current_device()))
-
-    return device

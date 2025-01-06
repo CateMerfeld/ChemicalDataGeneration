@@ -1,0 +1,63 @@
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Configure stats pid to 118447
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/.config/wandb/settings
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/ChemicalDataGeneration/models/wandb/settings
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': '/home/cmdunham/ChemicalDataGeneration/models/ims_generator.ipynb'}
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Applying login settings: {}
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_init.py:_log_setup():520] Logging user logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20250106_103407-r4654442/logs/debug.log
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_init.py:_log_setup():521] Logging internal logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20250106_103407-r4654442/logs/debug-internal.log
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_init.py:init():560] calling init triggers
+2025-01-06 10:34:07,126 INFO    MainThread:118447 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'architecture': 'carl_generator', 'optimizer': 'AdamW', 'loss': 'MSELoss', 'dataset': 'carls', 'target_embedding': 'ChemNet', 'batch_size': 32, 'epochs': 100, 'learning_rate': 0.01}
+2025-01-06 10:34:07,127 INFO    MainThread:118447 [wandb_init.py:init():585] re-initializing run, found existing run on stack: tsmnpl2g
+2025-01-06 10:34:07,128 INFO    MainThread:118447 [wandb_run.py:_finish():2103] finishing run catemerfeld/ims_encoder_decoder/tsmnpl2g
+2025-01-06 10:34:07,128 ERROR   MainThread:118447 [jupyter.py:save_history():437] Run pip install nbformat to save notebook history
+2025-01-06 10:34:07,128 INFO    MainThread:118447 [jupyter.py:_save_ipynb():384] looking for notebook: /home/cmdunham/ChemicalDataGeneration/models/ims_generator.ipynb
+2025-01-06 10:34:07,261 INFO    MainThread:118447 [wandb_init.py:_jupyter_teardown():447] saved code and history: <Artifact source-ims_encoder_decoder-_home_cmdunham_ChemicalDataGeneration_models_ims_generator.ipynb>
+2025-01-06 10:34:07,261 INFO    MainThread:118447 [wandb_init.py:_jupyter_teardown():448] cleaning up jupyter logic
+2025-01-06 10:34:07,261 INFO    MainThread:118447 [wandb_run.py:_atexit_cleanup():2343] got exitcode: 0
+2025-01-06 10:34:07,261 INFO    MainThread:118447 [wandb_run.py:_restore():2326] restore
+2025-01-06 10:34:07,262 INFO    MainThread:118447 [wandb_run.py:_restore():2332] restore done
+2025-01-06 10:34:12,564 INFO    MainThread:118447 [wandb_run.py:_footer_history_summary_info():3994] rendering history
+2025-01-06 10:34:12,564 INFO    MainThread:118447 [wandb_run.py:_footer_history_summary_info():4026] rendering summary
+2025-01-06 10:34:12,570 INFO    MainThread:118447 [wandb_run.py:_footer_sync_info():3953] logging synced files
+2025-01-06 10:34:12,596 INFO    MainThread:118447 [wandb_init.py:init():610] starting backend
+2025-01-06 10:34:12,596 INFO    MainThread:118447 [wandb_init.py:init():614] setting up manager
+2025-01-06 10:34:12,600 INFO    MainThread:118447 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2025-01-06 10:34:12,601 INFO    MainThread:118447 [wandb_init.py:init():622] backend started and connected
+2025-01-06 10:34:12,607 INFO    MainThread:118447 [wandb_run.py:_label_probe_notebook():1328] probe notebook
+2025-01-06 10:34:12,627 INFO    MainThread:118447 [wandb_init.py:init():711] updated telemetry
+2025-01-06 10:34:12,823 INFO    MainThread:118447 [wandb_init.py:init():744] communicating run to backend with 90.0 second timeout
+2025-01-06 10:34:14,066 INFO    MainThread:118447 [wandb_run.py:_on_init():2396] communicating current version
+2025-01-06 10:34:14,131 INFO    MainThread:118447 [wandb_run.py:_on_init():2405] got version response upgrade_message: "wandb version 0.19.1 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2025-01-06 10:34:14,131 INFO    MainThread:118447 [wandb_init.py:init():795] starting run threads in backend
+2025-01-06 10:34:14,861 INFO    MainThread:118447 [wandb_run.py:_console_start():2374] atexit reg
+2025-01-06 10:34:14,861 INFO    MainThread:118447 [wandb_run.py:_redirect():2229] redirect: wrap_raw
+2025-01-06 10:34:14,861 INFO    MainThread:118447 [wandb_run.py:_redirect():2294] Wrapping output streams.
+2025-01-06 10:34:14,861 INFO    MainThread:118447 [wandb_run.py:_redirect():2319] Redirects installed.
+2025-01-06 10:34:14,861 INFO    MainThread:118447 [wandb_init.py:init():838] run started, returning control to user process
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Configure stats pid to 118447
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/.config/wandb/settings
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Loading settings from /home/cmdunham/ChemicalDataGeneration/models/wandb/settings
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': '/home/cmdunham/ChemicalDataGeneration/models/ims_generator.ipynb'}
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_setup.py:_flush():76] Applying login settings: {}
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_init.py:_log_setup():520] Logging user logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20250106_105002-2brnct52/logs/debug.log
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_init.py:_log_setup():521] Logging internal logs to /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20250106_105002-2brnct52/logs/debug-internal.log
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_init.py:_jupyter_setup():466] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x7f3f18d6e9a0>
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_init.py:init():560] calling init triggers
+2025-01-06 10:50:02,713 INFO    MainThread:118447 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'architecture': 'carl_generator', 'optimizer': 'AdamW', 'loss': 'MSELoss', 'dataset': 'carls', 'target_embedding': 'ChemNet', 'batch_size': 32, 'epochs': 100, 'learning_rate': 0.001}
+2025-01-06 10:50:02,714 INFO    MainThread:118447 [wandb_init.py:init():585] re-initializing run, found existing run on stack: r4654442
+2025-01-06 10:50:02,714 INFO    MainThread:118447 [wandb_run.py:_finish():2103] finishing run catemerfeld/ims_encoder_decoder/r4654442
+2025-01-06 10:50:02,714 INFO    MainThread:118447 [wandb_run.py:_atexit_cleanup():2343] got exitcode: 0
+2025-01-06 10:50:02,714 INFO    MainThread:118447 [wandb_run.py:_restore():2326] restore
+2025-01-06 10:50:02,715 INFO    MainThread:118447 [wandb_run.py:_restore():2332] restore done
+2025-01-06 10:50:08,631 INFO    MainThread:118447 [wandb_run.py:_footer_history_summary_info():3994] rendering history
+2025-01-06 10:50:08,631 INFO    MainThread:118447 [wandb_run.py:_footer_history_summary_info():4026] rendering summary
+2025-01-06 10:50:08,638 INFO    MainThread:118447 [wandb_run.py:_footer_sync_info():3953] logging synced files

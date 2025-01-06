@@ -478,6 +478,79 @@ def plot_emb_pca(
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
+
+def plot_generation_results_pca(
+        true_spectra, synthetic_spectra, chem_labels, results_type, log_wandb=False,
+        mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=False):
+    
+    pca = PCA(n_components=2)
+    pca.fit(true_spectra.iloc[:,:-1])
+
+    _, ax = plt.subplots(figsize=(8,6))
+
+    # Create a color cycle for distinct colors
+    color_cycle = plt.gca()._get_lines.prop_cycler
+
+    # Scatter plot
+    for chem, color in zip(chem_labels, color_cycle):
+        # color = next(color_cycle)['color']
+        color = color['color']
+        # Transform data for the current chemical, exclude last col (label)
+        transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
+        ax.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
+        transformed_synthetic_spectra = pca.transform(synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1])
+        # Scatter plot for synthetic spectra with a different marker
+        ax.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='*', color=color)
+        
+    # Add legend
+    legend1 = ax.legend(loc='upper right', title='Label')
+    ax.add_artist(legend1)
+
+    marker_legends = [
+    plt.Line2D([0], [0], marker='o', color='w', label='Experimental Spectra', markerfacecolor='black', markersize=6),
+    plt.Line2D([0], [0], marker='*', color='w', label='Synthetic Spectra', markerfacecolor='black', markersize=10),
+    ]
+    
+
+    # Add the second legend
+    legend2 = ax.legend(handles=marker_legends, title='Marker Types', loc='upper left')
+    ax.add_artist(legend2)
+
+    if mse_insert is not None:
+        # Add mse text in the corner with a box
+        plt.text(insert_position[0], insert_position[1], f'MSE: {format(mse_insert, ".2e")}', 
+            transform=plt.gca().transAxes,  # Use axis coordinates
+            fontsize=14,
+            verticalalignment='bottom',  # Align text to the top
+            horizontalalignment='left',  # Align text to the right
+            bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  # Box properties
+    
+    if show_wandb_run_name == True:
+        run_name = wandb.run.name
+        # Add wandb run text in the corner
+        xlim = plt.xlim()
+        ylim = plt.ylim()
+        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
+                ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
+                f'WandB run: {run_name}', 
+                fontsize=8,
+                verticalalignment='bottom',  # Align text to the top
+                horizontalalignment='right',  # Align text to the right
+                bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
+
+    plt.xticks([])
+    plt.yticks([])
+    plt.title(f'Experimental vs. Synthetic {results_type} Spectra PCA', fontsize=18)
+
+    if log_wandb:
+        plt.savefig('tmp_plot.png', format='png', dpi=300)
+        wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
+
+    plt.show()
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
  
 def plot_pca(
     data, batch_size, model, device, encoder_criterion, sorted_chem_names, 
@@ -562,7 +635,7 @@ def plot_pca(
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def plot_carl_real_synthetic_comparison(true_carl, synthetic_carl, results_type, chem_label, log_wandb=True, show_wandb_run_name=True):
+def plot_carl_real_synthetic_comparison(true_carl, synthetic_carl, results_type, chem_label, log_wandb=True, show_wandb_run_name=True, criterion=None, run_name=None):
     _, axes = plt.subplots(1, 2, figsize=(14, 8))
 
     # Flatten the axes array for easy iteration
@@ -571,8 +644,8 @@ def plot_carl_real_synthetic_comparison(true_carl, synthetic_carl, results_type,
     # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
     numbers = range(184, (len(true_carl)//2)+184)
     # y axis should run from min of both carls to max of both carls
-    min_y = min(true_carl+synthetic_carl) + 10
-    max_y = max(true_carl+synthetic_carl) + 10
+    min_y = min(list(true_carl)+list(synthetic_carl)) - 200
+    max_y = max(list(true_carl)+list(synthetic_carl)) + 200
 
     axes[0].plot(numbers, true_carl[:len(numbers)], label='Positive')
     axes[0].plot(numbers, true_carl[len(numbers):], label='Negative')
@@ -590,8 +663,20 @@ def plot_carl_real_synthetic_comparison(true_carl, synthetic_carl, results_type,
     axes[1].set_ylim(min_y, max_y)
     axes[1].legend(fontsize=14)
 
+    if criterion is not None:
+        xlim = axes[0].get_xlim()
+        ylim = axes[0].get_ylim()
+        axes[0].text(xlim[1] - 0.02 * (xlim[1] - xlim[0]),  # x position with an offset
+                    ylim[0] + 0.02 * (ylim[1] - ylim[0]),  # y position with an offset 
+                    'Real vs. Synthetic MSE: {:.2e}'.format(criterion(torch.Tensor(true_carl), torch.Tensor(synthetic_carl)).item()),
+                    fontsize=14,
+                    verticalalignment='bottom',  # Align text to the bottom
+                    horizontalalignment='right',  # Align text to the left
+                    bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
+
     if show_wandb_run_name == True:
-        run_name = wandb.run.name
+        if run_name is None:
+            run_name = wandb.run.name
         # Add wandb run text in the corner
         xlim = plt.xlim()
         ylim = plt.ylim()
@@ -599,7 +684,71 @@ def plot_carl_real_synthetic_comparison(true_carl, synthetic_carl, results_type,
                 ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
                 f'WandB run: {run_name}', 
                 fontsize=8,
-                verticalalignment='bottom',  # Align text to the top
+                verticalalignment='bottom',  # Align text to the bottom
+                horizontalalignment='right',  # Align text to the right
+                bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
+
+    if log_wandb:
+        plt.savefig('tmp_plot.png', format='png', dpi=300)
+        wandb.log({'Comparison of Real and Synthetic CARLs': wandb.Image('tmp_plot.png')})
+
+    plt.tight_layout()
+    plt.show()
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_type, chem_label, log_wandb=False, show_wandb_run_name=True, criterion=None, run_name=None):
+    _, axes = plt.subplots(1, 2, figsize=(14, 8))
+
+    # Flatten the axes array for easy iteration
+    axes = axes.flatten()
+
+    # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
+    numbers = range(184, (len(true_spec)//2)+184)
+    # y axis should run from min of both carls to max of both carls
+    min_y = min(list(true_spec)+list(synthetic_spec)) - 200
+    max_y = max(list(true_spec)+list(synthetic_spec)) + 200
+
+    axes[0].plot(numbers, true_spec[:len(numbers)], label='Positive')
+    axes[0].plot(numbers, true_spec[len(numbers):], label='Negative')
+    axes[0].set_title(f'True {results_type} {chem_label} Spectrum', fontsize=20)
+    axes[0].set_xlabel('Drift Time', fontsize=16)
+    axes[0].set_ylabel('Ion Intensity', fontsize=16)
+    axes[0].set_ylim(min_y, max_y)
+    axes[0].legend(fontsize=14)
+
+    axes[1].plot(numbers, synthetic_spec[:len(numbers)], label='Positive')
+    axes[1].plot(numbers, synthetic_spec[len(numbers):], label='Negative')
+    axes[1].set_title(f'Synthetic {results_type} {chem_label} Spectrum', fontsize=20)
+    axes[1].set_xlabel('Drift Time', fontsize=16)
+    axes[1].set_ylabel('Ion Intensity', fontsize=16)
+    axes[1].set_ylim(min_y, max_y)
+    axes[1].legend(fontsize=14)
+
+    if criterion is not None:
+        xlim = axes[0].get_xlim()
+        ylim = axes[0].get_ylim()
+        axes[0].text(xlim[1] - 0.02 * (xlim[1] - xlim[0]),  # x position with an offset
+                    ylim[0] + 0.02 * (ylim[1] - ylim[0]),  # y position with an offset 
+                    'Real vs. Synthetic MSE: {:.2e}'.format(criterion(torch.Tensor(true_spec), torch.Tensor(synthetic_spec)).item()),
+                    fontsize=14,
+                    verticalalignment='bottom',  # Align text to the bottom
+                    horizontalalignment='right',  # Align text to the left
+                    bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
+
+    if show_wandb_run_name == True:
+        if run_name is None:
+            run_name = wandb.run.name
+        # Add wandb run text in the corner
+        xlim = plt.xlim()
+        ylim = plt.ylim()
+        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
+                ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
+                f'WandB run: {run_name}', 
+                fontsize=8,
+                verticalalignment='bottom',  # Align text to the bottom
                 horizontalalignment='right',  # Align text to the right
                 bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
 
@@ -1193,7 +1342,7 @@ def train_generator(
         # creating different var for model loss to use for early stopping
         lowest_val_model_loss = np.inf
         
-        model = f.Generator().to(device)
+        model = Generator().to(device)
 
         epochs_without_validation_improvement = 0
         combo = dict(zip(keys, combo))
@@ -1210,9 +1359,9 @@ def train_generator(
             # Initialize the learning rate scheduler with patience of 5 epochs 
             scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
 
-        wandb_kwargs = f.update_wandb_kwargs(wandb_kwargs, combo)
+        wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
-        f.run_with_wandb(config, **wandb_kwargs)
+        run_with_wandb(config, **wandb_kwargs)
 
         print('--------------------------')
         print('--------------------------')
@@ -1227,7 +1376,7 @@ def train_generator(
                 # do a pass over the data
                 # at last epoch get predicted embeddings and chem names
                 if (epoch + 1) == combo['epochs']:
-                    average_loss, _, _ = f.train_one_epoch(
+                    average_loss, _, _ = train_one_epoch(
                     train_dataset, device, model, criterion, optimizer, epoch, combo
                     )
                     # save output pca to weights and biases
@@ -1247,15 +1396,15 @@ def train_generator(
                             # train_true_carls = [carl.cpu().detach().numpy() for carl in train_data.tensors[2]]
                             train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
                             test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
-                            f.plot_carl_real_synthetic_comparison(
+                            plot_carl_real_synthetic_comparison(
                                 train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', 
                                 train_chem, save_plots_to_wandb, show_wandb_run_name)
-                            f.plot_carl_real_synthetic_comparison(
+                            plot_carl_real_synthetic_comparison(
                                 test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', 
                                 test_chem, save_plots_to_wandb, show_wandb_run_name)
             
                 else:
-                    average_loss = f.train_one_epoch(
+                    average_loss = train_one_epoch(
                     train_dataset, device, model, criterion, optimizer, epoch, combo
                     )
 
@@ -1314,9 +1463,9 @@ def train_generator(
                 wandb.log({'Early Stopping Ecoch':epoch})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
-                train_predicted_carls, train_output_name_encodings, _, _ = f.predict_embeddings(train_dataset, model, device, criterion)
+                train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
                 test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
-                test_predicted_carls, test_output_name_encodings, _, _ = f.predict_embeddings(test_dataset, model, device, criterion)
+                test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
                 
                 for _ in range(num_plots):
                     random_carl = random.randint(0, len(test_data))
@@ -1382,233 +1531,19 @@ def predict_carls(dataset, model, device, criterion):
     average_loss = total_loss/len(dataset)
     return predicted_carls, output_name_encodings, average_loss, input_carl_indices
 
+# ------------------------------------------------------------------------------------------    
+# ------------------------------------------------------------------------------------------    
+# ------------------------------------------------------------------------------------------  
 
-# def train_model(
-#         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
-#         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
-#         encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, input_type='IMS',
-#         embedding_type='ChemNet', show_wandb_run_name=True, lr_scheduler = False
-#         ):
-    
-#     """
-#     Train a model with specified hyperparameters and log results using Weights & Biases.
+def generate_average_bkg_spectrum(bkg_df, n, num_avg_spectra=1, random_state=42):
+    avg_spectra = []
+    for _ in range(num_avg_spectra):
+        bkg_sample = bkg_df.sample(n=n, random_state=random_state).iloc[:,1:-1]
+        bkg_df = bkg_df.drop(bkg_sample.index)
+        bkg_sample.reset_index(inplace=True)
+        bkg_sample.drop(columns=['index'], inplace=True)
 
-#     Parameters:
-#     ----------
-#     model_type : str
-#         The type of model to be trained (e.g., 'Encoder').
+        avg_spectrum = bkg_sample.mean()
+        avg_spectra.append(avg_spectrum)
 
-#     train_data : Dataset
-#         The dataset used for training the model.
-
-#     val_data : Dataset
-#         The dataset used for validating the model during training.
-
-#     test_data : Dataset
-#         The dataset used for evaluating the model after training.
-
-#     device : torch.device
-#         The device (CPU or GPU) on which to perform the training.
-
-#     config : dict
-#         Configuration settings for the training process.
-
-#     wandb_kwargs : dict
-#         Arguments for logging to Weights & Biases.
-
-#     all_embeddings_df : pd.DataFrame
-#         DataFrame containing all embeddings for chemicals.
-
-#     ims_embeddings_df : pd.DataFrame
-#         DataFrame containing IMS (ion mobility spectrometry) embeddings.
-
-#     model_hyperparams : dict
-#         Dictionary of hyperparameters for the model, with keys as parameter names and values as lists of options.
-
-#     sorted_chem_names : list of str
-#         List of sorted chemical names corresponding to the embeddings.
-
-#     encoder_path : str
-#         File path to save the best model state.
-
-#     save_emb_pca_to_wandb : bool, optional
-#         If True, saves PCA plots of embeddings to Weights & Biases. Default is True.
-
-#     early_stop_threshold : int, optional
-#         Number of epochs without improvement in validation loss before stopping training. Default is 10.
-
-#     input_type : str, optional
-#         The type of input being used (IMS, Carl, MNIST). Default is 'IMS'.
-
-#     embedding_type : str, optional
-#         The type of embedding being used (ChemNet, OneHot). Default is 'ChemNet'.
-
-#     show_wandb_run_name : bool, optional
-#         If True, displays the current WandB run name on the plot. Default is True.
-
-#     Returns:
-#     -------
-#     dict
-#         The best hyperparameters found during training.
-#     """
-
-#     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
-#     lowest_val_loss = np.inf
-
-#     keys = model_hyperparams.keys()
-#     values = model_hyperparams.values()
-
-#     # Generate all parameter combinations from model_config using itertools.product
-#     combinations = itertools.product(*values)
-
-#     # Iterate through each parameter combination and run model 
-#     for combo in combinations:
-#         # creating different var for model loss to use for early stopping
-#         lowest_val_model_loss = np.inf
-        
-#         if model_type == 'Encoder':
-#             encoder = Encoder().to(device)
-
-#         if model_type == 'Generator':
-#             generator = Generator().to(device)
-
-#         epochs_without_validation_improvement = 0
-#         combo = dict(zip(keys, combo))
-
-#         train_dataset = DataLoader(train_data, batch_size=combo['batch_size'], shuffle=True)
-#         val_dataset = DataLoader(val_data, batch_size=combo['batch_size'], shuffle=False)
-
-#         encoder_optimizer = torch.optim.AdamW(encoder.parameters(), lr = combo['learning_rate'])
-#         encoder_criterion = nn.MSELoss()
-
-#         final_lr = combo['learning_rate']
-
-#         if lr_scheduler:
-#             # Initialize the learning rate scheduler with patience of 5 epochs 
-#             scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(encoder_optimizer, mode='min', patience=5, factor=0.1, verbose=True)
-
-#         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
-
-#         run_with_wandb(config, **wandb_kwargs)
-
-#         print('--------------------------')
-#         print('--------------------------')
-#         print('New run with hyperparameters:')
-#         for key in combo:
-#             print(key, ' : ', combo[key])
-
-#         for epoch in range(combo['epochs']):
-#             if epochs_without_validation_improvement < early_stop_threshold:
-#                 encoder.train(True)
-
-#                 # do a pass over the data
-#                 # at last epoch get predicted embeddings and chem names
-#                 if (epoch + 1) == combo['epochs']:
-#                     average_loss, _, _ = train_one_epoch(
-#                     train_dataset, device, encoder, encoder_criterion, encoder_optimizer, epoch, combo
-#                     )
-#                     # save output pca to weights and biases
-#                     if save_emb_pca_to_wandb:
-#                         # plot_pca gets predictions from trained model and plots them
-#                         plot_pca(
-#                             train_data, combo['batch_size'], encoder, device, 
-#                             encoder_criterion, sorted_chem_names, all_embeddings_df, 
-#                             ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
-#                             )
-#                         plot_pca(
-#                             test_data, combo['batch_size'], encoder, device, 
-#                             encoder_criterion, sorted_chem_names, all_embeddings_df,
-#                             ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
-#                             )
-#                 else:
-#                     average_loss = train_one_epoch(
-#                     train_dataset, device, encoder, encoder_criterion, encoder_optimizer, epoch, combo
-#                     )
-
-#                 epoch_val_loss = 0  
-#                 # evaluate model on validation data
-#                 encoder.eval() # Set model to evaluation mode
-#                 with torch.no_grad():
-#                     for val_batch, val_name_encodings, val_true_embeddings, _ in val_dataset:
-#                         val_batch = val_batch.to(device)
-#                         val_name_encodings = val_name_encodings.to(device)
-#                         val_true_embeddings = val_true_embeddings.to(device)
-
-#                         val_batch_predicted_embeddings = encoder(val_batch)
-
-#                         val_loss = encoder_criterion(val_batch_predicted_embeddings, val_true_embeddings)
-#                         # accumulate epoch validation loss
-#                         epoch_val_loss += val_loss.item()
-
-#                 # divide by number of batches to calculate average loss
-#                 val_average_loss = epoch_val_loss/len(val_dataset)
-
-#                 if lr_scheduler:
-#                     scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
-#                     # get the new learning rate (to give to wandb)
-#                     final_lr = encoder_optimizer.param_groups[0]['lr']
-
-#                 if val_average_loss < lowest_val_model_loss:
-#                     # check if val loss is improving for this model
-#                     epochs_without_validation_improvement = 0
-#                     lowest_val_model_loss = val_average_loss
-#                     # best_epoch = epoch + 1  # Store the best epoch
-
-#                     if val_average_loss < lowest_val_loss:
-#                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
-#                         # Save the model state
-#                         torch.save(encoder.state_dict(), encoder_path)
-#                         print(f'Saved best model at epoch {epoch}')
-#                         lowest_val_loss = val_average_loss
-#                         best_hyperparams = combo
-#                     else:
-#                         print(f'Model best validation loss at {epoch}')
-                
-#                 else:
-#                     epochs_without_validation_improvement += 1
-
-#                 # log losses to wandb
-#                 wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
-
-#                 if (epoch + 1) % 10 == 0:
-#                     print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
-#                     print(f'   Training loss: {average_loss}')
-#                     print(f'   Validation loss: {val_average_loss}')
-#                     print('-------------------------------------------')
-#             else:
-#                 print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
-#                 wandb.log({'Early Stopping Ecoch':epoch})
-#                 wandb.log({'Learning Rate at Final Epoch':final_lr})
-#                 plot_pca(
-#                     train_data, combo['batch_size'], encoder, device, 
-#                     encoder_criterion, sorted_chem_names, all_embeddings_df, 
-#                     ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
-#                     )
-#                 plot_pca(
-#                     test_data, combo['batch_size'], encoder, device, 
-#                     encoder_criterion, sorted_chem_names, all_embeddings_df,
-#                     ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
-#                     )
-#                 break
-#         # if save_emb_pca_to_wandb:
-#         #     # true_embeddings, predicted_embeddings_flattened, chem_names = 
-#         #     preds_to_emb_pca_plot(predicted_embeddings, output_name_encodings, sorted_chem_names, embedding_df)
-
-#         # at last epoch print model architecture details (this will also show up in wandb log)
-#         print('-------------------------------------------')
-#         print('-------------------------------------------')
-#         print('Dataset: ', wandb_kwargs['dataset'])
-#         print('Target Embeddings: ', wandb_kwargs['target_embedding'])
-#         print('-------------------------------------------')
-#         print('-------------------------------------------')
-#         print(encoder)
-#         print('-------------------------------------------')
-#         print('-------------------------------------------')
-
-#         wandb.finish()
-
-#     print('Hyperparameters for best model: ')
-#     for key in best_hyperparams:
-#         print('   ', key, ' : ', best_hyperparams[key])
-    
-#     return best_hyperparams
+    return avg_spectra

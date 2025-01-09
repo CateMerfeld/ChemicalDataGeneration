@@ -480,7 +480,7 @@ def plot_emb_pca(
 # ------------------------------------------------------------------------------------------
 
 def plot_generation_results_pca(
-        true_spectra, synthetic_spectra, chem_labels, results_type, log_wandb=False,
+        true_spectra, synthetic_spectra, chem_labels, results_type, sample_size=None, log_wandb=False,
         mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=False):
     
     pca = PCA(n_components=2)
@@ -490,6 +490,9 @@ def plot_generation_results_pca(
 
     # Create a color cycle for distinct colors
     color_cycle = plt.gca()._get_lines.prop_cycler
+
+    if sample_size is not None:
+        true_spectra = true_spectra.sample(n = sample_size, random_state=42)
 
     # Scatter plot
     for chem, color in zip(chem_labels, color_cycle):
@@ -713,7 +716,7 @@ def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_ty
 
     axes[0].plot(numbers, true_spec[:len(numbers)], label='Positive')
     axes[0].plot(numbers, true_spec[len(numbers):], label='Negative')
-    axes[0].set_title(f'True {results_type} {chem_label} Spectrum', fontsize=20)
+    axes[0].set_title(f'Experimental {chem_label} {results_type} Spectrum', fontsize=20)
     axes[0].set_xlabel('Drift Time', fontsize=16)
     axes[0].set_ylabel('Ion Intensity', fontsize=16)
     axes[0].set_ylim(min_y, max_y)
@@ -721,7 +724,7 @@ def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_ty
 
     axes[1].plot(numbers, synthetic_spec[:len(numbers)], label='Positive')
     axes[1].plot(numbers, synthetic_spec[len(numbers):], label='Negative')
-    axes[1].set_title(f'Synthetic {results_type} {chem_label} Spectrum', fontsize=20)
+    axes[1].set_title(f'Synthetic {chem_label} {results_type} Spectrum', fontsize=20)
     axes[1].set_xlabel('Drift Time', fontsize=16)
     axes[1].set_ylabel('Ion Intensity', fontsize=16)
     axes[1].set_ylim(min_y, max_y)
@@ -731,12 +734,12 @@ def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_ty
         xlim = axes[0].get_xlim()
         ylim = axes[0].get_ylim()
         axes[0].text(xlim[1] - 0.02 * (xlim[1] - xlim[0]),  # x position with an offset
-                    ylim[0] + 0.02 * (ylim[1] - ylim[0]),  # y position with an offset 
+                    ylim[0] + 0.05 * (ylim[1] - ylim[0]),  # y position with an offset 
                     'Real vs. Synthetic MSE: {:.2e}'.format(criterion(torch.Tensor(true_spec), torch.Tensor(synthetic_spec)).item()),
                     fontsize=14,
                     verticalalignment='bottom',  # Align text to the bottom
                     horizontalalignment='right',  # Align text to the left
-                    bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
+                    bbox=dict(facecolor='white', alpha=1, edgecolor='black'))
 
     if show_wandb_run_name == True:
         if run_name is None:
@@ -754,7 +757,7 @@ def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_ty
 
     if log_wandb:
         plt.savefig('tmp_plot.png', format='png', dpi=300)
-        wandb.log({'Comparison of Real and Synthetic CARLs': wandb.Image('tmp_plot.png')})
+        wandb.log({'Comparison of Experimental and Synthetic CARLs': wandb.Image('tmp_plot.png')})
 
     plt.tight_layout()
     plt.show()

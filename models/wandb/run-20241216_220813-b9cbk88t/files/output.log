@@ -1,0 +1,46 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  0.0001
+Saved best model at epoch 1
+Saved best model at epoch 3
+Saved best model at epoch 6
+Saved best model at epoch 8
+Epoch[10/500]:
+   Training loss: 0.00026763221351810783
+   Validation loss: 0.0009942559578858545
+-------------------------------------------
+Epoch 00014: reducing learning rate of group 0 to 1.0000e-05.
+Validation loss has not improved in 10 epochs. Stopping training at epoch 18.
+-------------------------------------------
+-------------------------------------------
+Dataset:  carls
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1548, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1548, out_features=1420, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1420, out_features=1292, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1292, out_features=1164, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=1164, out_features=1036, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=1036, out_features=908, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=908, out_features=780, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=780, out_features=652, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=652, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

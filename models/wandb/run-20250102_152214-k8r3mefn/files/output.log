@@ -1,0 +1,12 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  2
+learning_rate  :  0.001
+Saved best model at epoch 0
+Epoch[1/2]:
+   Training loss: 128988.50513221932
+   Validation loss: 129553.80416340865
+-------------------------------------------

@@ -1,0 +1,68 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  0.0001
+Saved best model at epoch 1
+Saved best model at epoch 2
+Saved best model at epoch 4
+Saved best model at epoch 8
+Saved best model at epoch 9
+Epoch[10/500]:
+   Training loss: 0.00014468624884718357
+   Validation loss: 9.592433311095047e-05
+-------------------------------------------
+Saved best model at epoch 13
+Epoch 00017: reducing learning rate of group 0 to 1.0000e-05.
+Saved best model at epoch 18
+Saved best model at epoch 19
+Saved best model at epoch 20
+Epoch[20/500]:
+   Training loss: 3.573644959493293e-05
+   Validation loss: 2.7666801297865286e-05
+-------------------------------------------
+Saved best model at epoch 21
+Saved best model at epoch 23
+Saved best model at epoch 30
+Epoch[30/500]:
+   Training loss: 1.665654773505462e-05
+   Validation loss: 1.1172298518108035e-05
+-------------------------------------------
+Saved best model at epoch 35
+Saved best model at epoch 39
+Epoch[40/500]:
+   Training loss: 1.5543297142212308e-05
+   Validation loss: 1.347606025022576e-05
+-------------------------------------------
+Validation loss has not improved in 10 epochs. Stopping training at epoch 49.
+-------------------------------------------
+-------------------------------------------
+Dataset:  IMS
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1548, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1548, out_features=1420, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1420, out_features=1292, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1292, out_features=1164, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=1164, out_features=1036, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=1036, out_features=908, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=908, out_features=780, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=780, out_features=652, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=652, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

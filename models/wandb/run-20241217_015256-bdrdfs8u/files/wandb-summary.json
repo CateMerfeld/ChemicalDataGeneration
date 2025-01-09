@@ -1,0 +1,1 @@
+{"Encoder Training Loss": 5.74140781526469e-06, "Encoder Validation Loss": 0.00015842170059156952, "_timestamp": 1734418514.942709, "_runtime": 138.20215892791748, "_step": 16, "Early Stopping Ecoch": 15, "Learning Rate at Final Epoch": 1e-05, "_wandb": {"runtime": 181}}

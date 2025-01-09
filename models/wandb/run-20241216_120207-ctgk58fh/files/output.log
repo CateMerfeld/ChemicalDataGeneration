@@ -1,0 +1,110 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  0.0001
+Saved best model at epoch 1
+Epoch[1/500]:
+   Training loss: 0.0009644431652454526
+   Validation loss: 0.015397528390211225
+-------------------------------------------
+Saved best model at epoch 2
+Epoch[2/500]:
+   Training loss: 0.2556329172690687
+   Validation loss: 0.012988361599752168
+-------------------------------------------
+Saved best model at epoch 3
+Epoch[3/500]:
+   Training loss: 0.0002975151330786359
+   Validation loss: 0.012410508407651694
+-------------------------------------------
+Epoch[4/500]:
+   Training loss: 38.335410003057625
+   Validation loss: 0.031828513580299686
+-------------------------------------------
+Epoch[5/500]:
+   Training loss: 0.0019017072664401693
+   Validation loss: 0.012997697077854866
+-------------------------------------------
+Epoch[6/500]:
+   Training loss: 0.00012304251612314966
+   Validation loss: 0.01444937122255416
+-------------------------------------------
+Saved best model at epoch 7
+Epoch[7/500]:
+   Training loss: 0.00019731501291116583
+   Validation loss: 0.011196047765128126
+-------------------------------------------
+Epoch[8/500]:
+   Training loss: 139838.5254311021
+   Validation loss: 0.7593576690050307
+-------------------------------------------
+Epoch[9/500]:
+   Training loss: 0.025527230234171683
+   Validation loss: 0.029777153327567318
+-------------------------------------------
+Epoch[10/500]:
+   Training loss: 0.0006718942579099692
+   Validation loss: 0.014985401828761166
+-------------------------------------------
+Epoch[11/500]:
+   Training loss: 9.555613555085578e-05
+   Validation loss: 0.015333531769197026
+-------------------------------------------
+Epoch[12/500]:
+   Training loss: 0.000157566934163184
+   Validation loss: 201830015.59677634
+-------------------------------------------
+Epoch 00013: reducing learning rate of group 0 to 1.0000e-05.
+Epoch[13/500]:
+   Training loss: 52637.44782256887
+   Validation loss: 178190.56712175574
+-------------------------------------------
+Epoch[14/500]:
+   Training loss: 0.0013097088477640048
+   Validation loss: 125851.53124231804
+-------------------------------------------
+Epoch[15/500]:
+   Training loss: 9.480317233890376e-05
+   Validation loss: 120843.97973340811
+-------------------------------------------
+Epoch[16/500]:
+   Training loss: 2.5209016177087527e-05
+   Validation loss: 96578.53295943886
+-------------------------------------------
+Epoch[17/500]:
+   Training loss: 1.581565908595582e-05
+   Validation loss: 62315.767863324254
+-------------------------------------------
+Validation loss has not improved in 10 epochs. Stopping training at epoch 17.
+-------------------------------------------
+-------------------------------------------
+Dataset:  carls
+Target Embeddings:  ChemNet
+-------------------------------------------
+-------------------------------------------
+Encoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1548, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1548, out_features=1420, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1420, out_features=1292, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1292, out_features=1164, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=1164, out_features=1036, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=1036, out_features=908, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=908, out_features=780, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=780, out_features=652, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=652, out_features=512, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

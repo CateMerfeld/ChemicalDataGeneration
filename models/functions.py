@@ -17,6 +17,9 @@ import torch
 
 import random
 
+from scipy.stats import zscore
+from scipy.spatial import ConvexHull
+
 def flatten_and_bin(predicted_embeddings_batches):
     """
     Flatten prediction batches and convert to binary format.
@@ -328,10 +331,27 @@ def predict_embeddings(dataset, model, device, criterion):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
+def add_hulls(ax, pca, chem_data, threshold=3):
+    # embeddings_by_bkg_list = [chem_data.iloc[::2], chem_data.iloc[1::2]]
+    # for df in embeddings_by_bkg_list:
+    z_scores = np.abs(zscore(chem_data))
+    threshold = threshold  # Adjust threshold as needed
+
+    # Exclude outliers
+    filtered_data = chem_data[(z_scores < threshold).all(axis=1)]
+    # print(f'Excluded {round((len(chem_data) - len(filtered_data))/len(chem_data)*100)}% of data points as outliers.')
+
+    transformed_data = pca.transform(filtered_data)
+    hull = ConvexHull(transformed_data)
+    for simplex in hull.simplices:
+        ax.plot(transformed_data[simplex, 0], transformed_data[simplex, 1], 'r-') 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
  
 def plot_emb_pca(
         all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=True, 
-        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True):
+        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True, plot_hulls=False, hull_data=None):
     """
     This function performs Principal Component Analysis (PCA) on chemical embeddings and visualizes the results
     in a 2D scatter plot. It overlays additional data from ion mobility spectrometry (IMS) and mass spectrometry 
@@ -403,19 +423,25 @@ def plot_emb_pca(
     for chem in all_chemical_names:
         idx = all_chemical_names.index(chem)
         color = next(color_cycle)['color']
-        # only label 1st 8 chemicals to avoid giant legend
-        # ax.scatter(0,0, color = color, label=chem)
-        if idx < 8:
+        # Plot ChemNet embeddings
+        if idx < 8: # only label 1st 8 chemicals to avoid giant legend
             ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem)#, s=200)
         else:
             ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color)#, s=75)
-        # Transform ims_embeddings for the current chemical, if we have ims data for chem
+
+        # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
         if chem in ims_labels:
             # transform all data for the given chemical. Exclude last col (label)
             ims_transformed = pca.transform(ims_embeddings[ims_embeddings['Label'] == chem].iloc[:, :-1])
             
             # Scatter plot for ims_embeddings with a different marker
             ax.scatter(ims_transformed[:, 0], ims_transformed[:, 1], marker='o', facecolors='none', edgecolors=color)#marker='x', color=color)#, s=75)
+            if plot_hulls:
+                if hull_data is None:
+                    hull_data = ims_embeddings
+                add_hulls(ax, pca, hull_data[hull_data['Label'] == chem].iloc[:, :-1])
+
+
         # repeat for mass spec
         if mass_spec_labels:
             if chem in mass_spec_labels:
@@ -580,21 +606,9 @@ def plot_generation_results_pca_single_chem_side_by_side(
     _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
     # Setting x and y limits so that plot scales are the same
-    # true_transformed = pca.transform(true_spectra.iloc[:, :-1])
-    # synthetic_transformed = pca.transform(synthetic_spectra.iloc[:, :-1])
-    # min_x = min(true_transformed[:, 0].min(), synthetic_transformed[:, 0].min()) * 1.5
-    # max_x = min(true_transformed[:, 0].max(), synthetic_transformed[:, 0].max()) * 1.5
     if x_lims is not None:
-    # ax1.set_xlim(min_x, max_x)
-    # ax2.set_xlim(min_x, max_x)
         ax1.set_xlim(x_lims[0], x_lims[1])
         ax2.set_xlim(x_lims[0], x_lims[1])
-    # print(min_x, max_x)
-    # min_y = min(true_transformed[:, 1].min(), synthetic_transformed[:, 1].min()) * 1.5
-    # max_y = min(true_transformed[:, 1].max(), synthetic_transformed[:, 1].max()) * 1.5
-    # ax1.set_ylim(min_y, max_y)
-    # ax2.set_ylim(min_y, max_y)
-    # print(min_y, max_y)
     if y_lims is not None:
         ax1.set_ylim(y_lims[0], y_lims[1])
         ax2.set_ylim(y_lims[0], y_lims[1])
@@ -1254,7 +1268,7 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
 
     embedding_df : pd.DataFrame
         DataFrame containing embeddings for chemicals, with 'Embedding Floats' 
-        column corresponding to chemical names.
+        column corresponding to ChemNet embeddings.
 
     device : torch.device
         The device (CPU or GPU) on which to store the tensors.

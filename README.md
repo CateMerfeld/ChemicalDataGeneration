@@ -23,6 +23,12 @@ https://nvie.com/posts/a-successful-git-branching-model/
 4. Create new kernel using ```python -m ipykernel install --user --name=your_kernel_name```.
 5. If necessary, update git config with username and email using ```git config --global user.name "Your Name"``` and ```git config --global user.email "youremail@example.com"```.
 
+## Steps to run on Turing:
+1. ssh into turing account and run commands ```sinteractive``` and ```tmux```. 
+2. Activate virtual env using one of the commands above.
+3. To run jupyter notebooks and save output to notebook file: jupyter nbconvert --to notebook --execute --inplace notebook_name.ipynb
+
+
 ## Notation:
 Mathematical notation rules applied throughout this project are taken from [this](https://wookai.github.io/paper-tips-and-tricks/math.html) article.
 ![Notation rules](images/notation_rules.png)

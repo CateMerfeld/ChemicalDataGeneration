@@ -17,6 +17,9 @@ import torch
 
 import random
 
+from scipy.stats import zscore
+from scipy.spatial import ConvexHull
+
 def flatten_and_bin(predicted_embeddings_batches):
     """
     Flatten prediction batches and convert to binary format.
@@ -328,10 +331,27 @@ def predict_embeddings(dataset, model, device, criterion):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
+def add_hulls(ax, pca, chem_data, threshold=3):
+    # embeddings_by_bkg_list = [chem_data.iloc[::2], chem_data.iloc[1::2]]
+    # for df in embeddings_by_bkg_list:
+    z_scores = np.abs(zscore(chem_data))
+    threshold = threshold  # Adjust threshold as needed
+
+    # Exclude outliers
+    filtered_data = chem_data[(z_scores < threshold).all(axis=1)]
+    # print(f'Excluded {round((len(chem_data) - len(filtered_data))/len(chem_data)*100)}% of data points as outliers.')
+
+    transformed_data = pca.transform(filtered_data)
+    hull = ConvexHull(transformed_data)
+    for simplex in hull.simplices:
+        ax.plot(transformed_data[simplex, 0], transformed_data[simplex, 1], 'r-') 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
  
 def plot_emb_pca(
         all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=True, 
-        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True):
+        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True, plot_hulls=False, hull_data=None):
     """
     This function performs Principal Component Analysis (PCA) on chemical embeddings and visualizes the results
     in a 2D scatter plot. It overlays additional data from ion mobility spectrometry (IMS) and mass spectrometry 
@@ -403,19 +423,25 @@ def plot_emb_pca(
     for chem in all_chemical_names:
         idx = all_chemical_names.index(chem)
         color = next(color_cycle)['color']
-        # only label 1st 8 chemicals to avoid giant legend
-        # ax.scatter(0,0, color = color, label=chem)
-        if idx < 8:
+        # Plot ChemNet embeddings
+        if idx < 8: # only label 1st 8 chemicals to avoid giant legend
             ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem)#, s=200)
         else:
             ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color)#, s=75)
-        # Transform ims_embeddings for the current chemical, if we have ims data for chem
+
+        # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
         if chem in ims_labels:
             # transform all data for the given chemical. Exclude last col (label)
             ims_transformed = pca.transform(ims_embeddings[ims_embeddings['Label'] == chem].iloc[:, :-1])
             
             # Scatter plot for ims_embeddings with a different marker
             ax.scatter(ims_transformed[:, 0], ims_transformed[:, 1], marker='o', facecolors='none', edgecolors=color)#marker='x', color=color)#, s=75)
+            if plot_hulls:
+                if hull_data is None:
+                    hull_data = ims_embeddings
+                add_hulls(ax, pca, hull_data[hull_data['Label'] == chem].iloc[:, :-1])
+
+
         # repeat for mass spec
         if mass_spec_labels:
             if chem in mass_spec_labels:
@@ -480,8 +506,9 @@ def plot_emb_pca(
 # ------------------------------------------------------------------------------------------
 
 def plot_generation_results_pca(
-        true_spectra, synthetic_spectra, chem_labels, results_type, sample_size=None, log_wandb=False,
-        mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=False):
+        true_spectra, synthetic_spectra, chem_labels, results_type, sample_size=None, 
+        chem_of_interest=None, log_wandb=False, mse_insert=None, 
+        insert_position=[0.05, 0.05], show_wandb_run_name=False):
     
     pca = PCA(n_components=2)
     pca.fit(true_spectra.iloc[:,:-1])
@@ -500,11 +527,22 @@ def plot_generation_results_pca(
         color = color['color']
         # Transform data for the current chemical, exclude last col (label)
         transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
-        ax.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-        transformed_synthetic_spectra = pca.transform(synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1])
-        # Scatter plot for synthetic spectra with a different marker
-        ax.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='*', color=color)
-        
+        # if specified, make makers larger for the chemical of interest
+        if chem_of_interest is not None:
+            if chem != chem_of_interest:
+                ax.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=10)
+            else:
+                ax.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=100)
+        else:
+            ax.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
+
+        synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
+        # only plot synthetic spectra if there are any for given chemical
+        if synthetic_chem.shape[0] > 0:
+            transformed_synthetic_spectra = pca.transform(synthetic_chem)
+            # Scatter plot for synthetic spectra with a different marker
+            ax.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='*', color=color)
+
     # Add legend
     legend1 = ax.legend(loc='upper right', title='Label')
     ax.add_artist(legend1)
@@ -550,6 +588,189 @@ def plot_generation_results_pca(
         wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
 
     plt.show()
+
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def plot_generation_results_pca_single_chem_side_by_side(
+        true_spectra, synthetic_spectra, chem_labels, results_type, sample_size=None, 
+        chem_of_interest=None, log_wandb=False, mse_insert=None, 
+        insert_position=[0.05, 0.05], show_wandb_run_name=False, x_lims=None, y_lims=None):
+    
+    # if pca is None:
+    pca = PCA(n_components=2)
+    pca.fit(true_spectra.iloc[:,:-1])
+
+    _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+
+    # Setting x and y limits so that plot scales are the same
+    if x_lims is not None:
+        ax1.set_xlim(x_lims[0], x_lims[1])
+        ax2.set_xlim(x_lims[0], x_lims[1])
+    if y_lims is not None:
+        ax1.set_ylim(y_lims[0], y_lims[1])
+        ax2.set_ylim(y_lims[0], y_lims[1])
+
+    # Create a color cycle for distinct colors
+    color_cycle = plt.gca()._get_lines.prop_cycler
+
+    if sample_size is not None:
+        true_spectra = true_spectra.sample(n=sample_size, random_state=42)
+
+    # Plot for true spectra
+    for chem, color in zip(chem_labels, color_cycle):
+        color = color['color']
+        transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
+        
+        if chem_of_interest is not None:
+            marker_size = 50 if chem == chem_of_interest else 10
+            if chem == chem_of_interest:
+                ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
+            else:
+                true_sample = true_spectra[true_spectra['Label'] == chem].iloc[:, :-1].sample(n=10, random_state=42)
+                transformed_sample = pca.transform(true_sample)
+                ax1.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
+                ax2.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
+        # ax2.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', color=color, s=1)
+            # ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
+        # else:
+        #     ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
+        
+        synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
+        
+        if synthetic_chem.shape[0] > 0:
+            transformed_synthetic_spectra = pca.transform(synthetic_chem)
+            ax2.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='o', label=chem, color=color, s=50)
+    
+    # if chem_of_interest is not None:
+    ax1.set_title(f'Experimental {results_type} Spectra PCA {chem_of_interest}', fontsize=18)
+    ax2.set_title(f'Synthetic {results_type} Spectra PCA {chem_of_interest}', fontsize=18)
+    # else:
+    #     ax1.set_title(f'Experimental {results_type} Spectra PCA', fontsize=18)
+    #     ax2.set_title(f'Synthetic {results_type} Spectra PCA', fontsize=18)
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+
+    ax2.set_xticks([])
+    ax2.set_yticks([])
+
+    # Add legends
+    ax1.legend(loc='upper right', title='Label')
+    ax2.legend(loc='upper right', title='Label')
+
+    # marker_legends = [
+    #     plt.Line2D([0], [0], marker='o', color='w', label='Experimental Spectra', markerfacecolor='black', markersize=6),
+    #     plt.Line2D([0], [0], marker='*', color='w', label='Synthetic Spectra', markerfacecolor='black', markersize=10),
+    # ]
+    
+    # # Add marker type legend
+    # ax1.add_artist(plt.legend(handles=marker_legends, title='Marker Types', loc='upper left'))
+
+    if mse_insert is not None:
+        plt.text(insert_position[0], insert_position[1], f'MSE: {format(mse_insert, ".2e")}', 
+                 transform=plt.gca().transAxes, fontsize=14, verticalalignment='bottom',
+                 horizontalalignment='left', bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  
+    
+    if show_wandb_run_name:
+        run_name = wandb.run.name
+        xlim = plt.xlim()
+        ylim = plt.ylim()
+        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]), ylim[0] + 0.01 * (ylim[1] - ylim[0]),
+                 f'WandB run: {run_name}', fontsize=8, verticalalignment='bottom',
+                 horizontalalignment='right', bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
+
+    plt.tight_layout()
+
+    if log_wandb:
+        plt.savefig('tmp_plot.png', format='png', dpi=300)
+        wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
+
+    plt.show()
+
+
+    # _, ax = plt.subplots(1, 2, figsize=(8,6))
+
+    # axes = ax.flatten()
+
+    # if sample_size is not None:
+    #     true_spectra = true_spectra.sample(n = sample_size, random_state=42)
+
+    # # for each axis create a plot
+    # for idx in range(2):
+
+    #     # Create a color cycle for distinct colors
+    #     color_cycle = plt.gca()._get_lines.prop_cycler
+
+    #     # Scatter plot
+    #     for chem, color in zip(chem_labels, color_cycle):
+    #         # color = next(color_cycle)['color']
+    #         color = color['color']
+    #         # Transform data for the current chemical, exclude last col (label)
+    #         transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
+    #         # if specified, make makers larger for the chemical of interest
+    #         if chem_of_interest is not None:
+    #             if chem != chem_of_interest:
+    #                 axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=10)
+    #             else:
+    #                 axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=100)
+    #         else:
+    #             axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
+    #         synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
+    #         # only plot synthetic spectra if there are any for given chemical
+    #         if synthetic_chem.shape[0] > 0:
+    #             print(synthetic_chem.shape)
+    #             transformed_synthetic_spectra = pca.transform(synthetic_chem)
+    #             # Scatter plot for synthetic spectra with a different marker
+    #             axes[idx].scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='*', color=color)
+            
+    #     # Add legend
+    #     legend1 = ax.legend(loc='upper right', title='Label')
+    #     axes[idx].add_artist(legend1)
+
+    #     marker_legends = [
+    #     plt.Line2D([0], [0], marker='o', color='w', label='Experimental Spectra', markerfacecolor='black', markersize=6),
+    #     plt.Line2D([0], [0], marker='*', color='w', label='Synthetic Spectra', markerfacecolor='black', markersize=10),
+    #     ]
+        
+
+    #     # Add the second legend
+    #     legend2 = axes[idx].legend(handles=marker_legends, title='Marker Types', loc='upper left')
+    #     axes[idx].add_artist(legend2)
+
+    #     if mse_insert is not None:
+    #         # Add mse text in the corner with a box
+    #         plt.text(insert_position[0], insert_position[1], f'MSE: {format(mse_insert, ".2e")}', 
+    #             transform=plt.gca().transAxes,  # Use axis coordinates
+    #             fontsize=14,
+    #             verticalalignment='bottom',  # Align text to the top
+    #             horizontalalignment='left',  # Align text to the right
+    #             bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  # Box properties
+        
+    #     if show_wandb_run_name == True:
+    #         run_name = wandb.run.name
+    #         # Add wandb run text in the corner
+    #         xlim = plt.xlim()
+    #         ylim = plt.ylim()
+    #         plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
+    #                 ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
+    #                 f'WandB run: {run_name}', 
+    #                 fontsize=8,
+    #                 verticalalignment='bottom',  # Align text to the top
+    #                 horizontalalignment='right',  # Align text to the right
+    #                 bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
+
+    #     plt.xticks([])
+    #     plt.yticks([])
+    #     if idx == 0:
+    #         plt.title(f'Experimental vs. Synthetic {results_type} Spectra PCA', fontsize=18)
+
+    # if log_wandb:
+    #     plt.savefig('tmp_plot.png', format='png', dpi=300)
+    #     wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
+
+    # plt.show()
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -1047,7 +1268,7 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
 
     embedding_df : pd.DataFrame
         DataFrame containing embeddings for chemicals, with 'Embedding Floats' 
-        column corresponding to chemical names.
+        column corresponding to ChemNet embeddings.
 
     device : torch.device
         The device (CPU or GPU) on which to store the tensors.

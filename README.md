@@ -15,10 +15,9 @@ https://nvie.com/posts/a-successful-git-branching-model/
 
 ## Steps to run this repo:
 1. Set up virtual environment using ```python3 -m venv your_env_name```. Activate new virtual env with ```.\your_env_name\Scripts\activate``` for Windows or ```source your_env_name/bin/activate``` for macOS/Linux. 
-
-If using micromamba:
-  - Create with ```micromamba create -n data_gen_venv python=3.10```.
-  - Activate with ```micromamba activate your_env_name```.
+  - If using micromamba:
+    - Create with ```micromamba create -n data_gen_venv python=3.10```.
+    - Activate with ```micromamba activate your_env_name```.
 2. Install packages using ```pip install -r requirements.txt```. Verify correct installation with ```pip list```.
 3. Add virtual environment to ```.gitignore``` as it is unnecessary for GitHub to track.
 4. Create new kernel using ```python -m ipykernel install --user --name=your_kernel_name```.

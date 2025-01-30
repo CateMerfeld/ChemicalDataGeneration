@@ -14,14 +14,15 @@ https://nvie.com/posts/a-successful-git-branching-model/
 --->
 
 ## Steps to run this repo:
-1. Set up virtual environment using ```python3 -m venv your_env_name```. Activate new virtual env with ```.\your_env_name\Scripts\activate``` for Windows or ```source your_env_name/bin/activate``` for macOS/Linux. 
+1. Set up virtual environment using ```python3 -m venv your_env_name``` for Linux or ```python -m venv your_env_name```. Activate new virtual env with ```source your_env_name/bin/activate``` for macOS/Linux ```.\your_env_name\Scripts\activate``` for Windows. 
   - If using micromamba:
-    - Create with ```micromamba create -n data_gen_venv python=3.10```.
+    - Create with ```micromamba create -n your_env_name python=3.10```.
     - Activate with ```micromamba activate your_env_name```.
-2. Install packages using ```pip install -r requirements.txt```. Verify correct installation with ```pip list```.
-3. Add virtual environment to ```.gitignore``` as it is unnecessary for GitHub to track.
-4. Create new kernel using ```python -m ipykernel install --user --name=your_kernel_name```.
-5. If necessary, update git config with username and email using ```git config --global user.name "Your Name"``` and ```git config --global user.email "youremail@example.com"```.
+2. Make sure Python interpreter is pointing to: ```/path/to/your/project/venv/bin/python```
+3. Install packages using ```pip install -r requirements.txt```. Verify correct installation with ```pip list```.
+4. Add virtual environment to ```.gitignore``` as it is unnecessary for GitHub to track.
+5. Create new kernel using ```python -m ipykernel install --user --name=your_kernel_name```.
+6. If necessary, update git config with username and email using ```git config --global user.name "Your Name"``` and ```git config --global user.email "youremail@example.com"```.
 
 ## Steps to run on Turing:
 1. ssh into turing account and run commands ```sinteractive``` and ```tmux```. 

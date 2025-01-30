@@ -1309,7 +1309,7 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def create_dataset_tensors_for_generator(carl_dataset, embedding_preds_df, device):
+def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device):
     """
     Create tensors from the provided CARL dataset and embedding DataFrame.
 
@@ -1337,17 +1337,20 @@ def create_dataset_tensors_for_generator(carl_dataset, embedding_preds_df, devic
     # drop first col ('index') and last 9 cols ('Label', OneHot encodings) to get just CARLS and predicted embeddings
     carls = carl_dataset.iloc[:,1:-9]
     # embeddings df doesn't have 'Label' col, so dropping last 8 cols instead of last 9
-    embedding_preds = embedding_preds_df.iloc[:,1:-8]
+    embedding_preds = embedding_preds.iloc[:,1:-8]
 
     chem_encodings = carl_dataset.iloc[:,-8:]
+    print('sup')
+    del carl_dataset
 
-    embeddings_preds_tensor = torch.Tensor(embedding_preds.values).to(device)
-    carl_tensor = torch.Tensor(carls.values).to(device)
-    chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
+    embeddings_preds = torch.Tensor(embedding_preds.values).to(device)
+    carls = torch.Tensor(carls.values).to(device)
+    print('hello')
+    chem_encodings = torch.Tensor(chem_encodings.values).to(device)
     # torch.Tensor changes the vals after decimal but I need those to stay the same so using torch.tensor instead
-    carl_indices_tensor = torch.tensor(carl_dataset['index']).to(device)
-
-    return embeddings_preds_tensor, carl_tensor, chem_encodings_tensor, carl_indices_tensor
+    carl_indices = torch.tensor(carl_dataset['index']).to(device)
+    print('hi')
+    return embeddings_preds, carls, chem_encodings, carl_indices
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------

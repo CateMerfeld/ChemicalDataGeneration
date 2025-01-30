@@ -3,8 +3,8 @@ click==8.1.7
 # git+https://github.com/rossant/ipycache.git # for %%cache. 
 dask==2023.5.0 
 gputil==1.4.0
-# ipykernel ==6.29.5
-# ipywidgets ==8.1.5
+ipykernel ==6.29.5
+ipywidgets ==8.1.5
 numpy==1.24.4 # most recent version of numpy that works with python 3.8.10
 matplotlib==3.7.1
 pandas ==1.5.3

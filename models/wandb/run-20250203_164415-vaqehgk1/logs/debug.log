@@ -1,0 +1,369 @@
+2025-02-03 16:44:15,365 INFO    MainThread:6816 [wandb_setup.py:_flush():76] Current SDK version is 0.17.0
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_setup.py:_flush():76] Configure stats pid to 6816
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_setup.py:_flush():76] Loading settings from C:\Users\cmdunham\.config\wandb\settings
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_setup.py:_flush():76] Loading settings from c:\Users\cmdunham\OneDrive\Documents\phd_program\ChemicalDataGeneration\models\wandb\settings
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'notebook_name': 'C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb'}
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_setup.py:_flush():76] Applying login settings: {}
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_init.py:_log_setup():520] Logging user logs to c:\Users\cmdunham\OneDrive\Documents\phd_program\ChemicalDataGeneration\models\wandb\run-20250203_164415-vaqehgk1\logs\debug.log
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_init.py:_log_setup():521] Logging internal logs to c:\Users\cmdunham\OneDrive\Documents\phd_program\ChemicalDataGeneration\models\wandb\run-20250203_164415-vaqehgk1\logs\debug-internal.log
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_init.py:_jupyter_setup():466] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x000001C926D5D030>
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_init.py:init():560] calling init triggers
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_init.py:init():567] wandb.init called with sweep_config: {}
+config: {'wandb_entity': 'catemerfeld', 'wandb_project': 'ims_encoder_decoder', 'gpu': True, 'threads': 1, 'architecture': 'carl_encoder', 'optimizer': 'AdamW', 'loss': 'MSELoss', 'dataset': 'carls', 'target_embedding': 'ChemNet', 'batch_size': 32, 'epochs': 500, 'learning_rate': 1e-05}
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_init.py:init():610] starting backend
+2025-02-03 16:44:15,366 INFO    MainThread:6816 [wandb_init.py:init():614] setting up manager
+2025-02-03 16:44:15,370 INFO    MainThread:6816 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=spawn, using: spawn
+2025-02-03 16:44:15,376 INFO    MainThread:6816 [wandb_init.py:init():622] backend started and connected
+2025-02-03 16:44:15,390 INFO    MainThread:6816 [wandb_run.py:_label_probe_notebook():1328] probe notebook
+2025-02-03 16:44:15,391 INFO    MainThread:6816 [wandb_init.py:init():711] updated telemetry
+2025-02-03 16:44:15,715 INFO    MainThread:6816 [wandb_init.py:init():744] communicating run to backend with 90.0 second timeout
+2025-02-03 16:44:16,012 INFO    MainThread:6816 [wandb_run.py:_on_init():2396] communicating current version
+2025-02-03 16:44:16,113 INFO    MainThread:6816 [wandb_run.py:_on_init():2405] got version response upgrade_message: "wandb version 0.19.5 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2025-02-03 16:44:16,113 INFO    MainThread:6816 [wandb_init.py:init():795] starting run threads in backend
+2025-02-03 16:44:16,773 INFO    MainThread:6816 [wandb_run.py:_console_start():2374] atexit reg
+2025-02-03 16:44:16,773 INFO    MainThread:6816 [wandb_run.py:_redirect():2229] redirect: wrap_raw
+2025-02-03 16:44:16,773 INFO    MainThread:6816 [wandb_run.py:_redirect():2294] Wrapping output streams.
+2025-02-03 16:44:16,773 INFO    MainThread:6816 [wandb_run.py:_redirect():2319] Redirects installed.
+2025-02-03 16:44:16,775 INFO    MainThread:6816 [wandb_init.py:init():838] run started, returning control to user process
+2025-02-03 16:45:53,673 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:45:53,892 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:45:53,892 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:45:59,237 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:45:59,237 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:45:59,400 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:45:59,400 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:46:16,785 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:46:16,987 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:46:17,132 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:46:17,132 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:46:22,625 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:46:41,118 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:46:41,278 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:46:41,278 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:47:29,081 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:47:29,117 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:47:29,295 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:47:29,295 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:47:39,965 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:47:39,970 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:47:40,122 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:47:40,122 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:47:41,102 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:47:41,156 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:47:41,319 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:47:41,319 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:04,723 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:04,779 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:04,929 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:04,933 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:39,996 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:39,996 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:40,267 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:40,267 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:40,285 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:40,285 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:40,517 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:40,517 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:40,533 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:40,541 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:40,735 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:40,735 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:41,161 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:41,165 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:41,327 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:41,327 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:41,342 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:41,347 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:41,528 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:41,528 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:42,136 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:42,145 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:42,316 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:42,316 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:42,332 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:42,332 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:42,502 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:42,502 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:42,659 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:42,663 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:42,814 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:42,814 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:44,140 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:44,146 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:44,303 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:44,303 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:44,308 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:44,310 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:44,479 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:44,479 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:44,485 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:44,493 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:44,632 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:44,632 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:46,220 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:46,226 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:46,393 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:46,393 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:48,647 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:48,650 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:48,795 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:48,795 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:48,811 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:48,818 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:48,960 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:48,960 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:49,002 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:49,007 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:49,159 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:49,159 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:49,177 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:49,182 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:49,345 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:49,345 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:48:49,673 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:48:49,677 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:48:49,823 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:48:49,823 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:49:02,897 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:49:02,902 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:49:03,089 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:49:03,089 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:49:24,680 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:49:24,687 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:49:25,310 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:49:25,310 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:49:25,323 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:49:25,323 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:49:25,753 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:49:25,753 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:49:27,799 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:49:27,835 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:49:28,803 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:49:28,803 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:49:50,158 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:49:50,258 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:49:50,421 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:49:50,421 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:50:03,160 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:50:03,165 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:50:04,535 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:50:04,535 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:50:04,554 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:50:04,554 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:50:04,896 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:50:04,896 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:50:04,903 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:50:39,520 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:50:39,717 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:50:39,717 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:10,818 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:10,823 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:10,991 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:10,991 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:10,999 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:11,005 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:11,164 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:11,164 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:11,606 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:11,611 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:11,760 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:11,760 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:11,944 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:11,945 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:12,099 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:12,099 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:12,217 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:12,217 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:12,375 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:12,375 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:12,844 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:12,849 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:13,002 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:13,002 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:25,413 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:25,417 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:25,589 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:25,591 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:25,598 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:25,602 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:25,804 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:25,804 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:26,198 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:26,202 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:26,346 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:26,346 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:26,493 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:26,501 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:26,650 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:26,650 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:26,663 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:26,668 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:26,855 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:26,855 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:26,867 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:26,872 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:27,021 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:27,021 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:28,216 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:28,380 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:28,537 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:28,538 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:34,987 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:34,991 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:35,144 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:35,145 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:36,584 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:36,598 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:36,829 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:36,829 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:38,584 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:38,592 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:38,758 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:38,758 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:38,772 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:38,776 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:38,925 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:38,925 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:38,932 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:38,941 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:39,108 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:39,108 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:39,119 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:39,133 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:39,285 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:39,285 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:39,301 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:39,317 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:39,457 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:39,457 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:40,301 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:40,316 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:40,463 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:40,463 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:53,960 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:53,964 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:54,130 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:54,131 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:54,147 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:54,152 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:54,328 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:54,328 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:54,335 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:54,342 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:54,744 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:54,744 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:55,690 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:55,693 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:55,847 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:55,847 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:55,853 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:55,853 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:55,996 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:55,996 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:51:56,355 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:51:56,370 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:51:56,522 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:51:56,522 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:52:03,647 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:52:03,651 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:52:03,821 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:52:03,821 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:52:04,088 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:52:04,090 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:52:04,250 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:52:04,250 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:52:06,270 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:52:06,305 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:52:06,736 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:52:06,736 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:52:15,420 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:52:15,434 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:52:15,602 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:52:15,602 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:52:46,369 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:52:46,387 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:52:46,545 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:52:46,545 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:53:14,941 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:53:14,946 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:53:15,110 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:53:15,110 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:53:15,125 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:53:15,125 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:53:15,275 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:53:15,275 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:53:17,036 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:53:36,112 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:53:36,294 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:53:36,294 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:56:20,396 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:56:20,424 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:56:20,598 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:56:20,598 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:56:31,464 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:57:30,268 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:57:30,423 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:57:30,423 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 16:59:27,954 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 16:59:28,434 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 16:59:28,592 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 16:59:28,592 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:08,996 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:09,000 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:09,219 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:09,219 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:09,227 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:09,235 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:09,374 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:09,374 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:10,369 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:10,591 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:10,745 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:10,745 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:23,517 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:23,638 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:23,802 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:23,802 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:31,946 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:31,953 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:32,114 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:32,114 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:32,132 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:32,138 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:32,298 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:32,298 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:32,325 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:32,330 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:32,491 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:32,491 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:32,875 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:32,879 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:33,024 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:33,024 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:33,045 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:33,056 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:33,214 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:33,214 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:33,230 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:33,231 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:33,398 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:33,398 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:33,416 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:33,419 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:33,571 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:33,571 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:36,238 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:36,242 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:36,413 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:36,413 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:00:39,782 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:00:39,982 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:00:40,157 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:00:40,157 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend
+2025-02-03 17:08:30,059 INFO    MainThread:6816 [wandb_init.py:_resume_backend():436] resuming backend
+2025-02-03 17:08:30,116 INFO    MainThread:6816 [jupyter.py:_save_ipynb():384] looking for notebook: C:/Users/cmdunham/OneDrive/Documents/phd_program/ChemicalDataGeneration/models/carl_encoder.ipynb
+2025-02-03 17:08:30,293 INFO    MainThread:6816 [wandb_init.py:_pause_backend():429] saved code: <Artifact source-ims_encoder_decoder-C__Users_cmdunham_OneDrive_Documents_phd_program_ChemicalDataGeneration_models_carl_encoder.ipynb>
+2025-02-03 17:08:30,293 INFO    MainThread:6816 [wandb_init.py:_pause_backend():431] pausing backend

@@ -240,10 +240,13 @@ def preds_to_emb_pca_plot(
         - predicted_embeddings_flattened (list): Flattened list of predicted embeddings.
         - chem_names (list): List of chemical names corresponding to the predicted embeddings.
     """
-
-    # Currently, preds and name encodings are lists of [n_batches, batch_size], flattening to lists of [n_samples]
-    predicted_embeddings_flattened = [emb.cpu().detach().numpy() for emb_list in predicted_embeddings for emb in emb_list]
-    chem_name_encodings_flattened = [enc.cpu() for enc_list in output_name_encodings for enc in enc_list]
+    try:
+        # Currently, preds and name encodings are lists of [n_batches, batch_size], flattening to lists of [n_samples]
+        predicted_embeddings_flattened = [emb.cpu().detach().numpy() for emb_list in predicted_embeddings for emb in emb_list]
+        chem_name_encodings_flattened = [enc.cpu() for enc_list in output_name_encodings for enc in enc_list]
+    except AttributeError as e:
+        predicted_embeddings_flattened = [emb for emb_list in predicted_embeddings for emb in emb_list]
+        chem_name_encodings_flattened = [enc for enc_list in output_name_encodings for enc in enc_list]
 
     # Get chemical names from encodings
     chem_names = [sorted_chem_names[list(encoding).index(1)] for encoding in chem_name_encodings_flattened]
@@ -1120,7 +1123,7 @@ def train_model(
 
         if lr_scheduler:
             # Initialize the learning rate scheduler with patience of 5 epochs 
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1)#, verbose=True)
 
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
@@ -1202,15 +1205,15 @@ def train_model(
                 else:
                     epochs_without_validation_improvement += 1
 
-                if model == 'Encoder':
+                if model_type == 'Encoder':
                     # log losses to wandb
                     wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
-                elif model == 'Generator':
+                elif model_type == 'Generator':
                     # log losses to wandb
                     wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
                 if (epoch + 1) % 10 == 0 or epoch == 0:
-                    print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
+                    print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')

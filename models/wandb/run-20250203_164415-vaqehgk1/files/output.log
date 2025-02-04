@@ -1,0 +1,22 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  1e-05
+Selected GPU ID: 0
+  Name: NVIDIA GeForce RTX 4060 Laptop GPU
+  Memory Free: 1361.0 MB
+  Memory Used: 6597.0 MB
+  GPU Load: 0.00%
+Current device ID:  cuda:0
+PyTorch current device ID: 0
+PyTorch current device name: NVIDIA GeForce RTX 4060 Laptop GPU
+Selected GPU ID: 0
+  Name: NVIDIA GeForce RTX 4060 Laptop GPU
+  Memory Free: 1361.0 MB
+  Memory Used: 6597.0 MB
+  GPU Load: 0.00%
+Current device ID:  cuda:0
+PyTorch current device ID: 0

@@ -1025,7 +1025,7 @@ def train_model(
         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
         encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, input_type='IMS',
-        embedding_type='ChemNet', show_wandb_run_name=True, lr_scheduler = False
+        embedding_type='ChemNet', show_wandb_run_name=True, lr_scheduler = False, patience=5
         ):
     
     """
@@ -1123,7 +1123,7 @@ def train_model(
 
         if lr_scheduler:
             # Initialize the learning rate scheduler with patience of 5 epochs 
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=patience, factor=0.1, verbose=True)
 
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
@@ -1559,7 +1559,8 @@ def train_generator(
         train_data, val_data, test_data, device, config, wandb_kwargs, 
         model_hyperparams, sorted_chem_names, generator_path, 
         save_plots_to_wandb = True, early_stop_threshold=10, 
-        show_wandb_run_name=True, lr_scheduler = False, num_plots = 1
+        show_wandb_run_name=True, lr_scheduler = False, 
+        num_plots = 1, patience=5
         ):
 
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
@@ -1591,7 +1592,7 @@ def train_generator(
 
         if lr_scheduler:
             # Initialize the learning rate scheduler with patience of 5 epochs 
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=patience, factor=0.1, verbose=True)
 
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
@@ -1661,8 +1662,12 @@ def train_generator(
                 val_average_loss = epoch_val_loss/len(val_dataset)
 
                 if lr_scheduler:
+                    for i in optimizer.param_groups:
+                        print(f'LR for group {i}: ',optimizer.param_groups[i]['lr'])
                     scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
-                    # get the new learning rate (to give to wandb)
+                    for i in optimizer.param_groups:
+                        print(f'New LR for group {i}: ',optimizer.param_groups[i]['lr'])
+                    print('------------------------')
                     final_lr = optimizer.param_groups[0]['lr']
 
                 if val_average_loss < lowest_val_model_loss:

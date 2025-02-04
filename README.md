@@ -25,7 +25,7 @@ https://nvie.com/posts/a-successful-git-branching-model/
 5. If necessary, update git config with username and email using ```git config --global user.name "Your Name"``` and ```git config --global user.email "youremail@example.com"```.
 
 ## Steps to run on Turing:
-1. ssh into turing account and run commands ```sinteractive``` and ```tmux```. 
+1. ssh into turing account and run commands ```sinteractive``` and ```tmux```.  (```tmux kill-server``` to kill all existing tmux sessions)
 2. Activate virtual env using one of the commands above.
 3. To run jupyter notebooks and save output to notebook file: jupyter nbconvert --to notebook --execute --inplace notebook_name.ipynb
 

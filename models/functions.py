@@ -1123,7 +1123,7 @@ def train_model(
 
         if lr_scheduler:
             # Initialize the learning rate scheduler with patience of 5 epochs 
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1)#, verbose=True)
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
 
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
@@ -1182,7 +1182,11 @@ def train_model(
                 val_average_loss = epoch_val_loss/len(val_dataset)
 
                 if lr_scheduler:
+                    # old_lr = get_last_lr(scheduler)
                     scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
+                    # new_lr = scheduler._last_lr
+                    # if new_lr != old_lr:
+                    # print('Old lr: {}. New lr: {}'.format(old_lr, new_lr))
                     # get the new learning rate (to give to wandb)
                     final_lr = optimizer.param_groups[0]['lr']
 
@@ -1196,11 +1200,11 @@ def train_model(
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
                         # Save the model state
                         torch.save(model.state_dict(), encoder_path)
-                        print(f'Saved best model at epoch {epoch}')
+                        print(f'Saved best model at epoch {epoch+1}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {epoch}')
+                        print(f'Model best validation loss at {epoch+1}')
                 
                 else:
                     epochs_without_validation_improvement += 1
@@ -1213,13 +1217,13 @@ def train_model(
                     wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
                 if (epoch + 1) % 10 == 0 or epoch == 0:
-                    print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
+                    print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
             else:
-                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
-                wandb.log({'Early Stopping Ecoch':epoch})
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
+                wandb.log({'Early Stopping Ecoch':epoch+1})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 plot_pca(
                     train_data, combo['batch_size'], model, device, 
@@ -1671,11 +1675,11 @@ def train_generator(
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
                         # Save the model state
                         torch.save(model.state_dict(), generator_path)
-                        print(f'Saved best model at epoch {epoch}')
+                        print(f'Saved best model at epoch {epoch+1}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {epoch}')
+                        print(f'Model best validation loss at {epoch+1}')
                 
                 else:
                     epochs_without_validation_improvement += 1
@@ -1689,8 +1693,8 @@ def train_generator(
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
             else:
-                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
-                wandb.log({'Early Stopping Ecoch':epoch})
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
+                wandb.log({'Early Stopping Ecoch':epoch+1})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
                 train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)

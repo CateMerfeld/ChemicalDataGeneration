@@ -1,0 +1,371 @@
+{
+    "os": "Linux-5.15.0-122-generic-x86_64-with-glibc2.31",
+    "python": "3.10.16",
+    "heartbeatAt": "2025-02-04T13:53:37.217818",
+    "startedAt": "2025-02-04T13:53:35.998698",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "-f",
+        "/tmp/tmp2272am04.json",
+        "--HistoryManager.hist_file=:memory:"
+    ],
+    "state": "running",
+    "program": "<python with no main file>",
+    "codePathLocal": null,
+    "git": {
+        "remote": "https://github.com/CateMerfeld/ChemicalDataGeneration.git",
+        "commit": "161620b6dd38a83a09c18be91e7fe0d1c0be9143"
+    },
+    "email": "catemerfeld@gmail.com",
+    "root": "/home/cmdunham/ChemicalDataGeneration",
+    "host": "gpu-4-11",
+    "username": "cmdunham",
+    "executable": "/home/cmdunham/micromamba/envs/data_gen_venv/bin/python",
+    "cpu_count": 64,
+    "cpu_count_logical": 64,
+    "cpu_freq": {
+        "current": 2828.912593750001,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 3707.569,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2437.628,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 3602.752,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 3600.717,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2795.029,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 453.1394157409668,
+            "used": 19.709468841552734
+        }
+    },
+    "gpu": "NVIDIA A100-SXM4-80GB",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA A100-SXM4-80GB",
+            "memory_total": 85899345920
+        }
+    ],
+    "memory": {
+        "total": 503.4882392883301
+    }
+}

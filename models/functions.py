@@ -1198,8 +1198,9 @@ def train_model(
 
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
-                        # Save the model state
-                        torch.save(model.state_dict(), encoder_path)
+                        # Save the model
+                        # torch.save(model.state_dict(), encoder_path)
+                        torch.save(model, encoder_path)
                         print(f'Saved best model at epoch {epoch+1}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
@@ -1678,8 +1679,9 @@ def train_generator(
 
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
-                        # Save the model state
-                        torch.save(model.state_dict(), generator_path)
+                        # Save the model
+                        # torch.save(model.state_dict(), generator_path)
+                        torch.save(model, generator_path)
                         print(f'Saved best model at epoch {epoch+1}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo

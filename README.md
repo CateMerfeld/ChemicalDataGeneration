@@ -29,6 +29,16 @@ https://nvie.com/posts/a-successful-git-branching-model/
 2. Activate virtual env using one of the commands above.
 3. To run jupyter notebooks and save output to notebook file: jupyter nbconvert --to notebook --execute --inplace notebook_name.ipynb
 
+## Steps to set up ssh:
+1. Use ```nano config``` to update config file (likely at ~/.ssh/config) with:
+  Host [host_nickname]
+    HostName [host address, like: turing.wpi.edu]
+    User [username]
+2. Eliminate need to enter passphrase by:
+* starting ssh agent with ```eval "$(ssh-agent -s)"```.
+* adding your ssh key with ```ssh-add ~/.ssh/id_rsa```.
+3. ssh into vm with ```ssh host_nickname```.
+
 
 ## Notation:
 Mathematical notation rules applied throughout this project are taken from [this](https://wookai.github.io/paper-tips-and-tricks/math.html) article.

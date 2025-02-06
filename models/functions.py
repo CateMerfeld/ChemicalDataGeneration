@@ -20,6 +20,14 @@ import random
 from scipy.stats import zscore
 from scipy.spatial import ConvexHull
 
+
+def create_individual_chemical_dataset_tensors(carl_dataset, embedding_preds, chem, device):
+    chem_carl_dataset = carl_dataset[carl_dataset['Label'] == chem]
+    del carl_dataset
+    chem_embedding_preds = embedding_preds[embedding_preds[chem] == 1]
+    del embedding_preds
+    return create_dataset_tensors_for_generator(chem_carl_dataset, chem_embedding_preds, device)
+
 def flatten_and_bin(predicted_embeddings_batches):
     """
     Flatten prediction batches and convert to binary format.
@@ -1348,16 +1356,13 @@ def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device):
     embedding_preds = embedding_preds.iloc[:,1:-8]
 
     chem_encodings = carl_dataset.iloc[:,-8:]
-    print('sup')
-    del carl_dataset
+    # del carl_dataset
 
     embeddings_preds = torch.Tensor(embedding_preds.values).to(device)
     carls = torch.Tensor(carls.values).to(device)
-    print('hello')
     chem_encodings = torch.Tensor(chem_encodings.values).to(device)
     # torch.Tensor changes the vals after decimal but I need those to stay the same so using torch.tensor instead
     carl_indices = torch.tensor(carl_dataset['index']).to(device)
-    print('hi')
     return embeddings_preds, carls, chem_encodings, carl_indices
 
 # ------------------------------------------------------------------------------------------

@@ -21,12 +21,16 @@ from scipy.stats import zscore
 from scipy.spatial import ConvexHull
 
 
-def create_individual_chemical_dataset_tensors(carl_dataset, embedding_preds, chem, device):
+# def create_individual_chemical_dataset_tensors(carl_dataset, embedding_preds, device, chem, multiple_carls_per_spec=True):
+def create_individual_chemical_dataset_tensors(carl_dataset_file_path, embedding_preds_file_path, device=None, chem=None, multiple_carls_per_spec=True):
+    carl_dataset = pd.read_feather(carl_dataset_file_path)
+    carl_dataset.drop('level_0', axis=1, inplace=True)
     chem_carl_dataset = carl_dataset[carl_dataset['Label'] == chem]
     del carl_dataset
-    chem_embedding_preds = embedding_preds[embedding_preds[chem] == 1]
+    embedding_preds = pd.read_csv(embedding_preds_file_path)
+    chem_embedding_preds = embedding_preds[embedding_preds[chem] == 1.0]
     del embedding_preds
-    return create_dataset_tensors_for_generator(chem_carl_dataset, chem_embedding_preds, device)
+    return create_dataset_tensors_for_generator(chem_carl_dataset, chem_embedding_preds, device, multiple_carls_per_spec)
 
 def flatten_and_bin(predicted_embeddings_batches):
     """
@@ -522,6 +526,7 @@ def plot_generation_results_pca(
         insert_position=[0.05, 0.05], show_wandb_run_name=False):
     
     pca = PCA(n_components=2)
+    # assert true_spectra.shape[1] == 1677, "True spectra df does not have 1677 columns"
     pca.fit(true_spectra.iloc[:,:-1])
 
     _, ax = plt.subplots(figsize=(8,6))
@@ -701,87 +706,6 @@ def plot_generation_results_pca_single_chem_side_by_side(
     plt.show()
 
 
-    # _, ax = plt.subplots(1, 2, figsize=(8,6))
-
-    # axes = ax.flatten()
-
-    # if sample_size is not None:
-    #     true_spectra = true_spectra.sample(n = sample_size, random_state=42)
-
-    # # for each axis create a plot
-    # for idx in range(2):
-
-    #     # Create a color cycle for distinct colors
-    #     color_cycle = plt.gca()._get_lines.prop_cycler
-
-    #     # Scatter plot
-    #     for chem, color in zip(chem_labels, color_cycle):
-    #         # color = next(color_cycle)['color']
-    #         color = color['color']
-    #         # Transform data for the current chemical, exclude last col (label)
-    #         transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
-    #         # if specified, make makers larger for the chemical of interest
-    #         if chem_of_interest is not None:
-    #             if chem != chem_of_interest:
-    #                 axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=10)
-    #             else:
-    #                 axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=100)
-    #         else:
-    #             axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-    #         synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
-    #         # only plot synthetic spectra if there are any for given chemical
-    #         if synthetic_chem.shape[0] > 0:
-    #             print(synthetic_chem.shape)
-    #             transformed_synthetic_spectra = pca.transform(synthetic_chem)
-    #             # Scatter plot for synthetic spectra with a different marker
-    #             axes[idx].scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='*', color=color)
-            
-    #     # Add legend
-    #     legend1 = ax.legend(loc='upper right', title='Label')
-    #     axes[idx].add_artist(legend1)
-
-    #     marker_legends = [
-    #     plt.Line2D([0], [0], marker='o', color='w', label='Experimental Spectra', markerfacecolor='black', markersize=6),
-    #     plt.Line2D([0], [0], marker='*', color='w', label='Synthetic Spectra', markerfacecolor='black', markersize=10),
-    #     ]
-        
-
-    #     # Add the second legend
-    #     legend2 = axes[idx].legend(handles=marker_legends, title='Marker Types', loc='upper left')
-    #     axes[idx].add_artist(legend2)
-
-    #     if mse_insert is not None:
-    #         # Add mse text in the corner with a box
-    #         plt.text(insert_position[0], insert_position[1], f'MSE: {format(mse_insert, ".2e")}', 
-    #             transform=plt.gca().transAxes,  # Use axis coordinates
-    #             fontsize=14,
-    #             verticalalignment='bottom',  # Align text to the top
-    #             horizontalalignment='left',  # Align text to the right
-    #             bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  # Box properties
-        
-    #     if show_wandb_run_name == True:
-    #         run_name = wandb.run.name
-    #         # Add wandb run text in the corner
-    #         xlim = plt.xlim()
-    #         ylim = plt.ylim()
-    #         plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
-    #                 ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
-    #                 f'WandB run: {run_name}', 
-    #                 fontsize=8,
-    #                 verticalalignment='bottom',  # Align text to the top
-    #                 horizontalalignment='right',  # Align text to the right
-    #                 bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
-
-    #     plt.xticks([])
-    #     plt.yticks([])
-    #     if idx == 0:
-    #         plt.title(f'Experimental vs. Synthetic {results_type} Spectra PCA', fontsize=18)
-
-    # if log_wandb:
-    #     plt.savefig('tmp_plot.png', format='png', dpi=300)
-    #     wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
-
-    # plt.show()
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -1190,11 +1114,7 @@ def train_model(
                 val_average_loss = epoch_val_loss/len(val_dataset)
 
                 if lr_scheduler:
-                    # old_lr = get_last_lr(scheduler)
                     scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
-                    # new_lr = scheduler._last_lr
-                    # if new_lr != old_lr:
-                    # print('Old lr: {}. New lr: {}'.format(old_lr, new_lr))
                     # get the new learning rate (to give to wandb)
                     final_lr = optimizer.param_groups[0]['lr']
 
@@ -1325,7 +1245,7 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device):
+def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device=None, multiple_carls_per_spec=False):
     """
     Create tensors from the provided CARL dataset and embedding DataFrame.
 
@@ -1358,11 +1278,21 @@ def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device):
     chem_encodings = carl_dataset.iloc[:,-8:]
     # del carl_dataset
 
-    embeddings_preds = torch.Tensor(embedding_preds.values).to(device)
-    carls = torch.Tensor(carls.values).to(device)
-    chem_encodings = torch.Tensor(chem_encodings.values).to(device)
-    # torch.Tensor changes the vals after decimal but I need those to stay the same so using torch.tensor instead
-    carl_indices = torch.tensor(carl_dataset['index']).to(device)
+    if device is not None:
+        embeddings_preds = torch.Tensor(embedding_preds.values).to(device)
+        carls = torch.Tensor(carls.values).to(device)
+        chem_encodings = torch.Tensor(chem_encodings.values).to(device)
+    else:
+        embeddings_preds = torch.Tensor(embedding_preds.values)
+        carls = torch.Tensor(carls.values)
+        chem_encodings = torch.Tensor(chem_encodings.values)
+
+    if multiple_carls_per_spec:
+        # torch.Tensor changes the vals after decimal but I need those to stay the same so using torch.tensor instead
+        carl_indices = torch.tensor(carl_dataset['index']).to(device)
+    else:
+        carl_indices = torch.Tensor(carl_dataset['index'].values).to(device)
+
     return embeddings_preds, carls, chem_encodings, carl_indices
 
 # ------------------------------------------------------------------------------------------
@@ -1561,14 +1491,54 @@ def set_up_gpu():
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
+def plot_and_save_generator_results(
+    data, batch_size, sorted_chem_names, model, device, 
+    criterion, num_plots, plot_overlap_pca=False, 
+    save_plots_to_wandb=True, show_wandb_run_name=True, test_or_train='Train'
+    ):
+    # get predictions from trained model and plot them
+    dataset = DataLoader(data, batch_size=batch_size)
+    predicted_carls, output_name_encodings, _, _ = predict_embeddings(dataset, model, device, criterion)
+    
+    for _ in range(num_plots):
+        random_carl = random.randint(0, len(data))
+        encodings_list = [enc for enc_list in output_name_encodings for enc in enc_list]
+        predicted_carls_list = [pred for pred_list in predicted_carls for pred in pred_list]       
+        chem = sorted_chem_names[list(encodings_list[random_carl]).index(1)]
+        plot_carl_real_synthetic_comparison(
+            data[random_carl][2].cpu(), predicted_carls_list[random_carl], test_or_train, 
+            chem, save_plots_to_wandb, show_wandb_run_name)
+
+    if plot_overlap_pca:
+        true_spectra = [spec[2].cpu() for spec in data]
+        true_spectra_df = pd.DataFrame(true_spectra)
+        spectra_labels = [sorted_chem_names[list(enc).index(1)] for enc in encodings_list]
+        true_spectra_df['Labels'] = spectra_labels
+
+        print('len pred carls list:', len(predicted_carls_list))
+        print('len labels', len(spectra_labels))
+        # synthetic_spectra_df = pd.DataFrame(predicted_carls_list)
+        # print(synthetic_spectra_df.shape)
+        # synthetic_spectra_df['Labels'] = spectra_labels
+        # print('got here')
+        # plot_generation_results_pca(
+        #     true_spectra_df, synthetic_spectra_df.sample(n=1000, random_state=42), 
+        #     sorted_chem_names, test_or_train, sample_size=1000, log_wandb=True,
+        #     mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True)
+    
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
 def train_generator(
         train_data, val_data, test_data, device, config, wandb_kwargs, 
         model_hyperparams, sorted_chem_names, generator_path, 
         save_plots_to_wandb = True, early_stop_threshold=10, 
         show_wandb_run_name=True, lr_scheduler = False, 
-        num_plots = 1, patience=5
+        num_plots = 1, patience=5, plot_overlap_pca=False
         ):
-
+    wandb.finish()
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
     lowest_val_loss = np.inf
 
@@ -1620,29 +1590,42 @@ def train_generator(
                     average_loss, _, _ = train_one_epoch(
                     train_dataset, device, model, criterion, optimizer, epoch, combo
                     )
-                    # save output pca to weights and biases
+                    wandb.log({'Learning Rate at Final Epoch':final_lr})
+                    # save output plots to weights and biases
                     if save_plots_to_wandb:
-                        # get predictions from trained model and plot them
-                        train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
-                        train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
-                        test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
-                        test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
+                        plot_and_save_generator_results(
+                            train_data, combo['batch_size'], sorted_chem_names, 
+                            model, device, criterion, num_plots, plot_overlap_pca=plot_overlap_pca, 
+                            save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
+                            test_or_train='Train'
+                            )
+                        plot_and_save_generator_results(
+                            test_data, combo['batch_size'], sorted_chem_names, 
+                            model, device, criterion, num_plots, plot_overlap_pca=False, 
+                            save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
+                            test_or_train='Train'
+                            )
+                        # # get predictions from trained model and plot them
+                        # train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
+                        # train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
+                        # test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
+                        # test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
                         
-                        for _ in range(num_plots):
-                            random_carl = random.randint(0, len(test_data))
-                            train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
-                            test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
-                            train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
-                            test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
-                            # train_true_carls = [carl.cpu().detach().numpy() for carl in train_data.tensors[2]]
-                            train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
-                            test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
-                            plot_carl_real_synthetic_comparison(
-                                train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', 
-                                train_chem, save_plots_to_wandb, show_wandb_run_name)
-                            plot_carl_real_synthetic_comparison(
-                                test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', 
-                                test_chem, save_plots_to_wandb, show_wandb_run_name)
+                        # for _ in range(num_plots):
+                        #     random_carl = random.randint(0, len(test_data))
+                        #     train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
+                        #     test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
+                        #     train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
+                        #     test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
+                        #     # train_true_carls = [carl.cpu().detach().numpy() for carl in train_data.tensors[2]]
+                        #     train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
+                        #     test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
+                        #     plot_carl_real_synthetic_comparison(
+                        #         train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', 
+                        #         train_chem, save_plots_to_wandb, show_wandb_run_name)
+                        #     plot_carl_real_synthetic_comparison(
+                        #         test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', 
+                        #         test_chem, save_plots_to_wandb, show_wandb_run_name)
             
                 else:
                     average_loss = train_one_epoch(
@@ -1668,12 +1651,8 @@ def train_generator(
                 val_average_loss = epoch_val_loss/len(val_dataset)
 
                 if lr_scheduler:
-                    for i in optimizer.param_groups:
-                        print(f'LR for group {i}: ',optimizer.param_groups[i]['lr'])
                     scheduler.step(val_average_loss)  # Pass the validation loss to the scheduler
-                    for i in optimizer.param_groups:
-                        print(f'New LR for group {i}: ',optimizer.param_groups[i]['lr'])
-                    print('------------------------')
+                    # get the new learning rate (to give to wandb)
                     final_lr = optimizer.param_groups[0]['lr']
 
                 if val_average_loss < lowest_val_model_loss:
@@ -1708,21 +1687,38 @@ def train_generator(
                 print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
                 wandb.log({'Early Stopping Ecoch':epoch+1})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
-                train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
-                train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
-                test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
-                test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
+                plot_and_save_generator_results(
+                    train_data, combo['batch_size'], sorted_chem_names, 
+                    model, device, criterion, num_plots, plot_overlap_pca=plot_overlap_pca, 
+                    save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
+                    test_or_train='Train'
+                    )
+                plot_and_save_generator_results(
+                    test_data, combo['batch_size'], sorted_chem_names, 
+                    model, device, criterion, num_plots, plot_overlap_pca=False, 
+                    save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
+                    test_or_train='Train'
+                    )
+                # plot_and_save_generator_results(
+                #             test_data, combo['batch_size'], sorted_chem_names, 
+                #             model, device, criterion, num_plots, plot_overlap_pca=False, 
+                #             save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name
+                #             )
+                # train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
+                # train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
+                # test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
+                # test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
                 
-                for _ in range(num_plots):
-                    random_carl = random.randint(0, len(test_data))
-                    train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
-                    test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
-                    train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
-                    test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
-                    train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
-                    test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
-                    plot_carl_real_synthetic_comparison(train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', train_chem)
-                    plot_carl_real_synthetic_comparison(test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', test_chem)
+                # for _ in range(num_plots):
+                #     random_carl = random.randint(0, len(test_data))
+                #     train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
+                #     test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
+                #     train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
+                #     test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
+                #     train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
+                #     test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
+                #     plot_carl_real_synthetic_comparison(train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', train_chem)
+                #     plot_carl_real_synthetic_comparison(test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', test_chem)
                 
                 break
 

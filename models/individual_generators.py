@@ -16,6 +16,7 @@ import functions as f
 # Reload the functions module after updates
 importlib.reload(f)
 #%%
+print('---')
 
 
 def run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names, early_stopping_threshold=20):

@@ -26,10 +26,10 @@ def create_individual_chemical_dataset_tensors(carl_dataset_file_path, embedding
     carl_dataset = pd.read_feather(carl_dataset_file_path)
     carl_dataset.drop('level_0', axis=1, inplace=True)
     chem_carl_dataset = carl_dataset[carl_dataset['Label'] == chem]
-    del carl_dataset
+    # del carl_dataset
     embedding_preds = pd.read_csv(embedding_preds_file_path)
     chem_embedding_preds = embedding_preds[embedding_preds[chem] == 1.0]
-    del embedding_preds
+    # del embedding_preds
     return create_dataset_tensors_for_generator(chem_carl_dataset, chem_embedding_preds, device, multiple_carls_per_spec)
 
 def flatten_and_bin(predicted_embeddings_batches):
@@ -1515,8 +1515,6 @@ def plot_and_save_generator_results(
         spectra_labels = [sorted_chem_names[list(enc).index(1)] for enc in encodings_list]
         true_spectra_df['Labels'] = spectra_labels
 
-        print('len pred carls list:', len(predicted_carls_list))
-        print('len labels', len(spectra_labels))
         # synthetic_spectra_df = pd.DataFrame(predicted_carls_list)
         # print(synthetic_spectra_df.shape)
         # synthetic_spectra_df['Labels'] = spectra_labels

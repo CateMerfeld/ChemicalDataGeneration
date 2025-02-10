@@ -16,7 +16,6 @@ import functions as f
 # Reload the functions module after updates
 importlib.reload(f)
 #%%
-print('---')
 
 
 def run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names, early_stopping_threshold=20):
@@ -48,6 +47,7 @@ def run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names, ea
 
     wandb_kwargs = {
         'architecture': architecture,
+        'analyte':chem,
         'optimizer':'AdamW',
         'loss':'MSELoss',
         'dataset': dataset_type,
@@ -88,28 +88,9 @@ file_path_dict = {'train_carls_file_path':'../data/carls/train_carls_one_per_spe
                   'test_carls_file_path':'../data/carls/test_carls_one_per_spec.feather', 
                   'test_embeddings_file_path':'../data/encoder_embedding_predictions/test_embeddings.csv'}
 #%%
-# # device = f.set_up_gpu()
-# chem = 'DEM'
-# # val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_individual_chemical_dataset_tensors(
-# #     file_path_dict['val_carls_file_path'], file_path_dict['val_embeddings_file_path'], chem=chem, multiple_carls_per_spec=False
-# #     )
-# # val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor)
-# true_spectra = [spec[2] for spec in val_data]
-# true_spectra = pd.DataFrame(true_spectra)
-# true_spectra_encodings = [spec[1] for spec in val_data]
-# true_spectra_labels = [sorted_chem_names[list(enc).index(1)] for enc in true_spectra_encodings]
-
-# print(true_spectra_labels[:10])
-# print('shape of true_spectra df:',true_spectra.shape)
-# print(true_spectra.head())
-#%%
-# # true_spectra['Labels'] = true_spectra_labels
-# print(true_spectra.shape)
-# print(true_spectra.head())
-#%%
-
 for chem in sorted_chem_names:
     if chem == 'DtBP' or chem == 'JP8':
+        print('hi')
         run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names)
 #%%
 # carls_file_path = '../data/carls/train_carls_one_per_spec.feather'

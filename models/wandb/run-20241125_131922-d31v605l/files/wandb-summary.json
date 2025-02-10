@@ -1,1 +1,0 @@
-{"model_architecture": {"num_layers": 1, "layer_details": [{"layer_type": "Sequential", "num_nodes": null, "activation_function": "Sequential"}]}, "_timestamp": 1732558768.2013686, "_runtime": 5.589272499084473, "_step": 1, "Encoder Training Loss": 0.0049581387267802444, "Encoder Validation Loss": 0.0021523132605768204, "_wandb": {"runtime": 16}}

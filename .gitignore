@@ -4,3 +4,4 @@ data/
 unused_code.ipynb
 data_gen_venv/
 data_gen_env/
+models/wandb/

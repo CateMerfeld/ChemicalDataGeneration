@@ -1,10 +1,12 @@
 #%%
 # Load Packages and Files:
 import pandas as pd
+#%%
 # import matplotlib.pyplot as plt
 # import numpy as np
-# import torch
+import torch
 from torch.utils.data import DataLoader, TensorDataset 
+import torch.nn as nn
 # import wandb
 import os
 # from collections import Counter
@@ -15,6 +17,7 @@ import functions as f
 #%%
 # Reload the functions module after updates
 importlib.reload(f)
+
 #%%
 
 
@@ -29,6 +32,10 @@ def run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names, ea
     test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_individual_chemical_dataset_tensors(
     file_path_dict['test_carls_file_path'], file_path_dict['test_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
     )
+
+    train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor)
+    val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor)
+    test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor)
 
     notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/individual_ims_generator.ipynb'
     architecture = 'individual_carl_generator'
@@ -55,10 +62,6 @@ def run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names, ea
         'early stopping threshold':early_stopping_threshold
     }
 
-    train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor)
-    val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor)
-    test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor)
-
     f.train_generator(
         train_data, val_data, test_data, device, config, 
         wandb_kwargs, model_hyperparams, sorted_chem_names, 
@@ -73,9 +76,9 @@ def run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names, ea
 #     'learning_rate':[.001, .0001],
 #     }
 model_hyperparams = {
-    'batch_size':[64],
-    'epochs': [3],
-    'learning_rate':[.0001],
+    'batch_size':[4],
+    'epochs': [500],
+    'learning_rate':[.001],
     }
 
 #%%
@@ -87,101 +90,66 @@ file_path_dict = {'train_carls_file_path':'../data/carls/train_carls_one_per_spe
                   'val_embeddings_file_path':'../data/encoder_embedding_predictions/val_embeddings.csv',
                   'test_carls_file_path':'../data/carls/test_carls_one_per_spec.feather', 
                   'test_embeddings_file_path':'../data/encoder_embedding_predictions/test_embeddings.csv'}
-#%%
-for chem in sorted_chem_names:
-    if chem == 'DtBP' or chem == 'JP8':
-        print('hi')
-        run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names)
-#%%
-# carls_file_path = '../data/carls/train_carls_one_per_spec.feather'
-# # train_carls = pd.read_feather(file_path)
-# # train_carls.drop('level_0', axis=1, inplace=True)
-
-# embedding_file_path = '../data/encoder_embedding_predictions/train_embeddings.csv'
-# # train_embeddings = pd.read_csv(file_path)
-# # train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_individual_chemical_dataset_tensors(
-# #     carls_file_path, embedding_file_path, device, chem, multiple_carls_per_spec=False
-# #     )
-# # train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_individual_chemical_dataset_tensors(train_carls, train_embeddings, device, chem, multiple_carls_per_spec=False)
 # #%%
-
-# carls_file_path = '../data/carls/val_carls_one_per_spec.feather'
-# # val_carls = pd.read_feather(file_path)
-# # val_carls.drop('level_0', axis=1, inplace=True)
-
-# embedding_file_path = '../data/encoder_embedding_predictions/val_embeddings.csv'
-# # val_embeddings = pd.read_csv(file_path)
-
+# for chem in sorted_chem_names:
+#     if chem == 'JP8': # or chem == 'MES':
+#         run_generator(file_path_dict, chem, model_hyperparams, sorted_chem_names)
+#%%
+device = f.set_up_gpu()
+generator_path = '../models/trained_models/JP8_carl_to_chemnet_generator.pth'
+best_model = torch.load(generator_path, weights_only=False)
+# f.Generator().to(device)
+# best_model.load(torch.load(generator_path))
+# print(best_model)
+chem='JP8'
+# train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_individual_chemical_dataset_tensors(
+# file_path_dict['train_carls_file_path'], file_path_dict['train_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+# )
 # val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_individual_chemical_dataset_tensors(
-#     carls_file_path, embedding_file_path, device, chem, multiple_carls_per_spec=False
-#     )
-
-# #%%
-# carls_file_path = '../data/carls/test_carls_one_per_spec.feather'
-# # test_carls = pd.read_feather(file_path)
-# # test_carls.drop('level_0', axis=1, inplace=True)
-
-# embedding_file_path = '../data/encoder_embedding_predictions/test_embeddings.csv'
-# # test_embeddings = pd.read_csv(file_path)
-
-# test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_individual_chemical_dataset_tensors(
-#     carls_file_path, embedding_file_path, device, chem, multiple_carls_per_spec=False
-#     )
-# #%%
-
-# Training Generator:
-# Things that need to be changed for each generator/dataset/target carl
-# notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/individual_ims_generator.ipynb'
-# architecture = 'individual_carl_generator'
-# dataset_type = 'carls'
-# target_embedding = 'ChemNet'
-# generator_path = f'../models/trained_models/{chem}_carl_to_chemnet_generator.pth'
-
-# config = {
-#     'wandb_entity': 'catemerfeld',
-#     'wandb_project': 'ims_encoder_decoder',
-#     'gpu':True,
-#     'threads':1,
-# }
-
-# os.environ['WANDB_NOTEBOOK_NAME'] = notebook_name
-
-# #%%
-# wandb_kwargs = {
-#     'architecture': architecture,
-#     'optimizer':'AdamW',
-#     'loss':'MSELoss',
-#     'dataset': dataset_type,
-#     'target_embedding': target_embedding
-# }
-
-# model_hyperparams = {
-#   'batch_size':[16,32,64],
-#   'epochs': [500],
-#   'learning_rate':[.001, .0001],
-#   }
-
+# file_path_dict['val_carls_file_path'], file_path_dict['val_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+# )
+test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_individual_chemical_dataset_tensors(
+file_path_dict['test_carls_file_path'], file_path_dict['test_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+)
+#%%
+test_carls = pd.read_feather(file_path_dict['test_carls_file_path'])
+#%%
 # train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor)
 # val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor)
-# test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor)
+test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor)
+#%%
+# file_path = '../../scratch/test_data.feather'
+# test_spectra = pd.read_feather(file_path)
+#%%
+file_path = '../../scratch/test_avg_bkg.csv'
+test_avg_bkg = pd.read_csv(file_path)
+test_avg_bkg.drop(columns=['Unnamed: 0'], inplace=True)
 
-# sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
+#%%
+batch_size = 16
+criterion = nn.MSELoss()
+num_plots = 5
 
-# f.train_generator(
-#     train_data, val_data, test_data, device, config, 
-#     wandb_kwargs, model_hyperparams, sorted_chem_names, 
-#     generator_path, early_stop_threshold=20, 
-#     lr_scheduler=True, num_plots=5
-#     )
+test_dataset = DataLoader(test_data, batch_size)
+test_predicted_carls, test_output_name_encodings, _, _ = f.predict_embeddings(test_dataset, best_model, device, criterion)
+#%%
 
-# #%%
-# ## Loading ChemNet Embeddings:
-# file_path = '../data/name_smiles_embedding_file.csv'
-# name_smiles_embedding_df = pd.read_csv(file_path)
+# combine all the predicted carls and corresponding background spectra to create synthetic spectra
+preds_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
 
-# # set the df index to be the chemical abbreviations in col 'Unnamed: 0'
-# name_smiles_embedding_df.set_index('Unnamed: 0', inplace=True)
-# name_smiles_embedding_df.head()
-# file_path = '../data/all_chemnet_embeddings.csv'
-# all_true_embeddings = pd.read_csv(file_path)
-# #%%
+synthetic_spectra = []
+
+for pred in preds_list:
+    synthetic_spec = pred + test_avg_bkg
+    synthetic_spectra.append(synthetic_spec.values.flatten())
+
+# Create list of chemical names for generated spectra
+test_chem_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
+test_labels = [sorted_chem_names[list(enc).index(1)] for enc in test_chem_encodings_list]
+
+synthetic_spectra_df = pd.DataFrame(synthetic_spectra)
+synthetic_spectra_df['Label'] = test_labels
+synthetic_spectra_df.columns = test_carls.columns[2:-8]
+#%%
+file_path = '../data/ims_data/synthetic_test_spectra.csv'
+synthetic_spectra_df.to_csv(file_path)

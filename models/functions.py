@@ -628,6 +628,21 @@ def plot_generation_results_pca_single_chem_side_by_side(
     if y_lims is not None:
         ax1.set_ylim(y_lims[0], y_lims[1])
         ax2.set_ylim(y_lims[0], y_lims[1])
+    if x_lims is None: # if plot boundaries are not specified, set them so that scales are consistent between plots
+        true_transformed = pca.transform(true_spectra.iloc[:, :-1])
+        synthetic_transformed = pca.transform(synthetic_spectra.iloc[:, :-1])
+        x_lims = [
+            min(true_transformed[:, 0].min(), synthetic_transformed[:, 0].min()) * 1.2, 
+            max(true_transformed[:, 0].max(), synthetic_transformed[:, 0].max()) * 1.2
+        ]
+        y_lims = [
+            min(true_transformed[:, 1].min(), synthetic_transformed[:, 1].min()) * 1.2,
+            max(true_transformed[:, 1].max(), synthetic_transformed[:, 1].max()) * 1.2
+        ]
+    ax1.set_xlim(x_lims[0], x_lims[1])
+    ax2.set_xlim(x_lims[0], x_lims[1])
+    ax1.set_ylim(y_lims[0], y_lims[1])
+    ax2.set_ylim(y_lims[0], y_lims[1])
 
     # Create a color cycle for distinct colors
     color_cycle = plt.gca()._get_lines.prop_cycler

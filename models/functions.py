@@ -16,10 +16,17 @@ import pandas as pd
 import torch
 import os
 import random
+import psutil
+import time
+import threading
 
 from scipy.stats import zscore
 from scipy.spatial import ConvexHull
 
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
 # def create_individual_chemical_dataset_tensors(carl_dataset, embedding_preds, device, chem, multiple_carls_per_spec=True):
 def create_individual_chemical_dataset_tensors(carl_dataset_file_path, embedding_preds_file_path, device=None, chem=None, multiple_carls_per_spec=True):
@@ -130,7 +137,10 @@ def update_wandb_kwargs(wandb_kwargs, updates):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def train_one_epoch(train_dataset, device, model, criterion, optimizer, epoch, combo):
+def train_one_epoch(
+        train_dataset, device, model, criterion, optimizer, 
+        epoch, combo
+        ):
   """
     Train the model for one epoch on the given training dataset.
 
@@ -186,8 +196,7 @@ def train_one_epoch(train_dataset, device, model, criterion, optimizer, epoch, c
 
     # backprapogation
     optimizer.zero_grad()
-
-    # forward pass
+    
     batch_predicted_embeddings = model(batch)
 
     loss = criterion(batch_predicted_embeddings, true_embeddings)
@@ -285,7 +294,7 @@ def preds_to_emb_pca_plot(
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
  
-def predict_embeddings(dataset, model, device, criterion):
+def predict_embeddings(dataset, model, device, criterion, reparameterization=False):
     """
     Generate predicted embeddings and compute average loss on the given dataset.
 
@@ -328,7 +337,7 @@ def predict_embeddings(dataset, model, device, criterion):
             batch = batch.to(device)
             true_embeddings = true_embeddings.to(device)
 
-            batch_predicted_embeddings = model(batch)
+            batch_predicted_embeddings = model(batch, reparameterization)
             predicted_embeddings.append(batch_predicted_embeddings.to('cpu').detach().numpy())
             output_name_encodings.append(name_encodings.to('cpu').detach().numpy())
             input_spectra_indices.append(spectra_indices.to('cpu').detach().numpy())
@@ -975,12 +984,30 @@ class Encoder(nn.Module):
       nn.LeakyReLU(inplace=True),
       nn.Linear(780, 652),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(652, 512),
     )
 
-  def forward(self, x):
+    # self.final_relu = 
+    self.final_linear = nn.Linear(652, 512)
+
+    self.mean_layer = nn.Linear(652, 512)
+    self.logvar_layer = nn.Linear(652, 512)
+
+  def reparameterize(self, mean, log_var):
+    eps = torch.randn_like(log_var)
+    z = mean + log_var * eps
+    return z
+
+  def forward(self, x, reparameterization=False):
     x = self.encoder(x)
-    return x
+    
+    # Do reparameterization if desired, otherwise run final encoder layer
+    if reparameterization:
+        mean, logvar = self.mean_layer(x), self.logvar_layer(x)
+        z = self.reparameterize(mean, logvar)
+        return z
+    else:
+        x = self.final_linear(x)
+        return x
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -989,8 +1016,9 @@ class Encoder(nn.Module):
 def train_model(
         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
-        encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, input_type='IMS',
-        embedding_type='ChemNet', show_wandb_run_name=True, lr_scheduler = False, patience=5
+        encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, 
+        input_type='IMS', embedding_type='ChemNet', show_wandb_run_name=True, 
+        lr_scheduler = False, patience=5
         ):
     
     """
@@ -1108,7 +1136,8 @@ def train_model(
                 # at last epoch get predicted embeddings and chem names
                 if (epoch + 1) == combo['epochs']:
                     average_loss, _, _ = train_one_epoch(
-                    train_dataset, device, model, criterion, optimizer, epoch, combo
+                    train_dataset, device, model, criterion, 
+                    optimizer, epoch, combo
                     )
                     # save output pca to weights and biases
                     if save_emb_pca_to_wandb:
@@ -1155,12 +1184,9 @@ def train_model(
                     # check if val loss is improving for this model
                     epochs_without_validation_improvement = 0
                     lowest_val_model_loss = val_average_loss
-                    # best_epoch = epoch + 1  # Store the best epoch
 
                     if val_average_loss < lowest_val_loss:
-                        # if current epoch of current model is best performing (of all epochs and models so far), save model state
-                        # Save the model
-                        # torch.save(model.state_dict(), encoder_path)
+                        # if current epoch of current model is best performing (of all epochs and models so far), save model 
                         torch.save(model, encoder_path)
                         print(f'Saved best model at epoch {epoch+1}')
                         lowest_val_loss = val_average_loss
@@ -1171,11 +1197,10 @@ def train_model(
                 else:
                     epochs_without_validation_improvement += 1
 
+                # log losses to wandb
                 if model_type == 'Encoder':
-                    # log losses to wandb
                     wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
                 elif model_type == 'Generator':
-                    # log losses to wandb
                     wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
                 if (epoch + 1) % 10 == 0 or epoch == 0:
@@ -1579,6 +1604,7 @@ def train_generator(
     # Generate all parameter combinations from model_config using itertools.product
     combinations = itertools.product(*values)
 
+
     # Iterate through each parameter combination and run model 
     for combo in combinations:
         # creating different var for model loss to use for early stopping
@@ -1685,14 +1711,19 @@ def train_generator(
                 else:
                     epochs_without_validation_improvement += 1
 
-                # log losses to wandb
-                wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
+                # log losses and memory stats to wandb
+                memory_info = psutil.virtual_memory()
+                wandb.log({
+                    "Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss, 
+                    "memory_used": memory_info.used, "memory_percent": memory_info.percent
+                    })
 
                 if (epoch + 1) % 10 == 0 or epoch == 0:
                     print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
+    
             else:
                 print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
                 wandb.log({'Early Stopping Ecoch':epoch+1})

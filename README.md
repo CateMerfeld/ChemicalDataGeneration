@@ -14,7 +14,7 @@ https://nvie.com/posts/a-successful-git-branching-model/
 --->
 
 ## Steps to run this repo:
-1. Set up virtual environment using ```python3 -m venv your_env_name``` for Linux or ```python -m venv your_env_name```. Activate new virtual env with ```source your_env_name/bin/activate``` for macOS/Linux ```.\your_env_name\Scripts\activate``` for Windows. 
+1. Set up virtual environment using ```python3 -m venv your_env_name``` for Linux or ```python -m venv your_env_name``` for Windows. Activate new virtual env with ```source your_env_name/bin/activate``` for macOS/Linux ```.\your_env_name\Scripts\activate``` for Windows. 
   - If using micromamba:
     - Create with ```micromamba create -n your_env_name python=3.10```.
     - Activate with ```micromamba activate your_env_name```.

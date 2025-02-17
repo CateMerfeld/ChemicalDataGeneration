@@ -39,7 +39,7 @@ https://nvie.com/posts/a-successful-git-branching-model/
 * adding your ssh key with ```ssh-add ~/.ssh/id_rsa```.
 3. ssh into vm with ```ssh host_nickname```.
 
-
+To save output to a file: ```python your_script.py > output.txt 2>&1```.
 ## Notation:
 Mathematical notation rules applied throughout this project are taken from [this](https://wookai.github.io/paper-tips-and-tricks/math.html) article.
 ![Notation rules](images/notation_rules.png)

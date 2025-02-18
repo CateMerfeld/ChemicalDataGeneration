@@ -1,0 +1,43 @@
+diff --git a/models/uninformative_embeddings/onehot_to_ims_universal_generator.py b/models/uninformative_embeddings/onehot_to_ims_universal_generator.py
+index 52fbffd6..083c7b81 100644
+--- a/models/uninformative_embeddings/onehot_to_ims_universal_generator.py
++++ b/models/uninformative_embeddings/onehot_to_ims_universal_generator.py
+@@ -67,9 +67,9 @@ wandb_kwargs = {
+     'early stopping threshold':20
+ }
+ model_hyperparams = {
+-    'batch_size':[32, 16],
++    'batch_size':[16, 8],
+     'epochs': [500],
+-    'learning_rate':[.0001,.00001],
++    'learning_rate':[.01,.001, .0001],
+     }
+ 
+ num_plots = 5
+diff --git a/models/uninformative_embeddings/wandb/debug-internal.log b/models/uninformative_embeddings/wandb/debug-internal.log
+index 6f16fd33..0ccc8923 120000
+--- a/models/uninformative_embeddings/wandb/debug-internal.log
++++ b/models/uninformative_embeddings/wandb/debug-internal.log
+@@ -1 +1 @@
+-run-20250217_232345-iu1d6bis/logs/debug-internal.log
+\ No newline at end of file
++run-20250218_094159-zj2m8udd/logs/debug-internal.log
+\ No newline at end of file
+diff --git a/models/uninformative_embeddings/wandb/debug.log b/models/uninformative_embeddings/wandb/debug.log
+index f128796c..ca2b7de8 120000
+--- a/models/uninformative_embeddings/wandb/debug.log
++++ b/models/uninformative_embeddings/wandb/debug.log
+@@ -1 +1 @@
+-run-20250217_232345-iu1d6bis/logs/debug.log
+\ No newline at end of file
++run-20250218_094159-zj2m8udd/logs/debug.log
+\ No newline at end of file
+diff --git a/models/uninformative_embeddings/wandb/latest-run b/models/uninformative_embeddings/wandb/latest-run
+index 1ff20eef..fd22682a 120000
+--- a/models/uninformative_embeddings/wandb/latest-run
++++ b/models/uninformative_embeddings/wandb/latest-run
+@@ -1 +1 @@
+-run-20250217_232345-iu1d6bis
+\ No newline at end of file
++run-20250218_094159-zj2m8udd
+\ No newline at end of file

@@ -5,11 +5,16 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
-
+import os
+import sys
+#%%
+import importlib
 # from collections import Counter
 # import importlib
-import functions as f
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
 import plotting_functions as pf
+import functions as f
 
 #%%
 device = f.set_up_gpu()
@@ -134,19 +139,20 @@ train_preds_df.to_csv(file_path, index=False)
 # # del y_test, x_test, test_chem_encodings_tensor, test_indices_tensor
 
 # #%%
+importlib.reload(pf)
+#%%
+file_path = '../../data/encoder_embedding_predictions/ims_to_onehot_encoder_test_preds.csv'
+test_preds_df = pd.read_csv(file_path)
+test_preds_df.head()
+sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
+encodings_list = test_preds_df[sorted_chem_names].values.tolist()
+# spectra_labels = [sorted_chem_names[list(enc).index(1)] for enc in encodings_list]
+embeddings_only = test_preds_df.iloc[:,1:-8].copy()
+embeddings_only.columns = all_true_embeddings.T.columns
+# embeddings_only['Label'] = test['Label']
 
-# file_path = '../data/encoder_embedding_predictions/ims_to_onehot_encoder_val_preds.csv'
-# test_preds_df = pd.read_csv(file_path)
-# test_preds_df.head()
-# sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
-# encodings_list = test_preds_df[sorted_chem_names].values.tolist()
-# # spectra_labels = [sorted_chem_names[list(enc).index(1)] for enc in encodings_list]
-# embeddings_only = test_preds_df.iloc[:,1:-8].copy()
-# embeddings_only.columns = all_true_embeddings.T.columns
-# # embeddings_only['Label'] = test['Label']
-
-# embeddings_only['Label'] = [sorted_chem_names[enc.index(1)] for enc in encodings_list]
-# pf.plot_emb_pca(
-#     all_true_embeddings, embeddings_only, 'Validation', 'IMS', embedding_type='OneHot',
-#     log_wandb=False, chemnet_embeddings_to_plot=all_true_embeddings,
-#     show_wandb_run_name=False)
+embeddings_only['Label'] = [sorted_chem_names[enc.index(1)] for enc in encodings_list]
+pf.plot_emb_pca(
+    all_true_embeddings, embeddings_only, 'Test', 'IMS', embedding_type='OneHot',
+    log_wandb=False, chemnet_embeddings_to_plot=all_true_embeddings,
+    show_wandb_run_name=False)

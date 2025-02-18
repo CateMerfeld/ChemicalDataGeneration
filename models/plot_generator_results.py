@@ -3,6 +3,7 @@ import pandas as pd
 import torch.nn as nn
 import importlib
 import functions as f
+import plotting_functions as pf
 import random
 
 #%%
@@ -11,7 +12,7 @@ importlib.reload(f)
 file_path = '../../scratch/test_data.feather'
 spectra = pd.read_feather(file_path)
 #%%
-chem = 'JP8'
+chem = 'MES'
 # gen_type = 'Individual'
 file_path = f'../data/ims_data/synthetic_test_{chem}_spectra.csv'
 synthetic_spectra_df = pd.read_csv(file_path)
@@ -47,6 +48,6 @@ for i in range(num_plots):
         )
 #%
 #%%
-f.plot_similarity_comparison(spectra, chem, synthetic_spectra_df, 'Individual', 2, -1)#, similarity_type='spect_avg')
-f.plot_similarity_comparison(spectra, chem, synthetic_spectra_df_universal, 'Universal', 0, -1)#, similarity_type='spect_avg')
+pf.plot_similarity_comparison(spectra, chem, synthetic_spectra_df, 'Individual', 2, -1)#, similarity_type='spect_avg')
+pf.plot_similarity_comparison(spectra, chem, synthetic_spectra_df_universal, 'Universal', 0, -1)#, similarity_type='spect_avg')
 #%%

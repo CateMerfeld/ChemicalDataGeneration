@@ -1,0 +1,80 @@
+diff --git a/models/__pycache__/functions.cpython-310.pyc b/models/__pycache__/functions.cpython-310.pyc
+index 3eeabbbc..24f65a28 100644
+Binary files a/models/__pycache__/functions.cpython-310.pyc and b/models/__pycache__/functions.cpython-310.pyc differ
+diff --git a/models/plot_generator_results.py b/models/plot_generator_results.py
+index b2aa8af2..e80ea452 100644
+--- a/models/plot_generator_results.py
++++ b/models/plot_generator_results.py
+@@ -3,6 +3,7 @@ import pandas as pd
+ import torch.nn as nn
+ import importlib
+ import functions as f
++import plotting_functions as pf
+ import random
+ 
+ #%%
+@@ -11,7 +12,7 @@ importlib.reload(f)
+ file_path = '../../scratch/test_data.feather'
+ spectra = pd.read_feather(file_path)
+ #%%
+-chem = 'JP8'
++chem = 'MES'
+ # gen_type = 'Individual'
+ file_path = f'../data/ims_data/synthetic_test_{chem}_spectra.csv'
+ synthetic_spectra_df = pd.read_csv(file_path)
+@@ -47,6 +48,6 @@ for i in range(num_plots):
+         )
+ #%
+ #%%
+-f.plot_similarity_comparison(spectra, chem, synthetic_spectra_df, 'Individual', 2, -1)#, similarity_type='spect_avg')
+-f.plot_similarity_comparison(spectra, chem, synthetic_spectra_df_universal, 'Universal', 0, -1)#, similarity_type='spect_avg')
++pf.plot_similarity_comparison(spectra, chem, synthetic_spectra_df, 'Individual', 2, -1)#, similarity_type='spect_avg')
++pf.plot_similarity_comparison(spectra, chem, synthetic_spectra_df_universal, 'Universal', 0, -1)#, similarity_type='spect_avg')
+ #%%
+\ No newline at end of file
+diff --git a/models/uninformative_embeddings/onehot_to_ims_universal_generator.py b/models/uninformative_embeddings/onehot_to_ims_universal_generator.py
+index 52fbffd6..daaadc5c 100644
+--- a/models/uninformative_embeddings/onehot_to_ims_universal_generator.py
++++ b/models/uninformative_embeddings/onehot_to_ims_universal_generator.py
+@@ -67,9 +67,9 @@ wandb_kwargs = {
+     'early stopping threshold':20
+ }
+ model_hyperparams = {
+-    'batch_size':[32, 16],
++    'batch_size':[16, 8],
+     'epochs': [500],
+-    'learning_rate':[.0001,.00001],
++    'learning_rate':[.001, .0001],
+     }
+ 
+ num_plots = 5
+diff --git a/models/uninformative_embeddings/tmp_plot.png b/models/uninformative_embeddings/tmp_plot.png
+index f2551c46..d4e84499 100644
+Binary files a/models/uninformative_embeddings/tmp_plot.png and b/models/uninformative_embeddings/tmp_plot.png differ
+diff --git a/models/uninformative_embeddings/wandb/debug-internal.log b/models/uninformative_embeddings/wandb/debug-internal.log
+index 6f16fd33..d4eadd6a 120000
+--- a/models/uninformative_embeddings/wandb/debug-internal.log
++++ b/models/uninformative_embeddings/wandb/debug-internal.log
+@@ -1 +1 @@
+-run-20250217_232345-iu1d6bis/logs/debug-internal.log
+\ No newline at end of file
++run-20250218_111826-3szc63re/logs/debug-internal.log
+\ No newline at end of file
+diff --git a/models/uninformative_embeddings/wandb/debug.log b/models/uninformative_embeddings/wandb/debug.log
+index f128796c..3d573adb 120000
+--- a/models/uninformative_embeddings/wandb/debug.log
++++ b/models/uninformative_embeddings/wandb/debug.log
+@@ -1 +1 @@
+-run-20250217_232345-iu1d6bis/logs/debug.log
+\ No newline at end of file
++run-20250218_111826-3szc63re/logs/debug.log
+\ No newline at end of file
+diff --git a/models/uninformative_embeddings/wandb/latest-run b/models/uninformative_embeddings/wandb/latest-run
+index 1ff20eef..c4b51dc7 120000
+--- a/models/uninformative_embeddings/wandb/latest-run
++++ b/models/uninformative_embeddings/wandb/latest-run
+@@ -1 +1 @@
+-run-20250217_232345-iu1d6bis
+\ No newline at end of file
++run-20250218_111826-3szc63re
+\ No newline at end of file

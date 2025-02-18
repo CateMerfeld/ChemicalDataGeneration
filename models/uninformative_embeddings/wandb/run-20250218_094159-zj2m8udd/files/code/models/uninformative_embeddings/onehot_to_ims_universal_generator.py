@@ -64,12 +64,12 @@ wandb_kwargs = {
     'loss':'MSELoss',
     'dataset': 'spectra',
     'target_embedding': 'OneHot',
-    'early stopping threshold':15
+    'early stopping threshold':20
 }
 model_hyperparams = {
     'batch_size':[16, 8],
     'epochs': [500],
-    'learning_rate':[.001, .0001],
+    'learning_rate':[.01,.001, .0001],
     }
 
 num_plots = 5

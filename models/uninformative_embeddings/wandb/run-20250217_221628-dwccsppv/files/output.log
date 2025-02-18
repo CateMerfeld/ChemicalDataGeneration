@@ -1,0 +1,59 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  16
+epochs  :  500
+learning_rate  :  0.01
+Traceback (most recent call last):
+  File "/home/cmdunham/ChemicalDataGeneration/models/uninformative_embeddings/onehot_to_ims_universal_generator.py", line 75, in <module>
+    f.train_generator(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 1049, in train_generator
+    average_loss = train_one_epoch(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 234, in train_one_epoch
+    batch_predicted_embeddings = model(batch)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 898, in forward
+    x = self.generator(x)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/container.py", line 215, in forward
+    input = module(input)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (16x8 and 512x652)
+Traceback (most recent call last):
+  File "/home/cmdunham/ChemicalDataGeneration/models/uninformative_embeddings/onehot_to_ims_universal_generator.py", line 75, in <module>
+    f.train_generator(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 1049, in train_generator
+    average_loss = train_one_epoch(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 234, in train_one_epoch
+    batch_predicted_embeddings = model(batch)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 898, in forward
+    x = self.generator(x)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/container.py", line 215, in forward
+    input = module(input)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (16x8 and 512x652)

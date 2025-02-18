@@ -1,0 +1,72 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  32
+epochs  :  500
+learning_rate  :  0.0001
+Saved best model at epoch 1
+Epoch[1/500]:
+   Training loss: 158259.31745555616
+   Validation loss: 152456.72429761649
+-------------------------------------------
+Saved best model at epoch 2
+Saved best model at epoch 3
+Saved best model at epoch 4
+Saved best model at epoch 6
+Traceback (most recent call last):
+  File "/home/cmdunham/ChemicalDataGeneration/models/uninformative_embeddings/onehot_to_ims_universal_generator.py", line 78, in <module>
+    f.train_generator(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 1052, in train_generator
+    average_loss = train_one_epoch(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 241, in train_one_epoch
+    optimizer.step()
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 373, in wrapper
+    out = func(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 76, in _use_grad
+    ret = func(self, *args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/optim/adamw.py", line 156, in step
+    self._cuda_graph_capture_health_check()
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 320, in _cuda_graph_capture_health_check
+    if not is_compiling() and torch.backends.cuda.is_built() and torch.cuda.is_available():
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/cuda/__init__.py", line 129, in is_available
+    if _nvml_based_avail():
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/cuda/__init__.py", line 122, in _nvml_based_avail
+    return os.getenv("PYTORCH_NVML_BASED_CUDA_CHECK") == "1"
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/os.py", line 776, in getenv
+    return environ.get(key, default)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/_collections_abc.py", line 824, in get
+    return self[key]
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/os.py", line 677, in __getitem__
+    value = self._data[self.encodekey(key)]
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/os.py", line 755, in encode
+    def encode(value):
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/cmdunham/ChemicalDataGeneration/models/uninformative_embeddings/onehot_to_ims_universal_generator.py", line 78, in <module>
+    f.train_generator(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 1052, in train_generator
+    average_loss = train_one_epoch(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 241, in train_one_epoch
+    optimizer.step()
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 373, in wrapper
+    out = func(*args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 76, in _use_grad
+    ret = func(self, *args, **kwargs)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/optim/adamw.py", line 156, in step
+    self._cuda_graph_capture_health_check()
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/optim/optimizer.py", line 320, in _cuda_graph_capture_health_check
+    if not is_compiling() and torch.backends.cuda.is_built() and torch.cuda.is_available():
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/cuda/__init__.py", line 129, in is_available
+    if _nvml_based_avail():
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/torch/cuda/__init__.py", line 122, in _nvml_based_avail
+    return os.getenv("PYTORCH_NVML_BASED_CUDA_CHECK") == "1"
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/os.py", line 776, in getenv
+    return environ.get(key, default)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/_collections_abc.py", line 824, in get
+    return self[key]
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/os.py", line 677, in __getitem__
+    value = self._data[self.encodekey(key)]
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/os.py", line 755, in encode
+    def encode(value):
+KeyboardInterrupt

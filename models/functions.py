@@ -15,12 +15,48 @@ import os
 import random
 import psutil
 import plotting_functions as pf
-
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
+def run_generator(file_path_dict, chem, model_hyperparams, wandb_kwargs, sorted_chem_names, generator_path, notebook_name, num_plots, model_type='chemnet_to_ims_generator'):
+    
+    device = set_up_gpu()
+    train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['train_carls_file_path'], file_path_dict['train_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    )
+    val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['val_carls_file_path'], file_path_dict['val_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    )
+    test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['test_carls_file_path'], file_path_dict['test_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    )
 
+    train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor)
+    val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor)
+    test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor)
+
+    # remove from memory since information is now stored in train/val/test datasets
+    del train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor
+    del val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor
+    del test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor
+
+    config = {
+        'wandb_entity': 'catemerfeld',
+        'wandb_project': 'ims_encoder_decoder',
+        'gpu':True,
+        'threads':1,
+    }
+
+    os.environ['WANDB_NOTEBOOK_NAME'] = notebook_name
+
+    train_generator(
+        train_data, val_data, test_data, device, config, 
+        wandb_kwargs, model_hyperparams, sorted_chem_names, 
+        generator_path, early_stop_threshold=wandb_kwargs['early stopping threshold'], 
+        lr_scheduler=True, num_plots=num_plots, plot_overlap_pca=True,
+        model_type=model_type
+        )
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -655,7 +691,7 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device=None, multiple_carls_per_spec=False):
+def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device=None, multiple_carls_per_spec=False, carl=True):
     """
     Create tensors from the provided CARL dataset and embedding DataFrame.
 
@@ -681,7 +717,10 @@ def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device=N
         - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the CARLS.
     """
     # drop first col ('index') and last 9 cols ('Label', OneHot encodings) to get just CARLS and predicted embeddings
-    carls = carl_dataset.iloc[:,1:-9]
+    if carl:
+        carls = carl_dataset.iloc[:,1:-9]
+    else:
+        carls = carl_dataset.iloc[:,2:-9]
     # embeddings df doesn't have 'Label' col, so dropping last 8 cols instead of last 9
     embedding_preds = embedding_preds.iloc[:,1:-8]
 
@@ -836,35 +875,64 @@ def create_dataset_tensors_from_chunks(spectra_dataset, embedding_df, device, ch
 # ------------------------------------------------------------------------------------------
  
 class Generator(nn.Module):
-  def __init__(self):
-    super().__init__()
-    self.encoder = nn.Sequential(
-      nn.Linear(512,652),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(652,780),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(780, 908),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(908, 1036),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1036, 1164),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1164, 1292),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1292, 1420),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1420, 1548),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1548, 1676),
-    )
+    def __init__(self):
+        super().__init__()
+        self.generator = nn.Sequential(
+        nn.Linear(512,652),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(652,780),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(780, 908),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(908, 1036),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1036, 1164),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1164, 1292),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1292, 1420),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1420, 1548),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1548, 1676),
+        )
 
-  def forward(self, x):
-    x = self.encoder(x)
-    return x
+    def forward(self, x):
+        x = self.generator(x)
+        return x
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
+
+class OneHottoIMSGenerator(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.generator = nn.Sequential(
+            nn.Linear(8, 256),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(256, 512),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(512, 780),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(780, 908),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(908, 1036),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1036, 1164),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1164, 1292),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1292, 1420),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1420, 1548),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1548, 1676),
+        )
+
+    def forward(self, x):
+        x = self.generator(x)
+        return x
    
 def set_up_gpu():
     if torch.cuda.is_available():
@@ -906,7 +974,7 @@ def train_generator(
         model_hyperparams, sorted_chem_names, generator_path, 
         save_plots_to_wandb = True, early_stop_threshold=10, 
         show_wandb_run_name=True, lr_scheduler = True, 
-        num_plots = 1, patience=5, plot_overlap_pca=False
+        num_plots = 1, patience=5, plot_overlap_pca=False, model_type='Generator'
         ):
     wandb.finish()
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
@@ -924,7 +992,10 @@ def train_generator(
         # creating different var for model loss to use for early stopping
         lowest_val_model_loss = np.inf
         
-        model = Generator().to(device)
+        if model_type == 'Generator':
+            model = Generator().to(device)
+        elif model_type == 'OneHottoIMSGenerator':
+            model = OneHottoIMSGenerator().to(device)
 
         epochs_without_validation_improvement = 0
         combo = dict(zip(keys, combo))
@@ -1025,11 +1096,11 @@ def train_generator(
                 else:
                     epochs_without_validation_improvement += 1
 
-                # log losses and memory stats to wandb
-                memory_info = psutil.virtual_memory()
+                # # log losses and memory stats to wandb
+                # memory_info = psutil.virtual_memory()
                 wandb.log({
-                    "Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss, 
-                    "memory_used": memory_info.used, "memory_percent": memory_info.percent
+                    f"{model_type} Training Loss": average_loss, f"{model_type} Validation Loss": val_average_loss, 
+                    # "memory_used": memory_info.used, "memory_percent": memory_info.percent
                     })
 
                 if (epoch + 1) % 10 == 0 or epoch == 0:

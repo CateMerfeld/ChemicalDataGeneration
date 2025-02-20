@@ -38,7 +38,7 @@ epochs:
   value: 500
 learning_rate:
   desc: null
-  value: 1.0e-05
+  value: 1.0e-06
 _wandb:
   desc: null
   value:
@@ -48,7 +48,7 @@ _wandb:
     framework: torch
     is_jupyter_run: false
     is_kaggle_kernel: false
-    start_time: 1739896212
+    start_time: 1739902100
     t:
       1:
       - 1
@@ -63,7 +63,6 @@ _wandb:
       - 54
       - 55
       3:
-      - 2
       - 16
       - 23
       4: 3.10.16

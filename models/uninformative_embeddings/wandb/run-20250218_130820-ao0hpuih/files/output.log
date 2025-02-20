@@ -1,0 +1,25 @@
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  8
+epochs  :  500
+learning_rate  :  1e-06
+Model best validation loss at 1
+Epoch[1/500]:
+   Training loss: 0.011148318270808848
+   Validation loss: 0.002714905613201459
+-------------------------------------------
+Model best validation loss at 2
+Model best validation loss at 3
+Model best validation loss at 5
+Model best validation loss at 7
+Model best validation loss at 8
+Model best validation loss at 9
+Model best validation loss at 10
+Epoch[10/500]:
+   Training loss: 0.0002727192141497714
+   Validation loss: 0.00019035839977516594
+-------------------------------------------
+Model best validation loss at 11
+Model best validation loss at 12

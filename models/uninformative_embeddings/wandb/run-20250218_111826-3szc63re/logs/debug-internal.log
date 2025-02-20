@@ -1156,3 +1156,16 @@ FileNotFoundError: [Errno 2] No such file or directory: 'conda'
 2025-02-18 11:50:13,801 DEBUG   SenderThread:1633680 [sender.py:send_request():405] send_request: stop_status
 2025-02-18 11:50:14,899 DEBUG   HandlerThread:1633680 [handler.py:handle_request():158] handle_request: status_report
 2025-02-18 11:50:19,900 DEBUG   HandlerThread:1633680 [handler.py:handle_request():158] handle_request: status_report
+2025-02-18 11:50:24,900 DEBUG   HandlerThread:1633680 [handler.py:handle_request():158] handle_request: status_report
+2025-02-18 11:50:27,079 DEBUG   SenderThread:1633680 [sender.py:send():378] send: stats
+2025-02-18 11:50:28,801 DEBUG   HandlerThread:1633680 [handler.py:handle_request():158] handle_request: stop_status
+2025-02-18 11:50:28,801 DEBUG   SenderThread:1633680 [sender.py:send_request():405] send_request: stop_status
+2025-02-18 11:50:29,951 DEBUG   HandlerThread:1633680 [handler.py:handle_request():158] handle_request: status_report
+2025-02-18 11:50:34,951 DEBUG   HandlerThread:1633680 [handler.py:handle_request():158] handle_request: status_report
+2025-02-18 11:50:39,952 DEBUG   HandlerThread:1633680 [handler.py:handle_request():158] handle_request: status_report
+2025-02-18 11:50:44,952 DEBUG   HandlerThread:1633680 [handler.py:handle_request():158] handle_request: status_report
+2025-02-18 11:50:47,378 INFO    memory    :1633680 [interfaces.py:monitor():138] Process proc.memory.rssMB has exited.
+2025-02-18 11:50:47,378 DEBUG   SystemMonitor:1633680 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2025-02-18 11:50:47,379 DEBUG   SystemMonitor:1633680 [system_monitor.py:_start():183] Publishing last batch of metrics
+2025-02-18 11:50:47,380 DEBUG   SenderThread:1633680 [sender.py:send():378] send: stats
+2025-02-18 11:50:48,211 INFO    MainThread:1633680 [internal.py:handle_exit():75] Internal process exited

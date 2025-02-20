@@ -19,3 +19,79 @@ Epoch[10/500]:
    Training loss: 0.00029402419445818967
    Validation loss: 0.00011889033551273297
 -------------------------------------------
+Epoch 00015: reducing learning rate of group 0 to 1.0000e-06.
+Saved best model at epoch 16
+Saved best model at epoch 17
+Saved best model at epoch 18
+Saved best model at epoch 19
+Epoch[20/500]:
+   Training loss: 1.4032073578545531e-05
+   Validation loss: 2.4890722395528373e-05
+-------------------------------------------
+Saved best model at epoch 21
+Saved best model at epoch 24
+Saved best model at epoch 25
+Saved best model at epoch 27
+Epoch[30/500]:
+   Training loss: 7.235246307375028e-06
+   Validation loss: 1.9989166130915226e-05
+-------------------------------------------
+Epoch 00033: reducing learning rate of group 0 to 1.0000e-07.
+Saved best model at epoch 34
+Saved best model at epoch 35
+Saved best model at epoch 36
+Saved best model at epoch 38
+Saved best model at epoch 39
+Saved best model at epoch 40
+Epoch[40/500]:
+   Training loss: 4.99948612836272e-06
+   Validation loss: 1.805039558703137e-05
+-------------------------------------------
+Saved best model at epoch 45
+Epoch[50/500]:
+   Training loss: 4.877871117822153e-06
+   Validation loss: 1.808831704741908e-05
+-------------------------------------------
+Epoch 00051: reducing learning rate of group 0 to 1.0000e-08.
+Saved best model at epoch 52
+Saved best model at epoch 53
+Saved best model at epoch 59
+Epoch[60/500]:
+   Training loss: 4.731946736395192e-06
+   Validation loss: 1.7920404218753858e-05
+-------------------------------------------
+Saved best model at epoch 62
+Epoch[70/500]:
+   Training loss: 4.722497026412809e-06
+   Validation loss: 1.7936833726656986e-05
+-------------------------------------------
+Validation loss has not improved in 15 epochs. Stopping training at epoch 78.
+-------------------------------------------
+-------------------------------------------
+Dataset:  ims
+Target Embeddings:  OneHot
+-------------------------------------------
+-------------------------------------------
+IMStoOneHotEncoder(
+  (encoder): Sequential(
+    (0): Linear(in_features=1676, out_features=1491, bias=True)
+    (1): LeakyReLU(negative_slope=0.01, inplace=True)
+    (2): Linear(in_features=1491, out_features=1306, bias=True)
+    (3): LeakyReLU(negative_slope=0.01, inplace=True)
+    (4): Linear(in_features=1306, out_features=1121, bias=True)
+    (5): LeakyReLU(negative_slope=0.01, inplace=True)
+    (6): Linear(in_features=1121, out_features=936, bias=True)
+    (7): LeakyReLU(negative_slope=0.01, inplace=True)
+    (8): Linear(in_features=936, out_features=751, bias=True)
+    (9): LeakyReLU(negative_slope=0.01, inplace=True)
+    (10): Linear(in_features=751, out_features=566, bias=True)
+    (11): LeakyReLU(negative_slope=0.01, inplace=True)
+    (12): Linear(in_features=566, out_features=381, bias=True)
+    (13): LeakyReLU(negative_slope=0.01, inplace=True)
+    (14): Linear(in_features=381, out_features=196, bias=True)
+    (15): LeakyReLU(negative_slope=0.01, inplace=True)
+    (16): Linear(in_features=196, out_features=8, bias=True)
+  )
+)
+-------------------------------------------
+-------------------------------------------

@@ -1,3 +1,4 @@
+#%%
 import pandas as pd
 import numpy as np
 
@@ -8,13 +9,30 @@ from torch.utils.data import TensorDataset, DataLoader
 import wandb
 import itertools
 import GPUtil
-
+from collections import Counter
 import dask.dataframe as dd
-import torch
 import os
-import random
-import psutil
+# import random
+# import psutil
 import plotting_functions as pf
+
+def format_embedding_df(embedding_df):
+    embedding_df.set_index('Unnamed: 0', inplace=True)
+
+    embedding_floats = []
+    for chem_name in embedding_df.index:
+        if chem_name == 'BKG':
+            embedding_floats.append(None)
+        else:
+            embedding_float = embedding_df['embedding'][chem_name].split('[')[1]
+            embedding_float = embedding_float.split(']')[0]
+            embedding_float = [np.float32(num) for num in embedding_float.split(',')]
+            embedding_floats.append(embedding_float)
+
+    embedding_df['Embedding Floats'] = embedding_floats
+
+    return embedding_df
+
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -57,6 +75,16 @@ def run_generator(file_path_dict, chem, model_hyperparams, wandb_kwargs, sorted_
         lr_scheduler=True, num_plots=num_plots, plot_overlap_pca=True,
         model_type=model_type
         )
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def get_class_weights(data, device):
+    class_counts = dict(sorted(Counter(data['Label']).items()))
+    class_weights = {cls: len(data) / count for cls, count in class_counts.items()}
+    class_weights = torch.tensor(list(class_weights.values()))
+    return class_weights.to(device)
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -233,7 +261,11 @@ def train_one_epoch(
     
     batch_predicted_embeddings = model(batch)
 
-    loss = criterion(batch_predicted_embeddings, true_embeddings)
+    if isinstance(model, IMStoOneHotEncoder):
+        class_indices = torch.argmax(true_embeddings, dim=1)
+        loss = criterion(batch_predicted_embeddings, class_indices)
+    else:
+        loss = criterion(batch_predicted_embeddings, true_embeddings)
     # accumulate epoch training loss
     epoch_training_loss += loss.item()
 
@@ -366,7 +398,7 @@ class Encoder(nn.Module):
     else:
         x = self.final_linear(x)
         return x
-
+#%%
 class IMStoOneHotEncoder(nn.Module):
   def __init__(self):
     super().__init__()
@@ -393,7 +425,7 @@ class IMStoOneHotEncoder(nn.Module):
   def forward(self, x):
     x = self.encoder(x)
     return x
-
+#%%
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -403,7 +435,7 @@ def train_model(
         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
         encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, 
         input_type='IMS', embedding_type='ChemNet', show_wandb_run_name=True, 
-        lr_scheduler = False, patience=5
+        lr_scheduler = False, patience=5, class_weights=None
         ):
     
     """
@@ -484,12 +516,18 @@ def train_model(
         
         if model_type == 'Encoder':
             model = Encoder().to(device)
+            criterion = nn.MSELoss()
 
         if model_type == 'Generator':
             model = Generator().to(device)
+            criterion = nn.MSELoss()
 
         if model_type == 'IMStoOneHotEncoder':
             model = IMStoOneHotEncoder().to(device)
+            if class_weights is not None:
+                criterion = nn.CrossEntropyLoss(weight=class_weights)
+            else:
+                criterion = nn.CrossEntropyLoss()
 
         epochs_without_validation_improvement = 0
         combo = dict(zip(keys, combo))
@@ -498,7 +536,6 @@ def train_model(
         val_dataset = DataLoader(val_data, batch_size=combo['batch_size'], shuffle=False)
 
         optimizer = torch.optim.AdamW(model.parameters(), lr = combo['learning_rate'])
-        criterion = nn.MSELoss()
 
         final_lr = combo['learning_rate']
 

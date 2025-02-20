@@ -7,3 +7,4 @@ data_gen_env/
 models/wandb/
 models/trained_models/
 plots/
+models/uninformative_embeddings/wandb/

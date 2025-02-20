@@ -32,6 +32,7 @@ val_carls = val_carls.drop(columns=['level_0'])
 file_path = '../data/carls/test_carls_one_per_spec.feather'
 test_carls = pd.read_feather(file_path)
 test_carls = test_carls.drop(columns=['level_0'])
+
 file_path = '../data/name_smiles_embedding_file.csv'
 name_smiles_embedding_df = pd.read_csv(file_path)
 

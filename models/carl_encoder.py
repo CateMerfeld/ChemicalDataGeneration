@@ -1,21 +1,12 @@
+#%%
 import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
-
-import wandb
+# import numpy as np
+from torch.utils.data import TensorDataset
 import os
-from sklearn.decomposition import PCA
-import itertools
-
-from collections import Counter
 import importlib
 import functions as f
-# Reload the functions module after updates
-importlib.reload(f)
+# # Reload the functions module after updates
+# importlib.reload(f)
 
 # Loading Data:
 # file_path = '../data/carls/train_carls.feather'
@@ -34,50 +25,55 @@ test_carls = pd.read_feather(file_path)
 test_carls = test_carls.drop(columns=['level_0'])
 
 file_path = '../data/name_smiles_embedding_file.csv'
-name_smiles_embedding_df = pd.read_csv(file_path)
+name_smiles_embedding_df = f.format_embedding_df(file_path) # pd.read_csv(file_path)
 
-# set the df index to be the chemical abbreviations in col 'Unnamed: 0'
-name_smiles_embedding_df.set_index('Unnamed: 0', inplace=True)
-name_smiles_embedding_df.head()
+
+# # set the df index to be the chemical abbreviations in col 'Unnamed: 0'
+# name_smiles_embedding_df.set_index('Unnamed: 0', inplace=True)
+# name_smiles_embedding_df.head()
 
 file_path = '../data/mass_spec_name_smiles_embedding_file.csv'
-mass_spec_name_smiles_embedding_df = pd.read_csv(file_path)
+mass_spec_name_smiles_embedding_df = f.format_embedding_df(file_path) # pd.read_csv(file_path)
 
-# set the df index to be the chemical abbreviations in col 'Unnamed: 0'
-mass_spec_name_smiles_embedding_df.set_index('Unnamed: 0', inplace=True)
-mass_spec_name_smiles_embedding_df.head()
-embedding_floats = []
-for chem_name in name_smiles_embedding_df.index:
-    if chem_name == 'BKG':
-        embedding_floats.append(None)
-    else:
-        embedding_float = name_smiles_embedding_df['embedding'][chem_name].split('[')[1]
-        embedding_float = embedding_float.split(']')[0]
-        embedding_float = [np.float32(num) for num in embedding_float.split(',')]
-        embedding_floats.append(embedding_float)
+# # set the df index to be the chemical abbreviations in col 'Unnamed: 0'
+# mass_spec_name_smiles_embedding_df.set_index('Unnamed: 0', inplace=True)
+# mass_spec_name_smiles_embedding_df.head()
+# embedding_floats = []
+# for chem_name in name_smiles_embedding_df.index:
+#     if chem_name == 'BKG':
+#         embedding_floats.append(None)
+#     else:
+#         embedding_float = name_smiles_embedding_df['embedding'][chem_name].split('[')[1]
+#         embedding_float = embedding_float.split(']')[0]
+#         embedding_float = [np.float32(num) for num in embedding_float.split(',')]
+#         embedding_floats.append(embedding_float)
 
-name_smiles_embedding_df['Embedding Floats'] = embedding_floats
-mass_spec_embedding_floats = []
-for chem_name in mass_spec_name_smiles_embedding_df.index:
-    embedding_float = mass_spec_name_smiles_embedding_df['embedding'][chem_name].split('[')[1]
-    embedding_float = embedding_float.split(']')[0]
-    embedding_float = [np.float32(num) for num in embedding_float.split(',')]
-    mass_spec_embedding_floats.append(embedding_float)
+# name_smiles_embedding_df['Embedding Floats'] = embedding_floats
+# mass_spec_embedding_floats = []
+# for chem_name in mass_spec_name_smiles_embedding_df.index:
+#     embedding_float = mass_spec_name_smiles_embedding_df['embedding'][chem_name].split('[')[1]
+#     embedding_float = embedding_float.split(']')[0]
+#     embedding_float = [np.float32(num) for num in embedding_float.split(',')]
+#     mass_spec_embedding_floats.append(embedding_float)
 
-mass_spec_name_smiles_embedding_df['Embedding Floats'] = mass_spec_embedding_floats
-filtered_mass_spec_embeddings = pd.DataFrame([emb for emb in mass_spec_name_smiles_embedding_df['Embedding Floats']]).T #mass_spec_embeddings[chems_above_5]
-cols = mass_spec_name_smiles_embedding_df.index
-filtered_mass_spec_embeddings.columns = cols
-# filtered_mass_spec_encoder_generated_embeddings = mass_spec_encoder_generated_embeddings[mass_spec_encoder_generated_embeddings['Label'].isin(chems_above_5)]
-
+# mass_spec_name_smiles_embedding_df['Embedding Floats'] = mass_spec_embedding_floats
+# filtered_mass_spec_embeddings = pd.DataFrame([emb for emb in mass_spec_name_smiles_embedding_df['Embedding Floats']]).T #mass_spec_embeddings[chems_above_5]
+# cols = mass_spec_name_smiles_embedding_df.index
+# filtered_mass_spec_embeddings.columns = cols
+# # filtered_mass_spec_encoder_generated_embeddings = mass_spec_encoder_generated_embeddings[mass_spec_encoder_generated_embeddings['Label'].isin(chems_above_5)]
+#%%
 # Combine embeddings for IMS simulants and mass spec chems to use for plotting pca
 ims_embeddings = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']][1:]).T
+mass_spec_embeddings = pd.DataFrame([emb for emb in mass_spec_name_smiles_embedding_df['Embedding Floats']]).T
 cols = name_smiles_embedding_df.index[1:]
 ims_embeddings.columns = cols
-all_true_embeddings = pd.concat([ims_embeddings, filtered_mass_spec_embeddings], axis=1)
-# all_true
+cols = mass_spec_name_smiles_embedding_df.index
+mass_spec_embeddings.columns = cols
+all_true_embeddings = pd.concat([ims_embeddings, mass_spec_embeddings], axis=1)
 all_true_embeddings.head()
-
+#%%
+mass_spec_name_smiles_embedding_df.head()
+#%%
 # Training Encoder on Carls:
 
 device = f.set_up_gpu()

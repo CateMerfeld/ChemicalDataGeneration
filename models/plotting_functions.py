@@ -33,6 +33,21 @@ from sklearn.preprocessing import StandardScaler
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
+def plot_ims_spectrum(spectrum, chem_label, real_or_synthetic):
+    # x axis should run from lowest drift time (184) to highest drift time (184 + len(spectrum)//2)
+    numbers = range(184, (len(spectrum)//2)+184)
+
+    plt.plot(numbers, spectrum[:len(numbers)], label='Positive')
+    plt.plot(numbers, spectrum[len(numbers):], label='Negative')
+    plt.title(f'{real_or_synthetic} {chem_label} Spectrum', fontsize=20)
+    plt.xlabel('Drift Time', fontsize=16)
+    plt.ylabel('Ion Intensity', fontsize=16)
+    plt.legend(fontsize=14)
+    plt.show()
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 def plot_ims_spectra_pca(data, sample_size=1000):
     """
     Perform PCA on IMS spectra and plot the transformed data.
@@ -307,9 +322,9 @@ def plot_emb_pca(
         color = next(color_cycle)['color']
         # Plot ChemNet embeddings
         if idx < 8: # only label 1st 8 chemicals to avoid giant legend
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem)#, s=200)
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=75, alpha=0.8)
         else:
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color)#, s=75)
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color,)# s=75)
 
         # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
         if chem in ims_labels:
@@ -317,7 +332,7 @@ def plot_emb_pca(
             ims_transformed = pca.transform(ims_embeddings[ims_embeddings['Label'] == chem].iloc[:, :-1])
             
             # Scatter plot for ims_embeddings with a different marker
-            ax.scatter(ims_transformed[:, 0], ims_transformed[:, 1], marker='o', facecolors='none', edgecolors=color)#marker='x', color=color)#, s=75)
+            ax.scatter(ims_transformed[:, 0], ims_transformed[:, 1], marker='o', facecolors='none', edgecolors=color, s=200)#marker='x', color=color)#, s=75)
             if plot_hulls:
                 if hull_data is None:
                     hull_data = ims_embeddings

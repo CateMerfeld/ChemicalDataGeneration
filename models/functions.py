@@ -16,7 +16,8 @@ import os
 # import psutil
 import plotting_functions as pf
 
-def format_embedding_df(embedding_df):
+def format_embedding_df(file_path):
+    embedding_df = pd.read_csv(file_path)
     embedding_df.set_index('Unnamed: 0', inplace=True)
 
     embedding_floats = []
@@ -430,6 +431,35 @@ class IMStoOneHotEncoder(nn.Module):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
+class OneHottoChemNetEncoder(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.encoder = nn.Sequential(
+      nn.Linear(8, 72),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(72, 136),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(136, 200),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(200, 264),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(264, 328),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(328, 392),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(392, 456),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(456, 512),
+    )
+
+  def forward(self, x):
+    x = self.encoder(x)
+    return x
+#%%
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
 def train_model(
         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
@@ -528,6 +558,10 @@ def train_model(
                 criterion = nn.CrossEntropyLoss(weight=class_weights)
             else:
                 criterion = nn.CrossEntropyLoss()
+        
+        if model_type == 'OneHottoChemNetEncoder':
+            model = OneHottoChemNetEncoder().to(device)
+            criterion = nn.MSELoss()
 
         epochs_without_validation_improvement = 0
         combo = dict(zip(keys, combo))
@@ -675,7 +709,7 @@ def train_model(
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
+def create_dataset_tensors(spectra_dataset, embedding_df, device, input_type='spec'):
     """
     Create tensors from the provided spectra dataset and embedding DataFrame.
 
@@ -706,9 +740,11 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
         - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
     """
     # drop first two cols ('Unnamed:0' and 'index') and last 9 cols ('Label' and OneHot encodings) to get just spectra
-    if carl: # carl dataset has no 'Unnamed: 0' column
+    if input_type == 'carl': # carl dataset has no 'Unnamed: 0' column
         spectra = spectra_dataset.iloc[:,1:-9]
         # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
+    elif input_type == 'onehot':
+        spectra = spectra_dataset.iloc[:,2:]
     else:
         spectra = spectra_dataset.iloc[:,2:-9]
         # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)

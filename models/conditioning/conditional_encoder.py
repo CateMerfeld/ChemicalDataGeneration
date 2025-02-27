@@ -11,41 +11,41 @@ import functions as f
 # # Reload the functions module after updates
 # importlib.reload(f)
 #%%
-# Loading Data:
-file_path = '../../data/carls/train_carls_one_per_spec.feather'
-train_carls = pd.read_feather(file_path)
-train_carls = train_carls.drop(columns=['level_0'])
-file_path = '../../data/train_test_val_splits/train_meta.csv'
-train_meta = pd.read_csv(file_path)
-
-file_path = '../../data/carls/val_carls_one_per_spec.feather'
-val_carls = pd.read_feather(file_path)
-val_carls = val_carls.drop(columns=['level_0'])
-file_path = '../../data/train_test_val_splits/val_meta.csv'
-val_meta = pd.read_csv(file_path)
-
-file_path = '../../data/carls/test_carls_one_per_spec.feather'
-test_carls = pd.read_feather(file_path)
-test_carls = test_carls.drop(columns=['level_0'])
-file_path = '../../data/train_test_val_splits/test_meta.csv'
-test_meta = pd.read_csv(file_path)
-#%%
-# Drop rows with null values in TemperatureKelvin or PressureBar
-train_meta = train_meta.dropna(subset=['TemperatureKelvin', 'PressureBar'])
-# Keep only rows of train_carls if the 'index' value in the row appears in the 'level_0' column in train_meta
-train_carls = train_carls[train_carls['index'].isin(train_meta['level_0'])]
-
-val_meta = val_meta.dropna(subset=['TemperatureKelvin', 'PressureBar'])
-val_carls = val_carls[val_carls['index'].isin(val_meta['level_0'])]
-
-test_meta = test_meta.dropna(subset=['TemperatureKelvin', 'PressureBar'])
-test_carls = test_carls[test_carls['index'].isin(test_meta['level_0'])]
-
-#%%
-file_path = '../data/name_smiles_embedding_file.csv'
+file_path = '../../data/name_smiles_embedding_file.csv'
 name_smiles_embedding_df = f.format_embedding_df(file_path)
 
-file_path = '../data/mass_spec_name_smiles_embedding_file.csv'
+device = f.set_up_gpu()
+
+start_idx = 2
+stop_idx = -9
+#%%
+# Loading Data:
+# file_path = '../data/train_test_val_splits/train_carls_low_TemperatureKelvin.csv'
+file_path = '../../data/train_test_val_splits/train_carls_low_TemperatureKelvin.csv'
+train_carls = pd.read_csv(file_path)
+train_carls['Label'].value_counts()
+y_train, x_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
+    train_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
+sorted_chem_names = list(train_carls.columns[-8:])
+del train_carls
+
+#%%
+file_path = '../../data/train_test_val_splits/val_carls_low_TemperatureKelvin.csv'
+val_carls = pd.read_csv(file_path)
+
+y_val, x_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
+    val_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
+del val_carls
+#%%
+# file_path = '../data/train_test_val_splits/test_carls_low_TemperatureKelvin.csv'
+file_path = '../../data/train_test_val_splits/test_carls_low_TemperatureKelvin.csv'
+test_carls = pd.read_csv(file_path)
+y_test, x_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(
+    test_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
+del test_carls
+
+#%%
+file_path = '../../data/mass_spec_name_smiles_embedding_file.csv'
 mass_spec_name_smiles_embedding_df = f.format_embedding_df(file_path)
 
 #%%
@@ -63,19 +63,20 @@ mass_spec_name_smiles_embedding_df.head()
 #%%
 # Training Encoder on Carls:
 
-device = f.set_up_gpu()
-train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(train_carls, name_smiles_embedding_df, device, carl=True)
-val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(val_carls, name_smiles_embedding_df, device, carl=True)
-test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(test_carls, name_smiles_embedding_df, device, carl=True)
-sorted_chem_names = list(train_carls.columns[-8:])
-del train_carls, val_carls, test_carls
+# y_train, x_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(train_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
+# y_val, x_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(val_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
+# y_test, x_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(test_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
+# sorted_chem_names = list(train_carls.columns[-8:])
+# del train_carls, val_carls, test_carls
 
 # Things that need to be changed for each encoder/dataset/target embedding
-notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/carl_encoder.py'
+notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/conditional_encoder.py'
 architecture = 'carl_encoder'
-dataset_type = 'carls'
+dataset_type = 'low_temp_carls'
 target_embedding = 'ChemNet'
-encoder_path = 'trained_models/carl_to_chemnet_encoder_reparameterization.pth'
+encoder_path = '../trained_models/low_temp_carl_to_chemnet_encoder.pth'
+input_type = 'Carl'
+model_type = 'Encoder'
 
 config = {
     'wandb_entity': 'catemerfeld',
@@ -99,19 +100,19 @@ wandb_kwargs = {
 }
 
 model_hyperparams = {
-  'batch_size':[32],
+  'batch_size':[16,32],
   'epochs': [500],
-  'learning_rate':[.00001],
+  'learning_rate':[.00001, .0001],
   }
 
-train_data = TensorDataset(train_carl_tensor, train_chem_encodings_tensor, train_embeddings_tensor, train_carl_indices_tensor)
-val_data = TensorDataset(val_carl_tensor, val_chem_encodings_tensor, val_embeddings_tensor, val_carl_indices_tensor)
-test_data = TensorDataset(test_carl_tensor, test_chem_encodings_tensor, test_embeddings_tensor, test_carl_indices_tensor)
+train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_carl_indices_tensor)
+val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_carl_indices_tensor)
+test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_carl_indices_tensor)
 
 best_hyperparams = f.train_model(
-    'Encoder', train_data, val_data, test_data, 
+    model_type, train_data, val_data, test_data, 
     device, config, wandb_kwargs, 
     all_true_embeddings, name_smiles_embedding_df, model_hyperparams, 
     sorted_chem_names, encoder_path, save_emb_pca_to_wandb=True, early_stop_threshold=early_stopping_threshold,
-    input_type='Carl', show_wandb_run_name=True, lr_scheduler=True
+    input_type=input_type, show_wandb_run_name=True, lr_scheduler=True
     )

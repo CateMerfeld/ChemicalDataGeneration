@@ -750,15 +750,6 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, start_idx=None
         - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
         - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
     """
-    # drop first two cols ('Unnamed:0' and 'index') and last 9 cols ('Label' and OneHot encodings) to get just spectra
-    # if input_type == 'carl': # carl dataset has no 'Unnamed: 0' column
-    #     spectra = spectra_dataset.iloc[:,1:-9]
-    #     # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-    # elif input_type == 'onehot':
-    #     spectra = spectra_dataset.iloc[:,2:]
-    # elif input_type == 'spec':
-    #     spectra = spectra_dataset.iloc[:,2:-9]
-    #     # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
     spectra = spectra_dataset.iloc[:,start_idx:stop_idx]
 
     chem_encodings = spectra_dataset.iloc[:,-8:]

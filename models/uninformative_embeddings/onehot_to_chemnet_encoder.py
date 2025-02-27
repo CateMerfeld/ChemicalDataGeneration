@@ -21,14 +21,32 @@ indices = [idx for idx in true_embeddings.index]
 true_embeddings.insert(0, 'index', indices)
 true_embeddings.insert(1, 'Label', sorted_chem_names)
 # true_embeddings.head()
-
+#%%
+file_path = '../../data/encoder_embedding_predictions/ims_to_onehot_encoder_val_preds.csv'
+val_embeddings = pd.read_csv(file_path)
+indices = [idx for idx in val_embeddings.index]
+chem_names = [sorted_chem_names[list(encoding).index(1)] for encoding in val_embeddings.iloc[:,-8:].values]
+val_embeddings.insert(1, 'Label', chem_names)
+#%%
+file_path = '../../data/encoder_embedding_predictions/ims_to_onehot_encoder_test_preds.csv'
+test_embeddings = pd.read_csv(file_path)
+indices = [idx for idx in test_embeddings.index]
+chem_names = [sorted_chem_names[list(encoding).index(1)] for encoding in test_embeddings.iloc[:,-8:].values]
+test_embeddings.insert(1, 'Label', chem_names)
 #%%
 device = f.set_up_gpu()
 y_train, x_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
-    true_embeddings, name_smiles_embedding_df, device, input_type='onehot'
+    true_embeddings, name_smiles_embedding_df, device, start_idx=2
     )
-# print(x_train.shape, y_train.shape, train_chem_encodings_tensor.shape, train_carl_indices_tensor.shape)
-# #%%
+y_val, x_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
+    val_embeddings, name_smiles_embedding_df, device, start_idx=2, stop_idx=-8
+    )
+y_test, x_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(
+    test_embeddings, name_smiles_embedding_df, device, start_idx=2, stop_idx=-8
+    )
+
+
+#%%
 
 # Things that need to be changed for each encoder/dataset/target embedding
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/uninformative_embeddings/onehot_to_chemnet_encoder.py'
@@ -65,6 +83,8 @@ model_hyperparams = {
   }
 # print(x_train)
 train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_carl_indices_tensor)
+val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_carl_indices_tensor)
+test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_carl_indices_tensor)
 
 ims_embeddings = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']][1:]).T
 cols = name_smiles_embedding_df.index[1:]

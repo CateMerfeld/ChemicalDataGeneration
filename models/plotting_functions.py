@@ -322,9 +322,9 @@ def plot_emb_pca(
         color = next(color_cycle)['color']
         # Plot ChemNet embeddings
         if idx < 8: # only label 1st 8 chemicals to avoid giant legend
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=75, alpha=0.8)
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=150)#, alpha=0.8)
         else:
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color,)# s=75)
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, s=150)
 
         # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
         if chem in ims_labels:
@@ -332,7 +332,7 @@ def plot_emb_pca(
             ims_transformed = pca.transform(ims_embeddings[ims_embeddings['Label'] == chem].iloc[:, :-1])
             
             # Scatter plot for ims_embeddings with a different marker
-            ax.scatter(ims_transformed[:, 0], ims_transformed[:, 1], marker='o', facecolors='none', edgecolors=color, s=200)#marker='x', color=color)#, s=75)
+            ax.scatter(ims_transformed[:, 0], ims_transformed[:, 1], marker='o', facecolors='none', edgecolors=color)#, s=200)#marker='x', color=color)#, s=75)
             if plot_hulls:
                 if hull_data is None:
                     hull_data = ims_embeddings
@@ -346,7 +346,7 @@ def plot_emb_pca(
                 mass_spec_transformed = pca.transform(mass_spec_embeddings[mass_spec_embeddings['Label'] == chem].iloc[:, :-1].values)
                 
                 # Scatter plot for mass_spec_embeddings with a different marker
-                ax.scatter(mass_spec_transformed[:, 0], mass_spec_transformed[:, 1], marker='*', color=color, s=75)
+                ax.scatter(mass_spec_transformed[:, 0], mass_spec_transformed[:, 1], marker='*', color=color)#, s=75)
     # Add legend
     legend1 = ax.legend(loc='upper right', title='Label')
     ax.add_artist(legend1)

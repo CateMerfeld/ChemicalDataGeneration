@@ -598,6 +598,7 @@ def train_model(
                     train_dataset, device, model, criterion, 
                     optimizer, epoch, combo
                     )
+                    wandb.log({'Learning Rate at Final Epoch':final_lr})
                     # save output pca to weights and biases
                     if save_emb_pca_to_wandb:
                         # plot_pca gets predictions from trained model and plots them
@@ -709,7 +710,7 @@ def train_model(
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def create_dataset_tensors(spectra_dataset, embedding_df, device, input_type='spec'):
+def create_dataset_tensors(spectra_dataset, embedding_df, device, start_idx=None, stop_idx=None):
     """
     Create tensors from the provided spectra dataset and embedding DataFrame.
 
@@ -740,15 +741,16 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, input_type='sp
         - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
     """
     # drop first two cols ('Unnamed:0' and 'index') and last 9 cols ('Label' and OneHot encodings) to get just spectra
-    if input_type == 'carl': # carl dataset has no 'Unnamed: 0' column
-        spectra = spectra_dataset.iloc[:,1:-9]
-        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-    elif input_type == 'onehot':
-        spectra = spectra_dataset.iloc[:,2:]
-    else:
-        spectra = spectra_dataset.iloc[:,2:-9]
-        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-        
+    # if input_type == 'carl': # carl dataset has no 'Unnamed: 0' column
+    #     spectra = spectra_dataset.iloc[:,1:-9]
+    #     # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
+    # elif input_type == 'onehot':
+    #     spectra = spectra_dataset.iloc[:,2:]
+    # elif input_type == 'spec':
+    #     spectra = spectra_dataset.iloc[:,2:-9]
+    #     # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
+    spectra = spectra_dataset.iloc[:,start_idx:stop_idx]
+
     chem_encodings = spectra_dataset.iloc[:,-8:]
 
     # create tensors of spectra, true embeddings, and chemical name encodings for train and val

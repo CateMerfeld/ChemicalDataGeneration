@@ -72,36 +72,36 @@ name_smiles_embedding_df.set_index(name_smiles_embedding_df.columns[:-1], inplac
 file_path = '../../scratch/val_data.feather'
 val_spectra = pd.read_feather(file_path)
 
-y_train, x_train, val_chem_encodings_tensor, val_indices_tensor = f.create_dataset_tensors(val_spectra, name_smiles_embedding_df, device)
+y_val, x_val, val_chem_encodings_tensor, val_indices_tensor = f.create_dataset_tensors(val_spectra, name_smiles_embedding_df, device)
 del val_spectra
 
-train_dataset = DataLoader(
+val_dataset = DataLoader(
     TensorDataset(
-        x_train, 
+        x_val, 
         val_chem_encodings_tensor, 
-        y_train,
+        y_val,
         val_indices_tensor
         ), 
         batch_size=batch_size, 
         shuffle=False
         )
 predicted_embeddings, output_name_encodings, average_loss, input_indices = f.predict_embeddings(
-    train_dataset, best_model, device, encoder_criterion)
+    val_dataset, best_model, device, encoder_criterion)
 # input_carl_indices = [idx.cpu().detach().numpy() for idx_list in input_carl_indices for idx in idx_list]
 input_indices = [idx for idx_list in input_indices for idx in idx_list]
 # predicted_embeddings = [emb.cpu().detach().numpy() for emb_list in predicted_embeddings for emb in emb_list]
 predicted_embeddings = [emb for emb_list in predicted_embeddings for emb in emb_list]
 # output_name_encodings = [enc.cpu().detach().numpy() for enc_list in output_name_encodings for enc in enc_list]
 output_name_encodings = [enc for enc_list in output_name_encodings for enc in enc_list]
-train_preds_df = pd.DataFrame(predicted_embeddings)
-train_preds_df.insert(0, 'index', input_indices)
+val_preds_df = pd.DataFrame(predicted_embeddings)
+val_preds_df.insert(0, 'index', input_indices)
 name_encodings_df = pd.DataFrame(output_name_encodings)
 # name_encodings_df.columns = train_carls.columns[-8:]
 name_encodings_df.columns = sorted_chem_names
-train_preds_df = pd.concat([train_preds_df, name_encodings_df], axis=1)
+val_preds_df = pd.concat([val_preds_df, name_encodings_df], axis=1)
 
 file_path = '../data/encoder_embedding_predictions/ims_to_onehot_encoder_val_preds.csv'
-train_preds_df.to_csv(file_path, index=False)
+val_preds_df.to_csv(file_path, index=False)
 #%%
 # file_path = '../../scratch/test_data.feather'
 # test_spectra = pd.read_feather(file_path)

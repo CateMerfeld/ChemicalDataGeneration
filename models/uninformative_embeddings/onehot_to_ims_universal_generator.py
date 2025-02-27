@@ -34,6 +34,7 @@ test_embeddings = pd.read_csv(file_path)
 
 
 #%%
+# THIS NEEDS TO BE FIXED, currently doing .iloc[:,2:-9], which I think is getting rid of data
 device = f.set_up_gpu()
 x_train, y_train, train_chem_encodings_tensor, train_indices_tensor = f.create_dataset_tensors_for_generator(train_spectra, train_embeddings, device, carl=False)
 del train_spectra

@@ -3,3 +3,8 @@ MoNA_data/
 data/
 unused_code.ipynb
 data_gen_venv/
+data_gen_env/
+wandb/
+models/trained_models/
+plots/
+models/uninformative_embeddings/wandb/

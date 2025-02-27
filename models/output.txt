@@ -1,0 +1,109 @@
+wandb: Currently logged in as: catemerfeld. Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.19.6 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.17.0
+wandb: Run data is saved locally in /home/cmdunham/ChemicalDataGeneration/models/wandb/run-20250217_162501-ueqrsfb8
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run revived-surf-690
+wandb: ⭐️ View project at https://wandb.ai/catemerfeld/ims_encoder_decoder
+wandb: 🚀 View run at https://wandb.ai/catemerfeld/ims_encoder_decoder/runs/ueqrsfb8
+   DEB  DEM  DMMP  DPM  DtBP  JP8  MES  TEPO
+0  1.0  0.0   0.0  0.0   0.0  0.0  0.0   0.0
+1  0.0  1.0   0.0  0.0   0.0  0.0  0.0   0.0
+2  0.0  0.0   1.0  0.0   0.0  0.0  0.0   0.0
+3  0.0  0.0   0.0  1.0   0.0  0.0  0.0   0.0
+4  0.0  0.0   0.0  0.0   1.0  0.0  0.0   0.0
+        0    1    2    3    4    5    6    7
+DEB   1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+DEM   0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
+DMMP  0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
+DPM   0.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0
+DtBP  0.0  0.0  0.0  0.0  1.0  0.0  0.0  0.0
+JP8   0.0  0.0  0.0  0.0  0.0  1.0  0.0  0.0
+MES   0.0  0.0  0.0  0.0  0.0  0.0  1.0  0.0
+TEPO  0.0  0.0  0.0  0.0  0.0  0.0  0.0  1.0
+Selected GPU ID: 0
+  Name: NVIDIA A100-SXM4-80GB
+  Memory Free: 81034.0 MB
+  Memory Used: 5.0 MB
+  GPU Load: 0.00%
+Current device ID:  cuda:0
+PyTorch current device ID: 0
+PyTorch current device name: NVIDIA A100-SXM4-80GB
+Using device: cuda
+--------------------------
+--------------------------
+New run with hyperparameters:
+batch_size  :  64
+epochs  :  2
+learning_rate  :  0.001
+Saved best model at epoch 1
+Epoch[1/2]:
+   Training loss: 678372136.4146693
+   Validation loss: 5050.553607720152
+-------------------------------------------
+TypeError: float() argument must be a string or a real number, not 'list'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/cmdunham/ChemicalDataGeneration/models/ims_to_onehot_encoder.py", line 88, in <module>
+    best_hyperparams = f.train_model(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 497, in train_model
+    pf.plot_pca(
+  File "/home/cmdunham/ChemicalDataGeneration/models/plotting_functions.py", line 662, in plot_pca
+    plot_emb_pca(
+  File "/home/cmdunham/ChemicalDataGeneration/models/plotting_functions.py", line 284, in plot_emb_pca
+    pca.fit(all_embeddings.T)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/decomposition/_pca.py", line 435, in fit
+    self._fit(X)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/decomposition/_pca.py", line 485, in _fit
+    X = self._validate_data(
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/base.py", line 565, in _validate_data
+    X = check_array(X, input_name="X", **check_params)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/utils/validation.py", line 879, in check_array
+    array = _asarray_with_order(array, order=order, dtype=dtype, xp=xp)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/utils/_array_api.py", line 185, in _asarray_with_order
+    array = numpy.asarray(array, order=order, dtype=dtype)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/pandas/core/generic.py", line 2070, in __array__
+    return np.asarray(self._values, dtype=dtype)
+ValueError: setting an array element with a sequence.
+TypeError: float() argument must be a string or a real number, not 'list'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/cmdunham/ChemicalDataGeneration/models/ims_to_onehot_encoder.py", line 88, in <module>
+    best_hyperparams = f.train_model(
+  File "/home/cmdunham/ChemicalDataGeneration/models/functions.py", line 497, in train_model
+    pf.plot_pca(
+  File "/home/cmdunham/ChemicalDataGeneration/models/plotting_functions.py", line 662, in plot_pca
+    plot_emb_pca(
+  File "/home/cmdunham/ChemicalDataGeneration/models/plotting_functions.py", line 284, in plot_emb_pca
+    pca.fit(all_embeddings.T)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/decomposition/_pca.py", line 435, in fit
+    self._fit(X)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/decomposition/_pca.py", line 485, in _fit
+    X = self._validate_data(
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/base.py", line 565, in _validate_data
+    X = check_array(X, input_name="X", **check_params)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/utils/validation.py", line 879, in check_array
+    array = _asarray_with_order(array, order=order, dtype=dtype, xp=xp)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/sklearn/utils/_array_api.py", line 185, in _asarray_with_order
+    array = numpy.asarray(array, order=order, dtype=dtype)
+  File "/home/cmdunham/micromamba/envs/data_gen_venv/lib/python3.10/site-packages/pandas/core/generic.py", line 2070, in __array__
+    return np.asarray(self._values, dtype=dtype)
+ValueError: setting an array element with a sequence.
+wandb: - 0.101 MB of 0.101 MB uploadedwandb: \ 0.101 MB of 0.101 MB uploadedwandb: | 0.101 MB of 0.109 MB uploadedwandb: / 0.109 MB of 0.109 MB uploadedwandb: 
+wandb: Run history:
+wandb:   IMStoOneHotEncoder Training Loss ▁
+wandb: IMStoOneHotEncoder Validation Loss ▁
+wandb: 
+wandb: Run summary:
+wandb:   IMStoOneHotEncoder Training Loss 678372136.41467
+wandb: IMStoOneHotEncoder Validation Loss 5050.55361
+wandb: 
+wandb: 🚀 View run revived-surf-690 at: https://wandb.ai/catemerfeld/ims_encoder_decoder/runs/ueqrsfb8
+wandb: ⭐️ View project at: https://wandb.ai/catemerfeld/ims_encoder_decoder
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 1 other file(s)
+wandb: Find logs at: ./wandb/run-20250217_162501-ueqrsfb8/logs

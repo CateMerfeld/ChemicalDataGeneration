@@ -1,8 +1,0 @@
-Using device: cuda
---------------------------
---------------------------
-New run with hyperparameters:
-batch_size  :  8
-epochs  :  100
-learning_rate  :  0.001
-Saved best model at epoch 1

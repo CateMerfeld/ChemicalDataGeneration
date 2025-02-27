@@ -1,24 +1,116 @@
+#%%
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
+from torch.utils.data import TensorDataset, DataLoader
 
 import wandb
-from sklearn.decomposition import PCA
 import itertools
 import GPUtil
-
+from collections import Counter
 import dask.dataframe as dd
-import pandas as pd
-import torch
+import os
+# import random
+# import psutil
+import plotting_functions as pf
 
-import random
+def combine_embeddings(ims_embeddings_df, mass_spec_embeddings_df): 
+    ims_embeddings = pd.DataFrame([emb for emb in ims_embeddings_df['Embedding Floats']][1:]).T
+    mass_spec_embeddings = pd.DataFrame([emb for emb in mass_spec_embeddings_df['Embedding Floats']]).T
+    cols = ims_embeddings_df.index[1:]
+    ims_embeddings.columns = cols
+    cols = mass_spec_embeddings_df.index
+    mass_spec_embeddings.columns = cols
+    all_true_embeddings = pd.concat([ims_embeddings, mass_spec_embeddings], axis=1)
+    return all_true_embeddings
 
-from scipy.stats import zscore
-from scipy.spatial import ConvexHull
+def format_embedding_df(file_path):
+    embedding_df = pd.read_csv(file_path)
+    embedding_df.set_index('Unnamed: 0', inplace=True)
+
+    embedding_floats = []
+    for chem_name in embedding_df.index:
+        if chem_name == 'BKG':
+            embedding_floats.append(None)
+        else:
+            embedding_float = embedding_df['embedding'][chem_name].split('[')[1]
+            embedding_float = embedding_float.split(']')[0]
+            embedding_float = [np.float32(num) for num in embedding_float.split(',')]
+            embedding_floats.append(embedding_float)
+
+    embedding_df['Embedding Floats'] = embedding_floats
+
+    return embedding_df
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def run_generator(file_path_dict, chem, model_hyperparams, wandb_kwargs, sorted_chem_names, generator_path, notebook_name, num_plots, model_type='chemnet_to_ims_generator'):
+    
+    device = set_up_gpu()
+    train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['train_carls_file_path'], file_path_dict['train_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    )
+    val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['val_carls_file_path'], file_path_dict['val_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    )
+    test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['test_carls_file_path'], file_path_dict['test_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    )
+
+    train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor)
+    val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor)
+    test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor)
+
+    # remove from memory since information is now stored in train/val/test datasets
+    del train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor
+    del val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor
+    del test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor
+
+    config = {
+        'wandb_entity': 'catemerfeld',
+        'wandb_project': 'ims_encoder_decoder',
+        'gpu':True,
+        'threads':1,
+    }
+
+    os.environ['WANDB_NOTEBOOK_NAME'] = notebook_name
+
+    train_generator(
+        train_data, val_data, test_data, device, config, 
+        wandb_kwargs, model_hyperparams, sorted_chem_names, 
+        generator_path, early_stop_threshold=wandb_kwargs['early stopping threshold'], 
+        lr_scheduler=True, num_plots=num_plots, plot_overlap_pca=True,
+        model_type=model_type
+        )
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def get_class_weights(data, device):
+    class_counts = dict(sorted(Counter(data['Label']).items()))
+    class_weights = {cls: len(data) / count for cls, count in class_counts.items()}
+    class_weights = torch.tensor(list(class_weights.values()))
+    return class_weights.to(device)
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+
+# def create_individual_chemical_dataset_tensors(carl_dataset, embedding_preds, device, chem, multiple_carls_per_spec=True):
+def create_individual_chemical_dataset_tensors(carl_dataset_file_path, embedding_preds_file_path, device=None, chem=None, multiple_carls_per_spec=True):
+    carl_dataset = pd.read_feather(carl_dataset_file_path)
+    carl_dataset.drop('level_0', axis=1, inplace=True)
+    chem_carl_dataset = carl_dataset[carl_dataset['Label'] == chem]
+    # del carl_dataset
+    embedding_preds = pd.read_csv(embedding_preds_file_path)
+    chem_embedding_preds = embedding_preds[embedding_preds[chem] == 1.0]
+    # del embedding_preds
+    return create_dataset_tensors_for_generator(chem_carl_dataset, chem_embedding_preds, device, multiple_carls_per_spec)
 
 def flatten_and_bin(predicted_embeddings_batches):
     """
@@ -118,7 +210,10 @@ def update_wandb_kwargs(wandb_kwargs, updates):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def train_one_epoch(train_dataset, device, model, criterion, optimizer, epoch, combo):
+def train_one_epoch(
+        train_dataset, device, model, criterion, optimizer, 
+        epoch, combo
+        ):
   """
     Train the model for one epoch on the given training dataset.
 
@@ -174,11 +269,14 @@ def train_one_epoch(train_dataset, device, model, criterion, optimizer, epoch, c
 
     # backprapogation
     optimizer.zero_grad()
-
-    # forward pass
+    
     batch_predicted_embeddings = model(batch)
 
-    loss = criterion(batch_predicted_embeddings, true_embeddings)
+    if isinstance(model, IMStoOneHotEncoder):
+        class_indices = torch.argmax(true_embeddings, dim=1)
+        loss = criterion(batch_predicted_embeddings, class_indices)
+    else:
+        loss = criterion(batch_predicted_embeddings, true_embeddings)
     # accumulate epoch training loss
     epoch_training_loss += loss.item()
 
@@ -201,76 +299,8 @@ def train_one_epoch(train_dataset, device, model, criterion, optimizer, epoch, c
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
  
-def preds_to_emb_pca_plot(
-        predicted_embeddings, output_name_encodings, 
-        sorted_chem_names, emb_df, 
-        mass_spec_encoder_embeddings=False, mass_spec_chems=False
-        ):
-    """
-    Generate and return data for PCA visualization of predicted embeddings alongside ChemNet embeddings.
 
-    This function flattens the predicted embeddings and their corresponding chemical names, 
-    optionally includes mass spectrometry embeddings, and prepares data for PCA plotting.
-
-    Parameters:
-    ----------
-    predicted_embeddings : list of list of torch.Tensor
-        A nested list of predicted embeddings, where each inner list contains tensors for a batch.
-
-    output_name_encodings : list of list of torch.Tensor
-        A nested list of one-hot encoded tensors representing the chemical names for the predicted embeddings.
-
-    sorted_chem_names : list of str
-        A list of chemical names corresponding to the indices of the one-hot encodings.
-
-    emb_df : pandas.DataFrame
-        A DataFrame containing true embeddings, with 'Embedding Floats' as one of its columns.
-
-    mass_spec_encoder_embeddings : bool, optional
-        If True, includes mass spectrometry encoder embeddings in the output.
-
-    mass_spec_chems : list of str, optional
-        A list of chemical names corresponding to mass spectrometry embeddings.
-
-    Returns:
-    -------
-    tuple
-        A tuple containing:
-        - true_embeddings (pd.DataFrame): DataFrame of true embeddings used for comparison.
-        - predicted_embeddings_flattened (list): Flattened list of predicted embeddings.
-        - chem_names (list): List of chemical names corresponding to the predicted embeddings.
-    """
-
-    # Currently, preds and name encodings are lists of [n_batches, batch_size], flattening to lists of [n_samples]
-    predicted_embeddings_flattened = [emb.cpu().detach().numpy() for emb_list in predicted_embeddings for emb in emb_list]
-    chem_name_encodings_flattened = [enc.cpu() for enc_list in output_name_encodings for enc in enc_list]
-
-    # Get chemical names from encodings
-    chem_names = [sorted_chem_names[list(encoding).index(1)] for encoding in chem_name_encodings_flattened]
-
-    if mass_spec_encoder_embeddings:
-        for emb in mass_spec_encoder_embeddings:
-            predicted_embeddings_flattened.append(torch.Tensor(emb))
-        chem_names += mass_spec_chems
-
-    try:
-        # making list of all embeddings and chem names except for BKG
-        embeddings = [emb for emb in emb_df['Embedding Floats']][1:]
-        cols = emb_df.index[1:]
-        true_embeddings = pd.DataFrame(embeddings).T
-        true_embeddings.columns = cols
-        
-    except KeyError as e:
-        if str(e) == "'Embedding Floats'":
-            true_embeddings = emb_df
-    
-    return (true_embeddings, predicted_embeddings_flattened, chem_names)
-
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
- 
-def predict_embeddings(dataset, model, device, criterion):
+def predict_embeddings(dataset, model, device, criterion, reparameterization=False):
     """
     Generate predicted embeddings and compute average loss on the given dataset.
 
@@ -313,7 +343,10 @@ def predict_embeddings(dataset, model, device, criterion):
             batch = batch.to(device)
             true_embeddings = true_embeddings.to(device)
 
-            batch_predicted_embeddings = model(batch)
+            if reparameterization:
+                batch_predicted_embeddings = model(batch, reparameterization)
+            else:
+                batch_predicted_embeddings = model(batch)
             predicted_embeddings.append(batch_predicted_embeddings.to('cpu').detach().numpy())
             output_name_encodings.append(name_encodings.to('cpu').detach().numpy())
             input_spectra_indices.append(spectra_indices.to('cpu').detach().numpy())
@@ -327,661 +360,6 @@ def predict_embeddings(dataset, model, device, criterion):
     # divide by number of batches to calculate average loss
     average_loss = total_loss/len(dataset)
     return predicted_embeddings, output_name_encodings, average_loss, input_spectra_indices
-
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-def add_hulls(ax, pca, chem_data, threshold=3):
-    # embeddings_by_bkg_list = [chem_data.iloc[::2], chem_data.iloc[1::2]]
-    # for df in embeddings_by_bkg_list:
-    z_scores = np.abs(zscore(chem_data))
-    threshold = threshold  # Adjust threshold as needed
-
-    # Exclude outliers
-    filtered_data = chem_data[(z_scores < threshold).all(axis=1)]
-    # print(f'Excluded {round((len(chem_data) - len(filtered_data))/len(chem_data)*100)}% of data points as outliers.')
-
-    transformed_data = pca.transform(filtered_data)
-    hull = ConvexHull(transformed_data)
-    for simplex in hull.simplices:
-        ax.plot(transformed_data[simplex, 0], transformed_data[simplex, 1], 'r-') 
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
- 
-def plot_emb_pca(
-        all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=True, 
-        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True, plot_hulls=False, hull_data=None):
-    """
-    This function performs Principal Component Analysis (PCA) on chemical embeddings and visualizes the results
-    in a 2D scatter plot. It overlays additional data from ion mobility spectrometry (IMS) and mass spectrometry 
-    if provided. The plot includes legends for different markers and can display the mean squared error (MSE) 
-    and Weights & Biases (WandB) run name.
-
-    Parameters:
-    ----------
-    all_embeddings : pd.DataFrame
-        DataFrame containing all chemical embeddings to be plotted.
-
-    ims_embeddings : pd.DataFrame
-        DataFrame containing IMS embeddings, including a 'Label' column for chemical names.
-
-    results_type : str
-        A string indicating the type of results being plotted (train, val or test), used for title annotation.
-
-    input_type : str
-        A string indicating the type of input data (IMS, Carl or MNIST), used for legend annotation.
-
-    embedding_type : str, optional
-        A string specifying the type of embedding being plotted (ChemNet or OneHot). Default is 'ChemNet'.
-
-    mass_spec_embeddings : pd.DataFrame, optional
-        DataFrame containing mass spectrometry embeddings, including a 'Label' column. Default is None.
-
-    log_wandb : bool, optional
-        If True, logs the plot to Weights & Biases (WandB). Default is False.
-
-    chemnet_embeddings_to_plot : pd.DataFrame, optional
-        DataFrame containing specific ChemNet embeddings to plot. Default is None, which means all embeddings will be used.
-
-    mse_insert : float, optional
-        The mean squared error value to display in the plot. Default is None.
-
-    insert_position : list of float, optional
-        A list specifying the position to insert the MSE text in the plot, given as [x, y] in axis coordinates. Default is [0.05, 0.05].
-
-    show_wandb_run_name : bool, optional
-        If True, includes the current WandB run name in the plot. Default is True.
-
-    Returns:
-    -------
-    None
-        The function displays a PCA plot and optionally logs it to WandB.
-    """
-    pca = PCA(n_components=2)
-    pca.fit(all_embeddings.T)
-
-    if chemnet_embeddings_to_plot is not None:
-        transformed_embeddings = pca.transform(chemnet_embeddings_to_plot.T)
-        all_chemical_names = list(chemnet_embeddings_to_plot.columns)
-    else:
-        transformed_embeddings = pca.transform(all_embeddings.T) 
-        all_chemical_names = list(all_embeddings.columns)
-
-    _, ax = plt.subplots(figsize=(8,6))
-
-    # Create a color cycle for distinct colors
-    color_cycle = plt.gca()._get_lines.prop_cycler
-
-    ims_labels = list(ims_embeddings['Label'])
-    if mass_spec_embeddings is not None:
-        mass_spec_labels=list(mass_spec_embeddings['Label'])
-    else:
-        mass_spec_labels = False
-    
-    # Scatter plot
-    for chem in all_chemical_names:
-        idx = all_chemical_names.index(chem)
-        color = next(color_cycle)['color']
-        # Plot ChemNet embeddings
-        if idx < 8: # only label 1st 8 chemicals to avoid giant legend
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem)#, s=200)
-        else:
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color)#, s=75)
-
-        # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
-        if chem in ims_labels:
-            # transform all data for the given chemical. Exclude last col (label)
-            ims_transformed = pca.transform(ims_embeddings[ims_embeddings['Label'] == chem].iloc[:, :-1])
-            
-            # Scatter plot for ims_embeddings with a different marker
-            ax.scatter(ims_transformed[:, 0], ims_transformed[:, 1], marker='o', facecolors='none', edgecolors=color)#marker='x', color=color)#, s=75)
-            if plot_hulls:
-                if hull_data is None:
-                    hull_data = ims_embeddings
-                add_hulls(ax, pca, hull_data[hull_data['Label'] == chem].iloc[:, :-1])
-
-
-        # repeat for mass spec
-        if mass_spec_labels:
-            if chem in mass_spec_labels:
-                # transform all data for the given chemical. Exclude last col (label)
-                mass_spec_transformed = pca.transform(mass_spec_embeddings[mass_spec_embeddings['Label'] == chem].iloc[:, :-1].values)
-                
-                # Scatter plot for mass_spec_embeddings with a different marker
-                ax.scatter(mass_spec_transformed[:, 0], mass_spec_transformed[:, 1], marker='*', color=color, s=75)
-    # Add legend
-    legend1 = ax.legend(loc='upper right', title='Label')
-    ax.add_artist(legend1)
-
-    marker_legends = [
-    plt.Line2D([0], [0], marker='o', color='w', label=embedding_type, markerfacecolor='black', markersize=6),
-    plt.Line2D([0], [0], marker='o', color='w', label=input_type, markerfacecolor='none', markeredgecolor='black', markersize=6),
-    ]
-    
-    if mass_spec_embeddings is not None:
-        marker_legends.append(plt.Line2D([0], [0], marker='*', color='w', label='Mass Spec', markerfacecolor='black', markersize=10))
-
-    # Add the second legend
-    legend2 = ax.legend(handles=marker_legends, title='Marker Types', loc='upper left')
-    ax.add_artist(legend2)
-
-    if mse_insert is not None:
-        # Add mse text in the corner with a box
-        plt.text(insert_position[0], insert_position[1], f'MSE: {format(mse_insert, ".2e")}', 
-            transform=plt.gca().transAxes,  # Use axis coordinates
-            fontsize=14,
-            verticalalignment='bottom',  # Align text to the top
-            horizontalalignment='left',  # Align text to the right
-            bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  # Box properties
-    
-    if show_wandb_run_name == True:
-        run_name = wandb.run.name
-        # Add wandb run text in the corner
-        xlim = plt.xlim()
-        ylim = plt.ylim()
-        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
-                ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
-                f'WandB run: {run_name}', 
-                fontsize=8,
-                verticalalignment='bottom',  # Align text to the top
-                horizontalalignment='right',  # Align text to the right
-                bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
-
-    plt.xticks([])
-    plt.yticks([])
-    if embedding_type != 'ChemNet':
-        plt.title(f'{embedding_type} vs. Encoder {results_type} Output PCA', fontsize=18)
-    else:
-        plt.title(f'ChemNet vs. Encoder {results_type} Output PCA', fontsize=18)
-
-    if log_wandb:
-        plt.savefig('tmp_plot.png', format='png', dpi=300)
-        wandb.log({'PCA of Predicted Chemical Embeddings': wandb.Image('tmp_plot.png')})
-
-    plt.show()
-
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-
-def plot_generation_results_pca(
-        true_spectra, synthetic_spectra, chem_labels, results_type, sample_size=None, 
-        chem_of_interest=None, log_wandb=False, mse_insert=None, 
-        insert_position=[0.05, 0.05], show_wandb_run_name=False):
-    
-    pca = PCA(n_components=2)
-    pca.fit(true_spectra.iloc[:,:-1])
-
-    _, ax = plt.subplots(figsize=(8,6))
-
-    # Create a color cycle for distinct colors
-    color_cycle = plt.gca()._get_lines.prop_cycler
-
-    if sample_size is not None:
-        true_spectra = true_spectra.sample(n = sample_size, random_state=42)
-
-    # Scatter plot
-    for chem, color in zip(chem_labels, color_cycle):
-        # color = next(color_cycle)['color']
-        color = color['color']
-        # Transform data for the current chemical, exclude last col (label)
-        transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
-        # if specified, make makers larger for the chemical of interest
-        if chem_of_interest is not None:
-            if chem != chem_of_interest:
-                ax.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=10)
-            else:
-                ax.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=100)
-        else:
-            ax.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-
-        synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
-        # only plot synthetic spectra if there are any for given chemical
-        if synthetic_chem.shape[0] > 0:
-            transformed_synthetic_spectra = pca.transform(synthetic_chem)
-            # Scatter plot for synthetic spectra with a different marker
-            ax.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='*', color=color)
-
-    # Add legend
-    legend1 = ax.legend(loc='upper right', title='Label')
-    ax.add_artist(legend1)
-
-    marker_legends = [
-    plt.Line2D([0], [0], marker='o', color='w', label='Experimental Spectra', markerfacecolor='black', markersize=6),
-    plt.Line2D([0], [0], marker='*', color='w', label='Synthetic Spectra', markerfacecolor='black', markersize=10),
-    ]
-    
-
-    # Add the second legend
-    legend2 = ax.legend(handles=marker_legends, title='Marker Types', loc='upper left')
-    ax.add_artist(legend2)
-
-    if mse_insert is not None:
-        # Add mse text in the corner with a box
-        plt.text(insert_position[0], insert_position[1], f'MSE: {format(mse_insert, ".2e")}', 
-            transform=plt.gca().transAxes,  # Use axis coordinates
-            fontsize=14,
-            verticalalignment='bottom',  # Align text to the top
-            horizontalalignment='left',  # Align text to the right
-            bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  # Box properties
-    
-    if show_wandb_run_name == True:
-        run_name = wandb.run.name
-        # Add wandb run text in the corner
-        xlim = plt.xlim()
-        ylim = plt.ylim()
-        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
-                ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
-                f'WandB run: {run_name}', 
-                fontsize=8,
-                verticalalignment='bottom',  # Align text to the top
-                horizontalalignment='right',  # Align text to the right
-                bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
-
-    plt.xticks([])
-    plt.yticks([])
-    plt.title(f'Experimental vs. Synthetic {results_type} Spectra PCA', fontsize=18)
-
-    if log_wandb:
-        plt.savefig('tmp_plot.png', format='png', dpi=300)
-        wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
-
-    plt.show()
-
-
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-
-def plot_generation_results_pca_single_chem_side_by_side(
-        true_spectra, synthetic_spectra, chem_labels, results_type, sample_size=None, 
-        chem_of_interest=None, log_wandb=False, mse_insert=None, 
-        insert_position=[0.05, 0.05], show_wandb_run_name=False, x_lims=None, y_lims=None):
-    
-    # if pca is None:
-    pca = PCA(n_components=2)
-    pca.fit(true_spectra.iloc[:,:-1])
-
-    _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-
-    # Setting x and y limits so that plot scales are the same
-    if x_lims is not None:
-        ax1.set_xlim(x_lims[0], x_lims[1])
-        ax2.set_xlim(x_lims[0], x_lims[1])
-    if y_lims is not None:
-        ax1.set_ylim(y_lims[0], y_lims[1])
-        ax2.set_ylim(y_lims[0], y_lims[1])
-
-    # Create a color cycle for distinct colors
-    color_cycle = plt.gca()._get_lines.prop_cycler
-
-    if sample_size is not None:
-        true_spectra = true_spectra.sample(n=sample_size, random_state=42)
-
-    # Plot for true spectra
-    for chem, color in zip(chem_labels, color_cycle):
-        color = color['color']
-        transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
-        
-        if chem_of_interest is not None:
-            marker_size = 50 if chem == chem_of_interest else 10
-            if chem == chem_of_interest:
-                ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
-            else:
-                true_sample = true_spectra[true_spectra['Label'] == chem].iloc[:, :-1].sample(n=10, random_state=42)
-                transformed_sample = pca.transform(true_sample)
-                ax1.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
-                ax2.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
-        # ax2.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', color=color, s=1)
-            # ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-        # else:
-        #     ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-        
-        synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
-        
-        if synthetic_chem.shape[0] > 0:
-            transformed_synthetic_spectra = pca.transform(synthetic_chem)
-            ax2.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='o', label=chem, color=color, s=50)
-    
-    # if chem_of_interest is not None:
-    ax1.set_title(f'Experimental {results_type} Spectra PCA {chem_of_interest}', fontsize=18)
-    ax2.set_title(f'Synthetic {results_type} Spectra PCA {chem_of_interest}', fontsize=18)
-    # else:
-    #     ax1.set_title(f'Experimental {results_type} Spectra PCA', fontsize=18)
-    #     ax2.set_title(f'Synthetic {results_type} Spectra PCA', fontsize=18)
-    ax1.set_xticks([])
-    ax1.set_yticks([])
-
-    ax2.set_xticks([])
-    ax2.set_yticks([])
-
-    # Add legends
-    ax1.legend(loc='upper right', title='Label')
-    ax2.legend(loc='upper right', title='Label')
-
-    # marker_legends = [
-    #     plt.Line2D([0], [0], marker='o', color='w', label='Experimental Spectra', markerfacecolor='black', markersize=6),
-    #     plt.Line2D([0], [0], marker='*', color='w', label='Synthetic Spectra', markerfacecolor='black', markersize=10),
-    # ]
-    
-    # # Add marker type legend
-    # ax1.add_artist(plt.legend(handles=marker_legends, title='Marker Types', loc='upper left'))
-
-    if mse_insert is not None:
-        plt.text(insert_position[0], insert_position[1], f'MSE: {format(mse_insert, ".2e")}', 
-                 transform=plt.gca().transAxes, fontsize=14, verticalalignment='bottom',
-                 horizontalalignment='left', bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  
-    
-    if show_wandb_run_name:
-        run_name = wandb.run.name
-        xlim = plt.xlim()
-        ylim = plt.ylim()
-        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]), ylim[0] + 0.01 * (ylim[1] - ylim[0]),
-                 f'WandB run: {run_name}', fontsize=8, verticalalignment='bottom',
-                 horizontalalignment='right', bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
-
-    plt.tight_layout()
-
-    if log_wandb:
-        plt.savefig('tmp_plot.png', format='png', dpi=300)
-        wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
-
-    plt.show()
-
-
-    # _, ax = plt.subplots(1, 2, figsize=(8,6))
-
-    # axes = ax.flatten()
-
-    # if sample_size is not None:
-    #     true_spectra = true_spectra.sample(n = sample_size, random_state=42)
-
-    # # for each axis create a plot
-    # for idx in range(2):
-
-    #     # Create a color cycle for distinct colors
-    #     color_cycle = plt.gca()._get_lines.prop_cycler
-
-    #     # Scatter plot
-    #     for chem, color in zip(chem_labels, color_cycle):
-    #         # color = next(color_cycle)['color']
-    #         color = color['color']
-    #         # Transform data for the current chemical, exclude last col (label)
-    #         transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
-    #         # if specified, make makers larger for the chemical of interest
-    #         if chem_of_interest is not None:
-    #             if chem != chem_of_interest:
-    #                 axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=10)
-    #             else:
-    #                 axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=100)
-    #         else:
-    #             axes[idx].scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-    #         synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
-    #         # only plot synthetic spectra if there are any for given chemical
-    #         if synthetic_chem.shape[0] > 0:
-    #             print(synthetic_chem.shape)
-    #             transformed_synthetic_spectra = pca.transform(synthetic_chem)
-    #             # Scatter plot for synthetic spectra with a different marker
-    #             axes[idx].scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='*', color=color)
-            
-    #     # Add legend
-    #     legend1 = ax.legend(loc='upper right', title='Label')
-    #     axes[idx].add_artist(legend1)
-
-    #     marker_legends = [
-    #     plt.Line2D([0], [0], marker='o', color='w', label='Experimental Spectra', markerfacecolor='black', markersize=6),
-    #     plt.Line2D([0], [0], marker='*', color='w', label='Synthetic Spectra', markerfacecolor='black', markersize=10),
-    #     ]
-        
-
-    #     # Add the second legend
-    #     legend2 = axes[idx].legend(handles=marker_legends, title='Marker Types', loc='upper left')
-    #     axes[idx].add_artist(legend2)
-
-    #     if mse_insert is not None:
-    #         # Add mse text in the corner with a box
-    #         plt.text(insert_position[0], insert_position[1], f'MSE: {format(mse_insert, ".2e")}', 
-    #             transform=plt.gca().transAxes,  # Use axis coordinates
-    #             fontsize=14,
-    #             verticalalignment='bottom',  # Align text to the top
-    #             horizontalalignment='left',  # Align text to the right
-    #             bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  # Box properties
-        
-    #     if show_wandb_run_name == True:
-    #         run_name = wandb.run.name
-    #         # Add wandb run text in the corner
-    #         xlim = plt.xlim()
-    #         ylim = plt.ylim()
-    #         plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
-    #                 ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
-    #                 f'WandB run: {run_name}', 
-    #                 fontsize=8,
-    #                 verticalalignment='bottom',  # Align text to the top
-    #                 horizontalalignment='right',  # Align text to the right
-    #                 bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
-
-    #     plt.xticks([])
-    #     plt.yticks([])
-    #     if idx == 0:
-    #         plt.title(f'Experimental vs. Synthetic {results_type} Spectra PCA', fontsize=18)
-
-    # if log_wandb:
-    #     plt.savefig('tmp_plot.png', format='png', dpi=300)
-    #     wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
-
-    # plt.show()
-
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
- 
-def plot_pca(
-    data, batch_size, model, device, encoder_criterion, sorted_chem_names, 
-    all_embeddings_df, ims_embeddings_df, results_type, 
-    input_type, embedding_type='ChemNet',
-    show_wandb_run_name=True, log_wandb=True, 
-    ):
-    """
-    Perform PCA on chemical embeddings and plot the transformed data.
-
-    This function generates a PCA scatter plot for ChemNet embeddings, 
-    including IMS and mass spectrometry embeddings if provided.
-
-    Parameters:
-    ----------
-    all_embeddings : pd.DataFrame
-        DataFrame containing ChemNet embeddings for all chemicals, with each column 
-        representing one chemical's embedding.
-
-    ims_embeddings : pd.DataFrame
-        DataFrame containing IMS (ion mobility spectrometry) embeddings, must include 
-        a 'Label' column with chemical names.
-
-    mass_spec_embeddings : pd.DataFrame, optional
-        DataFrame containing mass spectrometry embeddings, similar structure to `ims_embeddings`.
-        Default is None.
-
-    log_wandb : bool, optional
-        If True, logs the generated plot to Weights & Biases (wandb). Default is False.
-
-    chemnet_embeddings_to_plot : pd.DataFrame, optional
-        DataFrame containing ChemNet embeddings specifically to be plotted.
-    
-    results_type: str
-        Type of results - train, val, or test
-
-    input_type : str
-        The type of input data - IMS, Carl, MNIST, etc
-
-    embedding_type : str, optional
-        The type of embedding being visualized - ChemNet, OneHot, etc. Default is ChemNet.
-
-    mse_insert : float, optional
-        Mean Squared Error value to display on the plot.
-
-    insert_position : list of float, optional
-        Location in axis coordinates for MSE text insertion. Default is [0.05, 0.05].
-
-    show_wandb_run_name : bool, optional
-        If True, displays the current WandB run name on the plot. Default is True.
-
-    Returns:
-    -------
-    None
-        Displays the PCA scatter plot with ChemNet, IMS, and mass spec embeddings.
-
-    Notes:
-    -----
-    - PCA is performed on the transpose of `all_embeddings` to align with IMS and mass spec data.
-    """
-    dataset = DataLoader(
-        data, 
-        batch_size=batch_size, 
-        shuffle=False
-    )
-
-    preds, name_encodings, avg_loss, _ = predict_embeddings(dataset, model, device, encoder_criterion)
-    true_embeddings, predicted_embeddings_flattened, chem_names = preds_to_emb_pca_plot(
-        preds, name_encodings, sorted_chem_names, ims_embeddings_df,  
-        )
-    preds_df = pd.DataFrame(predicted_embeddings_flattened)
-    preds_df['Label'] = chem_names
-    
-    plot_emb_pca(
-        all_embeddings_df, preds_df, results_type=results_type, input_type=input_type,
-        embedding_type=embedding_type, log_wandb=log_wandb, 
-        chemnet_embeddings_to_plot=true_embeddings, mse_insert=avg_loss,
-        show_wandb_run_name=show_wandb_run_name
-        )
-
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-
-def plot_carl_real_synthetic_comparison(true_carl, synthetic_carl, results_type, chem_label, log_wandb=True, show_wandb_run_name=True, criterion=None, run_name=None):
-    _, axes = plt.subplots(1, 2, figsize=(14, 8))
-
-    # Flatten the axes array for easy iteration
-    axes = axes.flatten()
-
-    # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
-    numbers = range(184, (len(true_carl)//2)+184)
-    # y axis should run from min of both carls to max of both carls
-    min_y = min(list(true_carl)+list(synthetic_carl)) - 200
-    max_y = max(list(true_carl)+list(synthetic_carl)) + 200
-
-    axes[0].plot(numbers, true_carl[:len(numbers)], label='Positive')
-    axes[0].plot(numbers, true_carl[len(numbers):], label='Negative')
-    axes[0].set_title(f'True {results_type} {chem_label} CARL', fontsize=20)
-    axes[0].set_xlabel('Drift Time', fontsize=16)
-    axes[0].set_ylabel('Ion Intensity', fontsize=16)
-    axes[0].set_ylim(min_y, max_y)
-    axes[0].legend(fontsize=14)
-
-    axes[1].plot(numbers, synthetic_carl[:len(numbers)], label='Positive')
-    axes[1].plot(numbers, synthetic_carl[len(numbers):], label='Negative')
-    axes[1].set_title(f'Synthetic {results_type} {chem_label} CARL', fontsize=20)
-    axes[1].set_xlabel('Drift Time', fontsize=16)
-    axes[1].set_ylabel('Ion Intensity', fontsize=16)
-    axes[1].set_ylim(min_y, max_y)
-    axes[1].legend(fontsize=14)
-
-    if criterion is not None:
-        xlim = axes[0].get_xlim()
-        ylim = axes[0].get_ylim()
-        axes[0].text(xlim[1] - 0.02 * (xlim[1] - xlim[0]),  # x position with an offset
-                    ylim[0] + 0.02 * (ylim[1] - ylim[0]),  # y position with an offset 
-                    'Real vs. Synthetic MSE: {:.2e}'.format(criterion(torch.Tensor(true_carl), torch.Tensor(synthetic_carl)).item()),
-                    fontsize=14,
-                    verticalalignment='bottom',  # Align text to the bottom
-                    horizontalalignment='right',  # Align text to the left
-                    bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
-
-    if show_wandb_run_name == True:
-        if run_name is None:
-            run_name = wandb.run.name
-        # Add wandb run text in the corner
-        xlim = plt.xlim()
-        ylim = plt.ylim()
-        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
-                ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
-                f'WandB run: {run_name}', 
-                fontsize=8,
-                verticalalignment='bottom',  # Align text to the bottom
-                horizontalalignment='right',  # Align text to the right
-                bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
-
-    if log_wandb:
-        plt.savefig('tmp_plot.png', format='png', dpi=300)
-        wandb.log({'Comparison of Real and Synthetic CARLs': wandb.Image('tmp_plot.png')})
-
-    plt.tight_layout()
-    plt.show()
-
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------
-
-def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_type, chem_label, log_wandb=False, show_wandb_run_name=True, criterion=None, run_name=None):
-    _, axes = plt.subplots(1, 2, figsize=(14, 8))
-
-    # Flatten the axes array for easy iteration
-    axes = axes.flatten()
-
-    # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
-    numbers = range(184, (len(true_spec)//2)+184)
-    # y axis should run from min of both carls to max of both carls
-    min_y = min(list(true_spec)+list(synthetic_spec)) - 200
-    max_y = max(list(true_spec)+list(synthetic_spec)) + 200
-
-    axes[0].plot(numbers, true_spec[:len(numbers)], label='Positive')
-    axes[0].plot(numbers, true_spec[len(numbers):], label='Negative')
-    axes[0].set_title(f'Experimental {chem_label} {results_type} Spectrum', fontsize=20)
-    axes[0].set_xlabel('Drift Time', fontsize=16)
-    axes[0].set_ylabel('Ion Intensity', fontsize=16)
-    axes[0].set_ylim(min_y, max_y)
-    axes[0].legend(fontsize=14)
-
-    axes[1].plot(numbers, synthetic_spec[:len(numbers)], label='Positive')
-    axes[1].plot(numbers, synthetic_spec[len(numbers):], label='Negative')
-    axes[1].set_title(f'Synthetic {chem_label} {results_type} Spectrum', fontsize=20)
-    axes[1].set_xlabel('Drift Time', fontsize=16)
-    axes[1].set_ylabel('Ion Intensity', fontsize=16)
-    axes[1].set_ylim(min_y, max_y)
-    axes[1].legend(fontsize=14)
-
-    if criterion is not None:
-        xlim = axes[0].get_xlim()
-        ylim = axes[0].get_ylim()
-        axes[0].text(xlim[1] - 0.02 * (xlim[1] - xlim[0]),  # x position with an offset
-                    ylim[0] + 0.05 * (ylim[1] - ylim[0]),  # y position with an offset 
-                    'Real vs. Synthetic MSE: {:.2e}'.format(criterion(torch.Tensor(true_spec), torch.Tensor(synthetic_spec)).item()),
-                    fontsize=14,
-                    verticalalignment='bottom',  # Align text to the bottom
-                    horizontalalignment='right',  # Align text to the left
-                    bbox=dict(facecolor='white', alpha=1, edgecolor='black'))
-
-    if show_wandb_run_name == True:
-        if run_name is None:
-            run_name = wandb.run.name
-        # Add wandb run text in the corner
-        xlim = plt.xlim()
-        ylim = plt.ylim()
-        plt.text(xlim[1] - 0.01 * (xlim[1] - xlim[0]),  # x position with an offset
-                ylim[0] + 0.01 * (ylim[1] - ylim[0]),  # y position with an offset
-                f'WandB run: {run_name}', 
-                fontsize=8,
-                verticalalignment='bottom',  # Align text to the bottom
-                horizontalalignment='right',  # Align text to the right
-                bbox=dict(facecolor='white', alpha=0.001, edgecolor='white'))
-
-    if log_wandb:
-        plt.savefig('tmp_plot.png', format='png', dpi=300)
-        wandb.log({'Comparison of Experimental and Synthetic CARLs': wandb.Image('tmp_plot.png')})
-
-    plt.tight_layout()
-    plt.show()
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -1007,13 +385,87 @@ class Encoder(nn.Module):
       nn.LeakyReLU(inplace=True),
       nn.Linear(780, 652),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(652, 512),
+    )
+
+    # self.final_relu = 
+    self.final_linear = nn.Linear(652, 512)
+
+    self.mean_layer = nn.Linear(652, 512)
+    self.logvar_layer = nn.Linear(652, 512)
+
+  def reparameterize(self, mean, log_var):
+    eps = torch.randn_like(log_var)
+    z = mean + log_var * eps
+    return z
+
+  def forward(self, x, reparameterization=False):
+    x = self.encoder(x)
+    
+    # Do reparameterization if desired, otherwise run final encoder layer
+    if reparameterization:
+        mean, logvar = self.mean_layer(x), self.logvar_layer(x)
+        z = self.reparameterize(mean, logvar)
+        return z
+    else:
+        x = self.final_linear(x)
+        return x
+#%%
+class IMStoOneHotEncoder(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.encoder = nn.Sequential(
+      nn.Linear(1676,1491),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1491,1306),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1306, 1121),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1121, 936),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(936, 751),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(751, 566),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(566, 381),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(381, 196),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(196, 8)
     )
 
   def forward(self, x):
     x = self.encoder(x)
     return x
+#%%
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
+class OneHottoChemNetEncoder(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.encoder = nn.Sequential(
+      nn.Linear(8, 72),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(72, 136),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(136, 200),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(200, 264),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(264, 328),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(328, 392),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(392, 456),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(456, 512),
+    )
+
+  def forward(self, x):
+    x = self.encoder(x)
+    return x
+#%%
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -1021,8 +473,9 @@ class Encoder(nn.Module):
 def train_model(
         model_type, train_data, val_data, test_data, device, config, wandb_kwargs, 
         all_embeddings_df, ims_embeddings_df, model_hyperparams, sorted_chem_names, 
-        encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, input_type='IMS',
-        embedding_type='ChemNet', show_wandb_run_name=True, lr_scheduler = False
+        encoder_path, save_emb_pca_to_wandb = True, early_stop_threshold=10, 
+        input_type='IMS', embedding_type='ChemNet', show_wandb_run_name=True, 
+        lr_scheduler = False, patience=5, class_weights=None
         ):
     
     """
@@ -1103,9 +556,22 @@ def train_model(
         
         if model_type == 'Encoder':
             model = Encoder().to(device)
+            criterion = nn.MSELoss()
 
         if model_type == 'Generator':
             model = Generator().to(device)
+            criterion = nn.MSELoss()
+
+        if model_type == 'IMStoOneHotEncoder':
+            model = IMStoOneHotEncoder().to(device)
+            if class_weights is not None:
+                criterion = nn.CrossEntropyLoss(weight=class_weights)
+            else:
+                criterion = nn.CrossEntropyLoss()
+        
+        if model_type == 'OneHottoChemNetEncoder':
+            model = OneHottoChemNetEncoder().to(device)
+            criterion = nn.MSELoss()
 
         epochs_without_validation_improvement = 0
         combo = dict(zip(keys, combo))
@@ -1114,13 +580,12 @@ def train_model(
         val_dataset = DataLoader(val_data, batch_size=combo['batch_size'], shuffle=False)
 
         optimizer = torch.optim.AdamW(model.parameters(), lr = combo['learning_rate'])
-        criterion = nn.MSELoss()
 
         final_lr = combo['learning_rate']
 
         if lr_scheduler:
             # Initialize the learning rate scheduler with patience of 5 epochs 
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=patience, factor=0.1, verbose=True)
 
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
@@ -1140,17 +605,19 @@ def train_model(
                 # at last epoch get predicted embeddings and chem names
                 if (epoch + 1) == combo['epochs']:
                     average_loss, _, _ = train_one_epoch(
-                    train_dataset, device, model, criterion, optimizer, epoch, combo
+                    train_dataset, device, model, criterion, 
+                    optimizer, epoch, combo
                     )
+                    wandb.log({'Learning Rate at Final Epoch':final_lr})
                     # save output pca to weights and biases
                     if save_emb_pca_to_wandb:
                         # plot_pca gets predictions from trained model and plots them
-                        plot_pca(
+                        pf.plot_pca(
                             train_data, combo['batch_size'], model, device, 
                             criterion, sorted_chem_names, all_embeddings_df, 
                             ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
                             )
-                        plot_pca(
+                        pf.plot_pca(
                             test_data, combo['batch_size'], model, device, 
                             criterion, sorted_chem_names, all_embeddings_df,
                             ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
@@ -1187,27 +654,24 @@ def train_model(
                     # check if val loss is improving for this model
                     epochs_without_validation_improvement = 0
                     lowest_val_model_loss = val_average_loss
-                    # best_epoch = epoch + 1  # Store the best epoch
 
                     if val_average_loss < lowest_val_loss:
-                        # if current epoch of current model is best performing (of all epochs and models so far), save model state
-                        # Save the model state
-                        torch.save(model.state_dict(), encoder_path)
-                        print(f'Saved best model at epoch {epoch}')
+                        # if current epoch of current model is best performing (of all epochs and models so far), save model 
+                        torch.save(model, encoder_path)
+                        print(f'Saved best model at epoch {epoch+1}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {epoch}')
+                        print(f'Model best validation loss at {epoch+1}')
                 
                 else:
                     epochs_without_validation_improvement += 1
 
-                if model == 'Encoder':
-                    # log losses to wandb
-                    wandb.log({"Encoder Training Loss": average_loss, "Encoder Validation Loss": val_average_loss})
-                elif model == 'Generator':
-                    # log losses to wandb
-                    wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
+                # log losses to wandb
+                # if model_type == 'Encoder':
+                wandb.log({f"{model_type} Training Loss": average_loss, f"{model_type} Validation Loss": val_average_loss})
+                # elif model_type == 'Generator':
+                #     wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
                 if (epoch + 1) % 10 == 0 or epoch == 0:
                     print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
@@ -1215,15 +679,15 @@ def train_model(
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
             else:
-                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
-                wandb.log({'Early Stopping Ecoch':epoch})
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
+                wandb.log({'Early Stopping Ecoch':epoch+1})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
-                plot_pca(
+                pf.plot_pca(
                     train_data, combo['batch_size'], model, device, 
                     criterion, sorted_chem_names, all_embeddings_df, 
                     ims_embeddings_df, 'Train', input_type, embedding_type, show_wandb_run_name
                     )
-                plot_pca(
+                pf.plot_pca(
                     test_data, combo['batch_size'], model, device, 
                     criterion, sorted_chem_names, all_embeddings_df,
                     ims_embeddings_df, 'Test', input_type, embedding_type, show_wandb_run_name
@@ -1256,7 +720,7 @@ def train_model(
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
+def create_dataset_tensors(spectra_dataset, embedding_df, device, start_idx=None, stop_idx=None):
     """
     Create tensors from the provided spectra dataset and embedding DataFrame.
 
@@ -1286,14 +750,8 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
         - chem_encodings_tensor (torch.Tensor): Tensor of chemical name encodings.
         - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the spectra.
     """
-    # drop first two cols ('Unnamed:0' and 'index') and last 9 cols ('Label' and OneHot encodings) to get just spectra
-    if carl: # carl dataset has no 'Unnamed: 0' column
-        spectra = spectra_dataset.iloc[:,1:-9]
-        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-    else:
-        spectra = spectra_dataset.iloc[:,2:-9]
-        # embeddings_tensor = torch.Tensor([embedding_df['Embedding Floats'][chem_name] for chem_name in chem_labels]).to(device)
-        
+    spectra = spectra_dataset.iloc[:,start_idx:stop_idx]
+
     chem_encodings = spectra_dataset.iloc[:,-8:]
 
     # create tensors of spectra, true embeddings, and chemical name encodings for train and val
@@ -1309,7 +767,7 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, carl=False):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def create_dataset_tensors_for_generator(carl_dataset, embedding_preds_df, device):
+def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device=None, multiple_carls_per_spec=False, carl=True):
     """
     Create tensors from the provided CARL dataset and embedding DataFrame.
 
@@ -1335,19 +793,32 @@ def create_dataset_tensors_for_generator(carl_dataset, embedding_preds_df, devic
         - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the CARLS.
     """
     # drop first col ('index') and last 9 cols ('Label', OneHot encodings) to get just CARLS and predicted embeddings
-    carls = carl_dataset.iloc[:,1:-9]
+    if carl:
+        carls = carl_dataset.iloc[:,1:-9]
+    else:
+        carls = carl_dataset.iloc[:,2:-9]
     # embeddings df doesn't have 'Label' col, so dropping last 8 cols instead of last 9
-    embedding_preds = embedding_preds_df.iloc[:,1:-8]
+    embedding_preds = embedding_preds.iloc[:,1:-8]
 
     chem_encodings = carl_dataset.iloc[:,-8:]
+    # del carl_dataset
 
-    embeddings_preds_tensor = torch.Tensor(embedding_preds.values).to(device)
-    carl_tensor = torch.Tensor(carls.values).to(device)
-    chem_encodings_tensor = torch.Tensor(chem_encodings.values).to(device)
-    # torch.Tensor changes the vals after decimal but I need those to stay the same so using torch.tensor instead
-    carl_indices_tensor = torch.tensor(carl_dataset['index']).to(device)
+    if device is not None:
+        embeddings_preds = torch.Tensor(embedding_preds.values).to(device)
+        carls = torch.Tensor(carls.values).to(device)
+        chem_encodings = torch.Tensor(chem_encodings.values).to(device)
+    else:
+        embeddings_preds = torch.Tensor(embedding_preds.values)
+        carls = torch.Tensor(carls.values)
+        chem_encodings = torch.Tensor(chem_encodings.values)
 
-    return embeddings_preds_tensor, carl_tensor, chem_encodings_tensor, carl_indices_tensor
+    if multiple_carls_per_spec:
+        # torch.Tensor changes the vals after decimal but I need those to stay the same so using torch.tensor instead
+        carl_indices = torch.tensor(carl_dataset['index']).to(device)
+    else:
+        carl_indices = torch.Tensor(carl_dataset['index'].values).to(device)
+
+    return embeddings_preds, carls, chem_encodings, carl_indices
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -1480,35 +951,64 @@ def create_dataset_tensors_from_chunks(spectra_dataset, embedding_df, device, ch
 # ------------------------------------------------------------------------------------------
  
 class Generator(nn.Module):
-  def __init__(self):
-    super().__init__()
-    self.encoder = nn.Sequential(
-      nn.Linear(512,652),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(652,780),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(780, 908),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(908, 1036),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1036, 1164),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1164, 1292),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1292, 1420),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1420, 1548),
-      nn.LeakyReLU(inplace=True),
-      nn.Linear(1548, 1676),
-    )
+    def __init__(self):
+        super().__init__()
+        self.generator = nn.Sequential(
+        nn.Linear(512,652),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(652,780),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(780, 908),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(908, 1036),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1036, 1164),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1164, 1292),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1292, 1420),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1420, 1548),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1548, 1676),
+        )
 
-  def forward(self, x):
-    x = self.encoder(x)
-    return x
+    def forward(self, x):
+        x = self.generator(x)
+        return x
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
+
+class OneHottoIMSGenerator(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.generator = nn.Sequential(
+            nn.Linear(8, 256),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(256, 512),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(512, 780),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(780, 908),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(908, 1036),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1036, 1164),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1164, 1292),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1292, 1420),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1420, 1548),
+            nn.LeakyReLU(inplace=True),
+            nn.Linear(1548, 1676),
+        )
+
+    def forward(self, x):
+        x = self.generator(x)
+        return x
    
 def set_up_gpu():
     if torch.cuda.is_available():
@@ -1549,9 +1049,10 @@ def train_generator(
         train_data, val_data, test_data, device, config, wandb_kwargs, 
         model_hyperparams, sorted_chem_names, generator_path, 
         save_plots_to_wandb = True, early_stop_threshold=10, 
-        show_wandb_run_name=True, lr_scheduler = False, num_plots = 1
+        show_wandb_run_name=True, lr_scheduler = True, 
+        num_plots = 1, patience=5, plot_overlap_pca=False, model_type='Generator'
         ):
-
+    wandb.finish()
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
     lowest_val_loss = np.inf
 
@@ -1561,12 +1062,16 @@ def train_generator(
     # Generate all parameter combinations from model_config using itertools.product
     combinations = itertools.product(*values)
 
+
     # Iterate through each parameter combination and run model 
     for combo in combinations:
         # creating different var for model loss to use for early stopping
         lowest_val_model_loss = np.inf
         
-        model = Generator().to(device)
+        if model_type == 'Generator':
+            model = Generator().to(device)
+        elif model_type == 'OneHottoIMSGenerator':
+            model = OneHottoIMSGenerator().to(device)
 
         epochs_without_validation_improvement = 0
         combo = dict(zip(keys, combo))
@@ -1581,7 +1086,7 @@ def train_generator(
 
         if lr_scheduler:
             # Initialize the learning rate scheduler with patience of 5 epochs 
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.1, verbose=True)
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=patience, factor=0.1, verbose=True)
 
         wandb_kwargs = update_wandb_kwargs(wandb_kwargs, combo)
 
@@ -1603,29 +1108,21 @@ def train_generator(
                     average_loss, _, _ = train_one_epoch(
                     train_dataset, device, model, criterion, optimizer, epoch, combo
                     )
-                    # save output pca to weights and biases
+                    wandb.log({'Learning Rate at Final Epoch':final_lr})
+                    # save output plots to weights and biases
                     if save_plots_to_wandb:
-                        # get predictions from trained model and plot them
-                        train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
-                        train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
-                        test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
-                        test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
-                        
-                        for _ in range(num_plots):
-                            random_carl = random.randint(0, len(test_data))
-                            train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
-                            test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
-                            train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
-                            test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
-                            # train_true_carls = [carl.cpu().detach().numpy() for carl in train_data.tensors[2]]
-                            train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
-                            test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
-                            plot_carl_real_synthetic_comparison(
-                                train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', 
-                                train_chem, save_plots_to_wandb, show_wandb_run_name)
-                            plot_carl_real_synthetic_comparison(
-                                test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', 
-                                test_chem, save_plots_to_wandb, show_wandb_run_name)
+                        pf.plot_and_save_generator_results(
+                            train_data, combo['batch_size'], sorted_chem_names, 
+                            model, device, criterion, num_plots, plot_overlap_pca=plot_overlap_pca, 
+                            save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
+                            test_or_train='Train'
+                            )
+                        pf.plot_and_save_generator_results(
+                            test_data, combo['batch_size'], sorted_chem_names, 
+                            model, device, criterion, num_plots, plot_overlap_pca=False, 
+                            save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
+                            test_or_train='Train'
+                            )
             
                 else:
                     average_loss = train_one_epoch(
@@ -1663,44 +1160,67 @@ def train_generator(
 
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
-                        # Save the model state
-                        torch.save(model.state_dict(), generator_path)
-                        print(f'Saved best model at epoch {epoch}')
+                        # Save the model
+                        # torch.save(model.state_dict(), generator_path)
+                        torch.save(model, generator_path)
+                        print(f'Saved best model at epoch {epoch+1}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {epoch}')
+                        print(f'Model best validation loss at {epoch+1}')
                 
                 else:
                     epochs_without_validation_improvement += 1
 
-                # log losses to wandb
-                wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
+                # # log losses and memory stats to wandb
+                # memory_info = psutil.virtual_memory()
+                wandb.log({
+                    f"{model_type} Training Loss": average_loss, f"{model_type} Validation Loss": val_average_loss, 
+                    # "memory_used": memory_info.used, "memory_percent": memory_info.percent
+                    })
 
                 if (epoch + 1) % 10 == 0 or epoch == 0:
                     print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
+    
             else:
-                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
-                wandb.log({'Early Stopping Ecoch':epoch})
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
+                wandb.log({'Early Stopping Ecoch':epoch+1})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
-                train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
-                train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
-                test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
-                test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
+                pf.plot_and_save_generator_results(
+                    train_data, combo['batch_size'], sorted_chem_names, 
+                    model, device, criterion, num_plots, plot_overlap_pca=plot_overlap_pca, 
+                    save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
+                    test_or_train='Train'
+                    )
+                pf.plot_and_save_generator_results(
+                    test_data, combo['batch_size'], sorted_chem_names, 
+                    model, device, criterion, num_plots, plot_overlap_pca=False, 
+                    save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
+                    test_or_train='Train'
+                    )
+                # plot_and_save_generator_results(
+                #             test_data, combo['batch_size'], sorted_chem_names, 
+                #             model, device, criterion, num_plots, plot_overlap_pca=False, 
+                #             save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name
+                #             )
+                # train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
+                # train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
+                # test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
+                # test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
                 
-                for _ in range(num_plots):
-                    random_carl = random.randint(0, len(test_data))
-                    train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
-                    test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
-                    train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
-                    test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
-                    train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
-                    test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
-                    plot_carl_real_synthetic_comparison(train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', train_chem)
-                    plot_carl_real_synthetic_comparison(test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', test_chem)
+                # for _ in range(num_plots):
+                #     random_carl = random.randint(0, len(test_data))
+                #     train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
+                #     test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
+                #     train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
+                #     test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
+                #     train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
+                #     test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
+                #     plot_carl_real_synthetic_comparison(train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', train_chem)
+                #     plot_carl_real_synthetic_comparison(test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', test_chem)
                 
                 break
 

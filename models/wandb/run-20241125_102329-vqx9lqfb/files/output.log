@@ -1,7 +1,0 @@
-Using device: cuda
---------------------------
---------------------------
-New run with hyperparameters:
-batch_size  :  64
-epochs  :  100
-learning_rate  :  0.0001

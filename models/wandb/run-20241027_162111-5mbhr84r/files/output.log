@@ -1,5 +1,0 @@
-Using device: cuda
-GPU ID: 0, percent of total memory used: 0.91%
-GPU ID: 1, percent of total memory used: 0.0%
-Epoch[1/1], loss: 507.97463149366706
--------------------------------------------

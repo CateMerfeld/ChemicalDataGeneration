@@ -773,7 +773,7 @@ def format_data_for_plotting(data):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_type, chem_label, log_wandb=False, show_wandb_run_name=True, criterion=None, run_name=None):
+def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_type, chem_label, left_plot_type='Experimental', right_plot_type='Synthetic', log_wandb=False, show_wandb_run_name=False, criterion=None, run_name=None):
     _, axes = plt.subplots(1, 2, figsize=(14, 8))
 
     # Flatten the axes array for easy iteration
@@ -787,7 +787,7 @@ def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_ty
 
     axes[0].plot(numbers, true_spec[:len(numbers)], label='Positive')
     axes[0].plot(numbers, true_spec[len(numbers):], label='Negative')
-    axes[0].set_title(f'Experimental {chem_label} {results_type} Spectrum', fontsize=20)
+    axes[0].set_title(f'{left_plot_type} {chem_label} {results_type} Spectrum', fontsize=20)
     axes[0].set_xlabel('Drift Time', fontsize=16)
     axes[0].set_ylabel('Ion Intensity', fontsize=16)
     axes[0].set_ylim(min_y, max_y)
@@ -795,7 +795,7 @@ def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_ty
 
     axes[1].plot(numbers, synthetic_spec[:len(numbers)], label='Positive')
     axes[1].plot(numbers, synthetic_spec[len(numbers):], label='Negative')
-    axes[1].set_title(f'Synthetic {chem_label} {results_type} Spectrum', fontsize=20)
+    axes[1].set_title(f'{right_plot_type} {chem_label} {results_type} Spectrum', fontsize=20)
     axes[1].set_xlabel('Drift Time', fontsize=16)
     axes[1].set_ylabel('Ion Intensity', fontsize=16)
     axes[1].set_ylim(min_y, max_y)

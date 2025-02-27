@@ -16,6 +16,16 @@ import os
 # import psutil
 import plotting_functions as pf
 
+def combine_embeddings(ims_embeddings_df, mass_spec_embeddings_df): 
+    ims_embeddings = pd.DataFrame([emb for emb in ims_embeddings_df['Embedding Floats']][1:]).T
+    mass_spec_embeddings = pd.DataFrame([emb for emb in mass_spec_embeddings_df['Embedding Floats']]).T
+    cols = ims_embeddings_df.index[1:]
+    ims_embeddings.columns = cols
+    cols = mass_spec_embeddings_df.index
+    mass_spec_embeddings.columns = cols
+    all_true_embeddings = pd.concat([ims_embeddings, mass_spec_embeddings], axis=1)
+    return all_true_embeddings
+
 def format_embedding_df(file_path):
     embedding_df = pd.read_csv(file_path)
     embedding_df.set_index('Unnamed: 0', inplace=True)

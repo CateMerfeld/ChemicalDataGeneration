@@ -23,7 +23,9 @@ stop_idx = -9
 
 device = f.set_up_gpu()
 #%%
-file_path = '../../data/train_test_val_splits/train_carls_low_TemperatureKelvin.csv'
+## There are MORE low temp preds than high temp carls. Shuffle/repeat the high temp carls to match the number of low temp preds
+# Make sure indices are based on carls, not preds
+file_path = '../../data/train_test_val_splits/train_carls_high_TemperatureKelvin.csv'
 train_carls = pd.read_csv(file_path)
 file_path = '../../data/encoder_embedding_predictions/conditioning_train_preds.csv'
 train_preds_df = pd.read_csv(file_path)
@@ -32,7 +34,7 @@ x_train, y_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.cre
 
 del train_carls
 #%%
-file_path = '../../data/train_test_val_splits/val_carls_low_TemperatureKelvin.csv'
+file_path = '../../data/train_test_val_splits/val_carls_high_TemperatureKelvin.csv'
 val_carls = pd.read_csv(file_path)
 file_path = '../../data/encoder_embedding_predictions/conditioning_val_preds.csv'
 val_preds_df = pd.read_csv(file_path)
@@ -41,7 +43,7 @@ x_val, y_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_data
 
 del val_carls
 #%%
-file_path = '../../data/train_test_val_splits/test_carls_low_TemperatureKelvin.csv'
+file_path = '../../data/train_test_val_splits/test_carls_high_TemperatureKelvin.csv'
 test_carls = pd.read_csv(file_path)
 file_path = '../../data/encoder_embedding_predictions/conditioning_test_preds.csv'
 test_preds_df = pd.read_csv(file_path)

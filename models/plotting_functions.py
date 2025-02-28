@@ -48,7 +48,7 @@ def plot_ims_spectrum(spectrum, chem_label, real_or_synthetic):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
-def plot_ims_spectra_pca(data, sample_size=1000):
+def plot_ims_spectra_pca(data, condition_two=None, sample_size=1000):
     """
     Perform PCA on IMS spectra and plot the transformed data.
 
@@ -64,29 +64,43 @@ def plot_ims_spectra_pca(data, sample_size=1000):
     None
         Displays the PCA scatter plot with IMS spectra.
     """
-
-    sample = data.sample(n=sample_size, random_state=42)
-
-    # Scale the data
     scaler = StandardScaler()
-    scaled_data = scaler.fit_transform(sample.iloc[:, 2:-9])
-    sample.iloc[:, 2:-9] = scaled_data
+    if condition_two is not None:
+        full_data = pd.concat([data, condition_two], ignore_index=True)
+        scaler.fit(full_data.iloc[:, 2:-9])
+        scaled_condition_two = scaler.transform(condition_two.iloc[:, 2:-9])
+        condition_two.iloc[:, 2:-9] = scaled_condition_two
+    else:
+        scaler.fit(data.iloc[:, 2:-9])
+
+    scaler.fit(data.iloc[:, 2:-9])
+    scaled_data = scaler.transform(data.iloc[:, 2:-9])
+    data.iloc[:, 2:-9] = scaled_data
 
     # Perform PCA
     pca = PCA(n_components=2)
-    pca.fit(sample.iloc[:, 2:-9])
+    pca.fit(data.iloc[:, 2:-9])
 
     _, ax = plt.subplots(figsize=(8,6))
 
     # Create a color cycle for distinct colors
     color_cycle = plt.gca()._get_lines.prop_cycler
 
-    all_chemical_names = list(sample.columns[-8:])
+    all_chemical_names = list(data.columns[-8:])
     # Scatter plot
+
+    sample = data.sample(n=sample_size, random_state=42)
+
+    if condition_two is not None:
+        condition_two_sample = condition_two.sample(n=sample_size, random_state=42)
+
     for chem in all_chemical_names:
         color = next(color_cycle)['color']
         transformed_data = pca.transform(sample[sample['Label'] == chem].iloc[:, 2:-9])
         ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color = color, label=chem)#, s=200)
+        if condition_two:
+            transformed_data = pca.transform(condition_two_sample[condition_two_sample['Label'] == chem].iloc[:, 2:-9])
+            ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color = color, label=chem, marker='x')
         
     # Add legend
     legend1 = ax.legend(loc='upper right', title='Label')

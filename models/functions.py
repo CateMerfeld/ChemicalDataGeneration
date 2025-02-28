@@ -16,6 +16,31 @@ import os
 # import psutil
 import plotting_functions as pf
 
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def format_preds_df(input_indices, predicted_embeddings, output_name_encodings, sorted_chem_names):
+    input_indices = [idx for idx_list in input_indices for idx in idx_list]
+    predicted_embeddings = [emb for emb_list in predicted_embeddings for emb in emb_list]
+    output_name_encodings = [enc for enc_list in output_name_encodings for enc in enc_list]
+    test_preds_df = pd.DataFrame(predicted_embeddings)
+    test_preds_df.insert(0, 'index', input_indices)
+    name_encodings_df = pd.DataFrame(output_name_encodings)
+    name_encodings_df.columns = sorted_chem_names
+    test_preds_df = pd.concat([test_preds_df, name_encodings_df], axis=1)
+    return test_preds_df
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 def combine_embeddings(ims_embeddings_df, mass_spec_embeddings_df): 
     ims_embeddings = pd.DataFrame([emb for emb in ims_embeddings_df['Embedding Floats']][1:]).T
     mass_spec_embeddings = pd.DataFrame([emb for emb in mass_spec_embeddings_df['Embedding Floats']]).T
@@ -25,6 +50,10 @@ def combine_embeddings(ims_embeddings_df, mass_spec_embeddings_df):
     mass_spec_embeddings.columns = cols
     all_true_embeddings = pd.concat([ims_embeddings, mass_spec_embeddings], axis=1)
     return all_true_embeddings
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
 def format_embedding_df(file_path):
     embedding_df = pd.read_csv(file_path)
@@ -48,7 +77,11 @@ def format_embedding_df(file_path):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def run_generator(file_path_dict, chem, model_hyperparams, wandb_kwargs, sorted_chem_names, generator_path, notebook_name, num_plots, model_type='chemnet_to_ims_generator'):
+def run_generator(
+        file_path_dict, chem, model_hyperparams, wandb_kwargs, 
+        sorted_chem_names, generator_path, notebook_name, num_plots, 
+        model_type='chemnet_to_ims_generator'
+        ):
     
     device = set_up_gpu()
     train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = create_individual_chemical_dataset_tensors(

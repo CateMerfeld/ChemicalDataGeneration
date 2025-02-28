@@ -247,8 +247,8 @@ def add_hulls(ax, pca, chem_data, threshold=3):
 # ------------------------------------------------------------------------------------------
  
 def plot_emb_pca(
-        all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=True, 
-        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True, plot_hulls=False, hull_data=None):
+        all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=False, 
+        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=False, plot_hulls=False, hull_data=None):
     """
     This function performs Principal Component Analysis (PCA) on chemical embeddings and visualizes the results
     in a 2D scatter plot. It overlays additional data from ion mobility spectrometry (IMS) and mass spectrometry 
@@ -322,9 +322,9 @@ def plot_emb_pca(
         color = next(color_cycle)['color']
         # Plot ChemNet embeddings
         if idx < 8: # only label 1st 8 chemicals to avoid giant legend
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=150)#, alpha=0.8)
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=150, alpha=0.5)
         else:
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, s=150)
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, s=150, alpha=0.5)
 
         # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
         if chem in ims_labels:

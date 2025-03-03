@@ -1,17 +1,17 @@
 import pandas as pd
-import requests
+# import requests
 
 # from fcd_torch import FCD
-import torch
+# import torch
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder
+# from sklearn.model_selection import train_test_split
+# from sklearn.preprocessing import OneHotEncoder
 
-import numpy as np
-import time
-import GPUtil
+# import numpy as np
+# import time
+# import GPUtil
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 def create_condition_dfs(metadata, spectra, condition, condition_cutoff):
     low_condition_meta = metadata[metadata[condition] < condition_cutoff]

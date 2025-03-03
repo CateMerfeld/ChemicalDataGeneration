@@ -1,16 +1,15 @@
 #%%
+
 # Load Packages and Files:
 import pandas as pd
 #%%
-import numpy as np
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-import torch.nn as nn
+# import numpy as np
+# import torch
+from torch.utils.data import TensorDataset
+# import torch.nn as nn
 import os
-import importlib
-import functions as f
 import sys
-import importlib
+# import importlib
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 import plotting_functions as pf
@@ -23,47 +22,47 @@ stop_idx = -9
 
 device = f.set_up_gpu()
 #%%
-## There are MORE low temp preds than high temp carls. Shuffle/repeat the high temp carls to match the number of low temp preds
-# Make sure indices are based on carls, not preds
+
 file_path = '../../data/train_test_val_splits/train_carls_high_TemperatureKelvin.csv'
 train_carls = pd.read_csv(file_path)
 file_path = '../../data/encoder_embedding_predictions/conditioning_train_preds.csv'
 train_preds_df = pd.read_csv(file_path)
 
-x_train, y_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors_for_generator(train_carls, train_preds_df, device)
+## There are MORE low temp preds than high temp carls. Shuffle/repeat the high temp carls to match the number of low temp preds
+train_carls = train_carls.sample(n=len(train_preds_df), replace=True, random_state=42)
 
-del train_carls
+x_train, y_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors_for_generator(
+    train_carls, train_preds_df, device, start_idx=start_idx, stop_idx=stop_idx)
+
+del train_carls, train_preds_df
 #%%
 file_path = '../../data/train_test_val_splits/val_carls_high_TemperatureKelvin.csv'
 val_carls = pd.read_csv(file_path)
 file_path = '../../data/encoder_embedding_predictions/conditioning_val_preds.csv'
 val_preds_df = pd.read_csv(file_path)
 
-x_val, y_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors_for_generator(val_carls, val_preds_df, device)
+val_carls = val_carls.sample(n=len(val_preds_df), replace=True, random_state=42)
 
-del val_carls
-#%%
+x_val, y_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors_for_generator(
+    val_carls, val_preds_df, device, start_idx=start_idx, stop_idx=stop_idx)
+
+del val_carls, val_preds_df
+# %%
 file_path = '../../data/train_test_val_splits/test_carls_high_TemperatureKelvin.csv'
 test_carls = pd.read_csv(file_path)
 file_path = '../../data/encoder_embedding_predictions/conditioning_test_preds.csv'
 test_preds_df = pd.read_csv(file_path)
 
-x_test, y_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors_for_generator(test_carls, test_preds_df, device)
+test_carls = test_carls.sample(n=len(test_preds_df), replace=True, random_state=42)
 
-del test_carls
+x_test, y_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors_for_generator(
+    test_carls, test_preds_df, device, start_idx=start_idx, stop_idx=stop_idx)
+
+del test_carls, test_preds_df
 #%%
 
 # sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 
-# file_path_dict = {'train_carls_file_path':'../../data/train_test_val_splits/train_carls_high_TemperatureKelvin.csv',
-#                 'train_embeddings_file_path':'../../data/encoder_embedding_predictions/conditioning_train_preds.csv',
-
-#                 'val_carls_file_path': '../../data/carls/val_carls_one_per_spec.feather', 
-#                 'val_embeddings_file_path': '../../data/encoder_embedding_predictions/conditioning_val_preds.csv',
-
-#                 'test_carls_file_path':'../../data/carls/test_carls_one_per_spec.feather', 
-#                 'test_embeddings_file_path':  '../../data/encoder_embedding_predictions/conditioning_test_preds.csv',
-#                 }
 # #%%
 # wandb_kwargs = {
 #     'architecture': 'conditional_universal_carl_generator',

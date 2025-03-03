@@ -4,6 +4,7 @@ click==8.1.7
 dask==2023.5.0 
 fcd_torch==1.0.7
 gputil==1.4.0
+imblearn==0.0 # might need to be imbalanced-learn==0.13.0
 ipykernel==6.29.5
 ipywidgets==8.1.5
 numpy==1.24.4 # most recent version of numpy that works with python 3.8.10

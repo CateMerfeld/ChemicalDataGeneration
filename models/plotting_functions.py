@@ -1,18 +1,19 @@
-import seaborn as sns
-from scipy.spatial import distance
+# import seaborn as sns
+# from scipy.spatial import distance
 import matplotlib.pyplot as plt
-from scipy.spatial import ConvexHull
+# from scipy.spatial import ConvexHull
 import numpy as np
 from sklearn.decomposition import PCA
 import pandas as pd
-import wandb
-import torch
-from torch.utils.data import DataLoader
-import functions as f
+# import wandb
+# import torch
+# from torch.utils.data import DataLoader
+# import functions as f
 from scipy.stats import zscore
-import os
-import random
+# import os
+# import random
 from sklearn.preprocessing import StandardScaler
+# import time
 
 # # Here are all the functions currently defined in this file. There is definitely overlap between some of these functions, 
 # # and some could be combined into a single function with optional arguments to handle different use cases.
@@ -82,7 +83,7 @@ def plot_ims_spectra_pca(data, sample_size=1000):
     color_cycle = plt.gca()._get_lines.prop_cycler
 
     all_chemical_names = list(sample.columns[-8:])
-    # Scatter plot
+
     for chem in all_chemical_names:
         color = next(color_cycle)['color']
         transformed_data = pca.transform(sample[sample['Label'] == chem].iloc[:, 2:-9])
@@ -92,10 +93,92 @@ def plot_ims_spectra_pca(data, sample_size=1000):
     legend1 = ax.legend(loc='upper right', title='Label')
     ax.add_artist(legend1)
 
+    # Remove spines to reduce white space
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
     plt.xticks([])
     plt.yticks([])
     plt.title(f'IMS Train Spectra PCA', fontsize=18)
     plt.show()
+
+
+def plot_conditions_pca(
+        condition_one, condition_two, save_file_path_pt1, 
+        save_file_path_pt2, condition, sample_size=1000,
+        z_score_threshold=2,
+        ):
+    scaler = StandardScaler()
+    full_data = pd.concat([condition_one, condition_two], ignore_index=True)
+    scaler.fit(full_data.iloc[:, 2:-9])
+
+    scaled_full_data = scaler.transform(full_data.iloc[:, 2:-9])
+    full_data.iloc[:, 2:-9] = scaled_full_data
+    del scaled_full_data
+
+    scaled_data = scaler.transform(condition_one.iloc[:, 2:-9])
+    condition_one.iloc[:, 2:-9] = scaled_data
+    scaled_data = scaler.transform(condition_two.iloc[:, 2:-9])
+    condition_two.iloc[:, 2:-9] = scaled_data
+    del scaled_data
+
+    # Create a color cycle for distinct colors
+    color_cycle = plt.gca()._get_lines.prop_cycler
+
+    all_chemical_names = list(condition_one.columns[-8:])
+
+    for chem in all_chemical_names:
+        # Fit PCA on all spectra for a given chemical
+        pca = PCA(n_components=2)
+        full_data_chem = full_data[full_data['Label'] == chem]
+        pca.fit(full_data_chem.iloc[:, 2:-9])
+        del full_data_chem
+
+        print(f'Plotting {chem}...')
+        _, ax = plt.subplots(figsize=(8,6))
+        color = next(color_cycle)['color']
+        condition_one_chem = condition_one[condition_one['Label'] == chem]
+        if condition_one_chem.shape[0] > sample_size:
+            condition_one_sample = condition_one_chem.sample(n=sample_size, random_state=42)
+        else:
+            condition_one_sample = condition_one_chem
+
+        transformed_data = pca.transform(condition_one_sample.iloc[:, 2:-9])
+        # Exclude outliers
+        z_scores = np.abs(zscore(condition_one_sample.iloc[:, 2:-9]))
+        filtered_data = condition_one_sample[(z_scores < z_score_threshold).all(axis=1)]
+        
+        transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
+        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color=color, label=f'{chem} Low {condition}')
+
+        if chem in list(condition_two['Label']):
+            condition_two_chem = condition_two[condition_two['Label'] == chem]
+            if condition_two_chem.shape[0] > sample_size:
+                condition_two_sample = condition_two_chem.sample(n=sample_size, random_state=42)
+            else:
+                condition_two_sample = condition_two_chem
+            # print(condition_two_sample.shape)
+            z_scores = np.abs(zscore(condition_two_sample.iloc[:, 2:-9]))
+            filtered_data = condition_two_sample[(z_scores < z_score_threshold+1).all(axis=1)]
+            # print(filtered_data.shape)
+            
+            transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
+            # transformed_data = pca.transform(condition_two_sample[condition_two_sample['Label'] == chem].iloc[:, 2:-9])
+            color = next(color_cycle)['color']
+            ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color = color, label=f'{chem} High {condition}', marker='x')
+        else:
+            print(f'Chem {chem} not in condition two data')
+        
+        # Add legend
+        legend1 = ax.legend(loc='upper right', title='Label')
+        ax.add_artist(legend1)
+
+        plt.xticks([])
+        plt.yticks([])
+        plt.title(f'{chem} IMS Spectra by Condition PCA', fontsize=18)
+        save_file_path = save_file_path_pt1 + chem + save_file_path_pt2
+        plt.savefig(save_file_path, format='png', dpi=300)
+        plt.show()
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -247,8 +330,8 @@ def add_hulls(ax, pca, chem_data, threshold=3):
 # ------------------------------------------------------------------------------------------
  
 def plot_emb_pca(
-        all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=True, 
-        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=True, plot_hulls=False, hull_data=None):
+        all_embeddings, ims_embeddings, results_type, input_type, embedding_type='ChemNet', mass_spec_embeddings = None, log_wandb=False, 
+        chemnet_embeddings_to_plot=None, mse_insert=None, insert_position=[0.05, 0.05], show_wandb_run_name=False, plot_hulls=False, hull_data=None):
     """
     This function performs Principal Component Analysis (PCA) on chemical embeddings and visualizes the results
     in a 2D scatter plot. It overlays additional data from ion mobility spectrometry (IMS) and mass spectrometry 
@@ -322,9 +405,9 @@ def plot_emb_pca(
         color = next(color_cycle)['color']
         # Plot ChemNet embeddings
         if idx < 8: # only label 1st 8 chemicals to avoid giant legend
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=150)#, alpha=0.8)
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=150, alpha=0.5)
         else:
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, s=150)
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, s=150, alpha=0.5)
 
         # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
         if chem in ims_labels:

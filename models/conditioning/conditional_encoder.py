@@ -20,7 +20,6 @@ start_idx = 2
 stop_idx = -9
 #%%
 # Loading Data:
-# file_path = '../data/train_test_val_splits/train_carls_low_TemperatureKelvin.csv'
 file_path = '../../data/train_test_val_splits/train_carls_low_TemperatureKelvin.csv'
 train_carls = pd.read_csv(file_path)
 train_carls['Label'].value_counts()
@@ -37,7 +36,6 @@ y_val, x_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_data
     val_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
 del val_carls
 #%%
-# file_path = '../data/train_test_val_splits/test_carls_low_TemperatureKelvin.csv'
 file_path = '../../data/train_test_val_splits/test_carls_low_TemperatureKelvin.csv'
 test_carls = pd.read_csv(file_path)
 y_test, x_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(
@@ -62,12 +60,6 @@ all_true_embeddings.head()
 mass_spec_name_smiles_embedding_df.head()
 #%%
 # Training Encoder on Carls:
-
-# y_train, x_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(train_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
-# y_val, x_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(val_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
-# y_test, x_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(test_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
-# sorted_chem_names = list(train_carls.columns[-8:])
-# del train_carls, val_carls, test_carls
 
 # Things that need to be changed for each encoder/dataset/target embedding
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/conditional_encoder.py'

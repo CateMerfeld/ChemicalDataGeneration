@@ -84,12 +84,18 @@ def combine_embeddings(ims_embeddings_df, mass_spec_embeddings_df):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def format_embedding_df(file_path):
+def format_embedding_df(file_path, chem_list=None):
     embedding_df = pd.read_csv(file_path)
     embedding_df.set_index('Unnamed: 0', inplace=True)
 
     embedding_floats = []
     for chem_name in embedding_df.index:
+        if chem_list is not None:
+            if chem_name not in chem_list:
+                # print(chem_name)
+                embedding_floats.append(None)
+                continue
+            
         if chem_name == 'BKG':
             embedding_floats.append(None)
         else:
@@ -346,13 +352,13 @@ def train_one_epoch(
     optimizer.step()
 
     # at last epoch store output embeddings and corresponding labels to output list
-    if (epoch + 1) == combo['epochs']:
+    if epoch == combo['epochs']:
       output_name_encodings.append(name_encodings)
       predicted_embeddings.append(batch_predicted_embeddings)
 
   # divide by number of batches to calculate average loss
   average_loss = epoch_training_loss/len(train_dataset)
-  if (epoch + 1) == combo['epochs']:
+  if epoch == combo['epochs']:
     return average_loss, predicted_embeddings, output_name_encodings
   else:
     return average_loss
@@ -400,6 +406,7 @@ def predict_embeddings(dataset, model, device, criterion, reparameterization=Fal
     output_name_encodings = []
     input_spectra_indices = []
 
+    print('Predicting embeddings...')
     with torch.no_grad():
         for batch, name_encodings, true_embeddings, spectra_indices in dataset:
             batch = batch.to(device)
@@ -659,13 +666,13 @@ def train_model(
         for key in combo:
             print(key, ' : ', combo[key])
 
-        for epoch in range(combo['epochs']):
+        for epoch in range(1, combo['epochs']+1):
             if epochs_without_validation_improvement < early_stop_threshold:
                 model.train(True)
 
                 # do a pass over the data
                 # at last epoch get predicted embeddings and chem names
-                if (epoch + 1) == combo['epochs']:
+                if epoch == combo['epochs']:
                     average_loss, _, _ = train_one_epoch(
                     train_dataset, device, model, criterion, 
                     optimizer, epoch, combo
@@ -720,11 +727,11 @@ def train_model(
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model 
                         torch.save(model, encoder_path)
-                        print(f'Saved best model at epoch {epoch+1}')
+                        print(f'Saved best model at epoch {epoch}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {epoch+1}')
+                        print(f'Model best validation loss at {epoch}')
                 
                 else:
                     epochs_without_validation_improvement += 1
@@ -735,14 +742,14 @@ def train_model(
                 # elif model_type == 'Generator':
                 #     wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
-                if (epoch + 1) % 10 == 0 or epoch == 0:
-                    print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
+                if epoch % 10 == 0 or epoch == 0:
+                    print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
             else:
-                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
-                wandb.log({'Early Stopping Ecoch':epoch+1})
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
+                wandb.log({'Early Stopping Ecoch':epoch})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 pf.plot_pca(
                     train_data, combo['batch_size'], model, device, 
@@ -1132,7 +1139,7 @@ def train_generator(
         model_type='Generator', pretrained_model_path=False,
         carl_or_spec = 'CARL'
         ):
-    wandb.finish()
+    # wandb.finish()
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
     lowest_val_loss = np.inf
 
@@ -1145,6 +1152,11 @@ def train_generator(
     # Iterate through each parameter combination and run model 
     for combo in combinations:
         combo = dict(zip(keys, combo))
+
+        if early_stop_threshold > combo['epochs']:
+            early_stop = combo['epochs']
+        else:
+            early_stop = early_stop_threshold
         # creating different var for model loss to use for early stopping
         lowest_val_model_loss = np.inf
         
@@ -1181,13 +1193,13 @@ def train_generator(
         for key in combo:
             print(key, ' : ', combo[key])
 
-        for epoch in range(combo['epochs']):
-            if epochs_without_validation_improvement < early_stop_threshold:
+        for epoch in range(1, combo['epochs']+1):
+            if epochs_without_validation_improvement < early_stop:
                 model.train(True)
 
                 # do a pass over the data
                 # at last epoch get predicted embeddings and chem names
-                if (epoch + 1) == combo['epochs']:
+                if epoch == combo['epochs']:
                     average_loss, _, _ = train_one_epoch(
                     train_dataset, device, model, criterion, optimizer, epoch, combo
                     )
@@ -1239,18 +1251,18 @@ def train_generator(
                     # check if val loss is improving for this model
                     epochs_without_validation_improvement = 0
                     lowest_val_model_loss = val_average_loss
-                    # best_epoch = epoch + 1  # Store the best epoch
+                    # best_epoch = epoch  # Store the best epoch
 
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
                         # Save the model
                         # torch.save(model.state_dict(), generator_path)
                         torch.save(model, generator_path)
-                        print(f'Saved best model at epoch {epoch+1}')
+                        print(f'Saved best model at epoch {epoch}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {epoch+1}')
+                        print(f'Model best validation loss at {epoch}')
                 
                 else:
                     epochs_without_validation_improvement += 1
@@ -1262,15 +1274,15 @@ def train_generator(
                     # "memory_used": memory_info.used, "memory_percent": memory_info.percent
                     })
 
-                if (epoch + 1) % 10 == 0 or epoch == 0:
-                    print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
+                if (epoch) % 10 == 0 or epoch == 0:
+                    print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
     
             else:
-                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
-                wandb.log({'Early Stopping Ecoch':epoch+1})
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
+                wandb.log({'Early Stopping Ecoch':epoch})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 pf.plot_and_save_generator_results(
                     train_data, combo['batch_size'], sorted_chem_names, 

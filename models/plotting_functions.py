@@ -42,7 +42,11 @@ def calculate_average_spectrum_and_percentiles(data):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
-def plot_average_spectrum(data_cond_low, data_cond_high, chem_label, condition):
+def plot_average_spectrum(
+        data_cond_low, data_cond_high, chem_label, 
+        condition, save_file_path_pt1=None, save_file_path_pt2=None,
+        synthetic_data=None, synthetic_condition_type=None
+        ):
     """
     Plot the average spectrum for a given dataset.
 
@@ -64,7 +68,24 @@ def plot_average_spectrum(data_cond_low, data_cond_high, chem_label, condition):
     # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
     numbers = range(184, (len(avg_spectrum_low)//2)+184)
 
-    _, axes = plt.subplots(1, 2, figsize=(20, 8))
+    if synthetic_data is not None:
+        fig, axes = plt.subplots(1, 3, figsize=(20, 14), layout="constrained")
+        label_fontsize = 22
+        title_fontsize = 26
+        legend_fontsize = 20
+
+        fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
+
+        low_cond_title = f'Avg {chem_label} Low {condition} Spectra'
+        high_cond_title = f'Avg {chem_label} High {condition} Spectra'
+    else:
+        _, axes = plt.subplots(1, 2, figsize=(20, 8))
+        label_fontsize = 16
+        title_fontsize = 20
+        legend_fontsize = 14
+
+        low_cond_title = f'Average of {chem_label} Low {condition} Spectra'
+        high_cond_title = f'Average of {chem_label} High {condition} Spectra'
 
     # Flatten the axes array for easy iteration
     axes = axes.flatten()
@@ -73,28 +94,35 @@ def plot_average_spectrum(data_cond_low, data_cond_high, chem_label, condition):
     axes[0].plot(numbers, avg_spectrum_low[len(numbers):], label='Negative', color='blue')
     axes[0].fill_between(numbers, lower_bound_low[:len(numbers)], upper_bound_low[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
     axes[0].fill_between(numbers, lower_bound_low[len(numbers):], upper_bound_low[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
-    axes[0].set_title(f'Average of {chem_label} Low {condition} Spectra', fontsize=20)
-    axes[0].set_xlabel('Drift Time', fontsize=16)
-    axes[0].set_ylabel('Ion Intensity', fontsize=16)
-    axes[0].legend(fontsize=14)
+    axes[0].set_title(low_cond_title, fontsize=title_fontsize)
+    axes[0].set_xlabel('Drift Time', fontsize=label_fontsize)
+    axes[0].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+    axes[0].legend(fontsize=legend_fontsize)
 
     axes[1].plot(numbers, avg_spectrum_high[:len(numbers)], label='Positive', color='orange')
     axes[1].plot(numbers, avg_spectrum_high[len(numbers):], label='Negative', color='blue')
     axes[1].fill_between(numbers, lower_bound_high[:len(numbers)], upper_bound_high[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
     axes[1].fill_between(numbers, lower_bound_high[len(numbers):], upper_bound_high[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
-    axes[1].set_title(f'Average of {chem_label} High {condition} Spectra', fontsize=20)
-    axes[1].set_xlabel('Drift Time', fontsize=16)
-    axes[1].set_ylabel('Ion Intensity', fontsize=16)
-    axes[1].legend(fontsize=14)
+    axes[1].set_title(high_cond_title, fontsize=title_fontsize)
+    axes[1].set_xlabel('Drift Time', fontsize=label_fontsize)
+    axes[1].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+    axes[1].legend(fontsize=legend_fontsize)
 
-    # plt.plot(numbers, avg_spectrum[:len(numbers)], label='Positive', color='orange')
-    # plt.plot(numbers, avg_spectrum[len(numbers):], label='Negative', color='blue')
-    # plt.fill_between(numbers, lower_bound[:len(numbers)], upper_bound[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
-    # plt.fill_between(numbers, lower_bound[len(numbers):], upper_bound[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
-    # plt.title(f'Average of {chem_label} {condition} Spectra', fontsize=20)
-    # plt.xlabel('Drift Time', fontsize=16)
-    # plt.ylabel('Ion Intensity', fontsize=16)
-    # plt.legend(fontsize=14)
+    if synthetic_data is not None:
+        avg_spectrum_synthic, lower_bound_synthic, upper_bound_synthic = calculate_average_spectrum_and_percentiles(synthetic_data)
+        axes[2].plot(numbers, avg_spectrum_synthic[:len(numbers)], label='Positive', color='orange')
+        axes[2].plot(numbers, avg_spectrum_synthic[len(numbers):], label='Negative', color='blue')
+        axes[2].fill_between(numbers, lower_bound_synthic[:len(numbers)], upper_bound_synthic[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+        axes[2].fill_between(numbers, lower_bound_synthic[len(numbers):], upper_bound_synthic[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+        axes[2].set_title(f'Avg Synthetic {chem_label} {synthetic_condition_type} {condition} Spectra', fontsize=title_fontsize)
+        axes[2].set_xlabel('Drift Time', fontsize=label_fontsize)
+        axes[2].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+        axes[2].legend(fontsize=legend_fontsize)
+
+    if save_file_path_pt1 is not None:
+        save_file_path = save_file_path_pt1 + chem_label + save_file_path_pt2
+        plt.savefig(save_file_path, format='png', dpi=300)
+
     plt.show()
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -186,9 +214,6 @@ def plot_conditions_pca(
     condition_two.iloc[:, 2:-9] = scaled_data
     del scaled_data
 
-    # Create a color cycle for distinct colors
-    color_cycle = plt.gca()._get_lines.prop_cycler
-
     all_chemical_names = list(condition_one.columns[-8:])
 
     for chem in all_chemical_names:
@@ -200,7 +225,6 @@ def plot_conditions_pca(
 
         print(f'Plotting {chem}...')
         _, ax = plt.subplots(figsize=(12,8))
-        color = next(color_cycle)['color']
         condition_one_chem = condition_one[condition_one['Label'] == chem]
         if condition_one_chem.shape[0] > sample_size:
             condition_one_sample = condition_one_chem.sample(n=sample_size, random_state=42)
@@ -213,7 +237,7 @@ def plot_conditions_pca(
         filtered_data = condition_one_sample[(z_scores < z_score_threshold).all(axis=1)]
         
         transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
-        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color=color, label=f'{chem} Low {condition}')
+        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color='purple', label=f'{chem} Low {condition}')
 
         if chem in list(condition_two['Label']):
             condition_two_chem = condition_two[condition_two['Label'] == chem]
@@ -229,8 +253,7 @@ def plot_conditions_pca(
             if filtered_data.shape[0] > 1:
                 transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
                 # transformed_data = pca.transform(condition_two_sample[condition_two_sample['Label'] == chem].iloc[:, 2:-9])
-                color = next(color_cycle)['color']
-                ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color = color, label=f'{chem} High {condition}', marker='x')
+                ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color ='blue', label=f'{chem} High {condition}', marker='x')
             else:
                 print(f'Chem {chem} not in condition two data')
         else:

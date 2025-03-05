@@ -1,53 +1,79 @@
 #%%
 import pandas as pd
-import torch.nn as nn
-import importlib
-import functions as f
+#%%
+# import importlib
+import time
+#%%
+import os
+import sys
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+# %%
 import plotting_functions as pf
-import random
+# import functions as f
+# importlib.reload(pf)
+# #%%
+condition = 'TemperatureKelvin'
+synthetic_condition_type='High'
+# # #%%
+print(f'Loading low {condition} experimental data...')
+start_time = time.time()
+file_path = '../../../scratch/train_spectra_low_TemperatureKelvin.csv'
+train_low_cond = pd.read_csv(file_path)
+train_low_cond = train_low_cond.sample(frac=.1, random_state=42)
+end_time = time.time()
+print(f'Loaded in {round(end_time - start_time, 3)} seconds')
+#%%
+print(f'Loading high {condition} experimental data...')
+start_time = time.time()
+file_path = '../../../scratch/train_spectra_high_TemperatureKelvin.csv'
+train_high_cond = pd.read_csv(file_path)
+train_high_cond = train_high_cond.sample(frac=.8, random_state=42)
+end_time = time.time()
+print(f'Loaded in {round(end_time - start_time, 3)} seconds')
+# dmmp = train_high_cond[train_high_cond['Label'] == 'DMMP']
+# print(dmmp.head())
 
-#%%
-importlib.reload(f)
-#%%
-file_path = '../../scratch/test_data.feather'
-spectra = pd.read_feather(file_path)
-#%%
-chem = 'MES'
-# gen_type = 'Individual'
-file_path = f'../data/ims_data/synthetic_test_{chem}_spectra.csv'
-synthetic_spectra_df = pd.read_csv(file_path)
-file_path = f'../data/ims_data/synthetic_test_{chem}_spectra_universal_generator.csv'
-synthetic_spectra_df_universal = pd.read_csv(file_path)
 
-#%%
-results_type ='Test'
-num_plots = 5
-criterion = nn.MSELoss()
-test_spectra_single_chem = spectra[spectra['Label'] == chem]
-indices = list(test_spectra_single_chem['index'])
-file_path = '../plots/generator_results/'
-#%%
-input_spectra, sorted_chem_names, input_labels = f.format_data_for_plotting(spectra)
-synthetic_spectra, synthetic_spectra_labels = f.format_data_for_plotting(synthetic_spectra_df)
-#%%
-f.plot_generation_results_pca_single_chem_side_by_side(
-    input_spectra, synthetic_spectra, sorted_chem_names, 
-    results_type=results_type, chem_of_interest=chem, save_plot_path=file_path
-    )
-#%%
-for i in range(num_plots):
-    random_spec_idx = random.choice(indices)
-    true_spec = test_spectra_single_chem[test_spectra_single_chem['index']==random_spec_idx]
-    synthetic_spec = synthetic_spectra_df[synthetic_spectra_df['index']==random_spec_idx]
-    true_spec_values = true_spec.iloc[:, 2:-9].values.flatten()
-    synthetic_spec_values = synthetic_spec.iloc[:, 2:-1].values.flatten()
-    file_path = f'../plots/generator_results/{chem}_real_synthetic_comparison_{i}.png'
-    f.plot_carl_real_synthetic_comparison(
-        true_spec_values, synthetic_spec_values, results_type, 
-        chem, criterion=criterion, save_plot_path=file_path
+# print(f'Loading high {condition} embedding_preds...')
+# start_time = time.time()
+# file_path = '../../data/encoder_embedding_predictions/conditioning_test_preds.csv'
+# train_embeddings_df = pd.read_csv(file_path)
+# end_time = time.time()
+# print(f'Loaded in {round(end_time - start_time, 3)} seconds')
+# print(train_embeddings_df.head())
+print(f'Loading {synthetic_condition_type} {condition} synthetic data...')
+start_time = time.time()
+# file_path = f'../../data/ims_data/synthetic_test_high_TemperatureKelvin_all_spectra_universal_generator_spectra.csv'
+file_path = f'../../../scratch/synthetic_data/synthetic_test_high_TemperatureKelvin_all_chemicals_universal_generator_spectra.csv'
+# file_path = f'../../../scratch/synthetic_data/synthetic_test_high_TemperatureKelvin_dmmp_tepo_on_universal_generator_spectra.csv'
+# file_path = f'../../data/ims_data/synthetic_test_high_TemperatureKelvin_all_chemicals_universal_generator_undertrained_spectra.csv'
+preds = pd.read_csv(file_path)
+# preds = preds.sample(frac=.8, random_state=42)
+end_time = time.time()
+print(f'Loaded in {round(end_time - start_time, 3)} seconds')
+
+# #%%
+# # # # importlib.reload(pf)
+# plot_type = 'real_vs_synthetic_dmmp_tepo'
+plot_type = 'real_vs_synthetic'
+save_file_path_pt1 = f'../../plots/avg_low_vs_high_{condition}_{plot_type}_'
+save_file_path_pt2 = '_spectra.png'
+plot_title_condition = 'Temperature'
+
+for chem in train_high_cond['Label'].unique():
+    print(f'Plotting {chem}...')
+    low_temp_chem = train_low_cond[train_low_cond['Label'] == chem].iloc[:,2:-9]
+    high_temp_chem = train_high_cond[train_high_cond['Label'] == chem].iloc[:,2:-9]
+    high_temp_chem_preds = preds[preds['Label'] == chem].iloc[:,:-1]
+
+    pf.plot_average_spectrum(
+        low_temp_chem,
+        high_temp_chem,  
+        chem, 
+        save_file_path_pt1=save_file_path_pt1, 
+        save_file_path_pt2=save_file_path_pt2,
+        condition=plot_title_condition,
+        synthetic_data=high_temp_chem_preds,
+        synthetic_condition_type=synthetic_condition_type
         )
-#%
-#%%
-pf.plot_similarity_comparison(spectra, chem, synthetic_spectra_df, 'Individual', 2, -1)#, similarity_type='spect_avg')
-pf.plot_similarity_comparison(spectra, chem, synthetic_spectra_df_universal, 'Universal', 0, -1)#, similarity_type='spect_avg')
-#%%

@@ -145,16 +145,33 @@ print(train_low_temp['Label'].value_counts())
 
 # %%
 # condition = 'PressureBar'
+importlib.reload(pf)
 condition = 'TemperatureKelvin'
+avg_low_cond_spectra = []
+avg_high_cond_spectra = []
 for chem in train_high_temp['Label'].unique():
     high_temp_chem = train_high_temp[train_high_temp['Label'] == chem]
     low_temp_chem = train_low_temp[train_low_temp['Label'] == chem]
-    pf.plot_average_spectrum(
-        low_temp_chem.iloc[:,2:-9], 
-        high_temp_chem.iloc[:,2:-9], 
-        chem, condition
-        )
+    avg_low_cond_spectrum, _, _ = pf.calculate_average_spectrum_and_percentiles(low_temp_chem.iloc[:,2:-9])
+    avg_low_cond_spectra.append(avg_low_cond_spectrum)
+    avg_high_cond_spectrum, _, _ = pf.calculate_average_spectrum_and_percentiles(high_temp_chem.iloc[:,2:-9])
+    avg_high_cond_spectra.append(avg_high_cond_spectrum)
+    # pf.plot_average_spectrum(
+    #     low_temp_chem.iloc[:,2:-9], 
+    #     high_temp_chem.iloc[:,2:-9], 
+    #     chem, condition,
+    #     save_file_path_pt1, save_file_path_pt2
+    #     )
+# avg_low_cond_spectra = pd.DataFrame(avg_low_cond_spectra)
+# avg_low_cond_spectra['Label'] = train_high_temp['Label'].unique()
+# avg_low_cond_spectra.to_csv(f'../data/average_low_temp_spectra.csv', index=False)
+avg_high_cond_spectra = pd.DataFrame(avg_high_cond_spectra)
+avg_high_cond_spectra['Label'] = train_high_temp['Label'].unique()
+avg_high_cond_spectra.to_csv(f'../data/average_high_temp_spectra.csv', index=False)
+#%%  
+
     
+# print(avg_high_temp_spectrum.shape)
 # #%%
 # chem = 'MES'
 # high_temp_chem = train_high_temp[train_high_temp['Label'] == chem]

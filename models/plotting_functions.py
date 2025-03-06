@@ -69,10 +69,10 @@ def plot_average_spectrum(
     numbers = range(184, (len(avg_spectrum_low)//2)+184)
 
     if synthetic_data is not None:
-        fig, axes = plt.subplots(1, 3, figsize=(20, 14), layout="constrained")
-        label_fontsize = 22
-        title_fontsize = 26
-        legend_fontsize = 20
+        fig, axes = plt.subplots(1, 3, figsize=(30, 12), layout="constrained")
+        label_fontsize = 26
+        title_fontsize = 28
+        legend_fontsize = 24
 
         fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
 

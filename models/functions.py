@@ -15,13 +15,42 @@ import os
 # import random
 # import psutil
 import plotting_functions as pf
+from imblearn.over_sampling import RandomOverSampler
 
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
+def oversample_condition_data(data_to_oversample, data_to_match):
+    if 'Label' not in data_to_match.columns:
+        # Extract the one-hot encoded columns
+        one_hot_columns = data_to_match.columns[-8:]
 
+        # Convert one-hot encodings to 'Label' column
+        data_to_match['Label'] = data_to_match[one_hot_columns].idxmax(axis=1)
+
+    # Not all chems have data for both conditions. 
+    # Drop rows in data_to_match if their 'Label' is not in data_to_oversample['Label']
+    labels_to_keep = data_to_oversample['Label'].unique()
+    data_to_match = data_to_match[data_to_match['Label'].isin(labels_to_keep)]
+
+    class_counts = data_to_match['Label'].value_counts()
+
+    X = data_to_oversample.drop(columns=['Label'], axis=1)
+    y = data_to_oversample['Label']
+
+    ros = RandomOverSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
+    X_resampled, y_resampled = ros.fit_resample(X, y)
+
+    upsampled_data = pd.DataFrame(X_resampled, columns=X.columns).copy()
+    upsampled_data['Label'] = y_resampled
+
+    data_to_match = data_to_match.sort_values(by=['Label'])
+    upsampled_data = upsampled_data.sort_values(by=['Label'])
+
+    data_to_match.drop(columns=['Label'], inplace=True)
+    return upsampled_data, data_to_match
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -55,12 +84,18 @@ def combine_embeddings(ims_embeddings_df, mass_spec_embeddings_df):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def format_embedding_df(file_path):
+def format_embedding_df(file_path, chem_list=None):
     embedding_df = pd.read_csv(file_path)
     embedding_df.set_index('Unnamed: 0', inplace=True)
 
     embedding_floats = []
     for chem_name in embedding_df.index:
+        if chem_list is not None:
+            if chem_name not in chem_list:
+                # print(chem_name)
+                embedding_floats.append(None)
+                continue
+            
         if chem_name == 'BKG':
             embedding_floats.append(None)
         else:
@@ -317,13 +352,13 @@ def train_one_epoch(
     optimizer.step()
 
     # at last epoch store output embeddings and corresponding labels to output list
-    if (epoch + 1) == combo['epochs']:
+    if epoch == combo['epochs']:
       output_name_encodings.append(name_encodings)
       predicted_embeddings.append(batch_predicted_embeddings)
 
   # divide by number of batches to calculate average loss
   average_loss = epoch_training_loss/len(train_dataset)
-  if (epoch + 1) == combo['epochs']:
+  if epoch == combo['epochs']:
     return average_loss, predicted_embeddings, output_name_encodings
   else:
     return average_loss
@@ -371,6 +406,7 @@ def predict_embeddings(dataset, model, device, criterion, reparameterization=Fal
     output_name_encodings = []
     input_spectra_indices = []
 
+    print('Predicting embeddings...')
     with torch.no_grad():
         for batch, name_encodings, true_embeddings, spectra_indices in dataset:
             batch = batch.to(device)
@@ -630,13 +666,13 @@ def train_model(
         for key in combo:
             print(key, ' : ', combo[key])
 
-        for epoch in range(combo['epochs']):
+        for epoch in range(1, combo['epochs']+1):
             if epochs_without_validation_improvement < early_stop_threshold:
                 model.train(True)
 
                 # do a pass over the data
                 # at last epoch get predicted embeddings and chem names
-                if (epoch + 1) == combo['epochs']:
+                if epoch == combo['epochs']:
                     average_loss, _, _ = train_one_epoch(
                     train_dataset, device, model, criterion, 
                     optimizer, epoch, combo
@@ -691,11 +727,11 @@ def train_model(
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model 
                         torch.save(model, encoder_path)
-                        print(f'Saved best model at epoch {epoch+1}')
+                        print(f'Saved best model at epoch {epoch}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {epoch+1}')
+                        print(f'Model best validation loss at {epoch}')
                 
                 else:
                     epochs_without_validation_improvement += 1
@@ -706,14 +742,14 @@ def train_model(
                 # elif model_type == 'Generator':
                 #     wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
-                if (epoch + 1) % 10 == 0 or epoch == 0:
-                    print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
+                if epoch % 10 == 0 or epoch == 0:
+                    print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
             else:
-                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
-                wandb.log({'Early Stopping Ecoch':epoch+1})
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
+                wandb.log({'Early Stopping Ecoch':epoch})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 pf.plot_pca(
                     train_data, combo['batch_size'], model, device, 
@@ -800,7 +836,7 @@ def create_dataset_tensors(spectra_dataset, embedding_df, device, start_idx=None
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device=None, multiple_carls_per_spec=False, carl=True):
+def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device=None, multiple_carls_per_spec=False, start_idx=2, stop_idx=-9):
     """
     Create tensors from the provided CARL dataset and embedding DataFrame.
 
@@ -826,14 +862,18 @@ def create_dataset_tensors_for_generator(carl_dataset, embedding_preds, device=N
         - spectra_indices_tensor (torch.Tensor): Tensor of indices corresponding to the CARLS.
     """
     # drop first col ('index') and last 9 cols ('Label', OneHot encodings) to get just CARLS and predicted embeddings
-    if carl:
-        carls = carl_dataset.iloc[:,1:-9]
-    else:
-        carls = carl_dataset.iloc[:,2:-9]
+    # if carl:
+    #     carls = carl_dataset.iloc[:,1:-9]
+    # else:
+    carls = carl_dataset.iloc[:,start_idx:stop_idx]
+
     # embeddings df doesn't have 'Label' col, so dropping last 8 cols instead of last 9
     embedding_preds = embedding_preds.iloc[:,1:-8]
 
-    chem_encodings = carl_dataset.iloc[:,-8:]
+    if carl_dataset.columns[-1] == 'Label':
+        chem_encodings = carl_dataset.iloc[:,-9:-1]
+    else:
+        chem_encodings = carl_dataset.iloc[:,-8:]
     # del carl_dataset
 
     if device is not None:
@@ -1077,15 +1117,29 @@ def set_up_gpu():
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
+def load_model(model_path, device, freeze_layers=6):
+    print('Loading pretrained model...')
+    model = torch.load(model_path, weights_only=False)
+    model.to(device)
+    # Freeze first freeze_layers/2 Linear layers and LeakyReLU layers
+    for layer in model.generator[:freeze_layers]: 
+        for param in layer.parameters():
+            param.requires_grad = False
+    return model
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 def train_generator(
         train_data, val_data, test_data, device, config, wandb_kwargs, 
         model_hyperparams, sorted_chem_names, generator_path, 
         save_plots_to_wandb = True, early_stop_threshold=10, 
         show_wandb_run_name=True, lr_scheduler = True, 
-        num_plots = 1, patience=5, plot_overlap_pca=False, model_type='Generator'
+        num_plots = 1, patience=5, plot_overlap_pca=False, 
+        model_type='Generator', pretrained_model_path=False,
+        carl_or_spec = 'CARL'
         ):
-    wandb.finish()
+    # wandb.finish()
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
     lowest_val_loss = np.inf
 
@@ -1095,19 +1149,27 @@ def train_generator(
     # Generate all parameter combinations from model_config using itertools.product
     combinations = itertools.product(*values)
 
-
     # Iterate through each parameter combination and run model 
     for combo in combinations:
+        combo = dict(zip(keys, combo))
+
+        if early_stop_threshold > combo['epochs']:
+            early_stop = combo['epochs']
+        else:
+            early_stop = early_stop_threshold
         # creating different var for model loss to use for early stopping
         lowest_val_model_loss = np.inf
         
-        if model_type == 'Generator':
-            model = Generator().to(device)
-        elif model_type == 'OneHottoIMSGenerator':
-            model = OneHottoIMSGenerator().to(device)
+        # load pretrained model if provided, otherwise create new model
+        if pretrained_model_path:
+            model = load_model(pretrained_model_path, freeze_layers=combo['freeze_layers'])
+        else:
+            if model_type == 'Generator':
+                model = Generator().to(device)
+            elif model_type == 'OneHottoIMSGenerator':
+                model = OneHottoIMSGenerator().to(device)
 
         epochs_without_validation_improvement = 0
-        combo = dict(zip(keys, combo))
 
         train_dataset = DataLoader(train_data, batch_size=combo['batch_size'], shuffle=True)
         val_dataset = DataLoader(val_data, batch_size=combo['batch_size'], shuffle=False)
@@ -1131,13 +1193,13 @@ def train_generator(
         for key in combo:
             print(key, ' : ', combo[key])
 
-        for epoch in range(combo['epochs']):
-            if epochs_without_validation_improvement < early_stop_threshold:
+        for epoch in range(1, combo['epochs']+1):
+            if epochs_without_validation_improvement < early_stop:
                 model.train(True)
 
                 # do a pass over the data
                 # at last epoch get predicted embeddings and chem names
-                if (epoch + 1) == combo['epochs']:
+                if epoch == combo['epochs']:
                     average_loss, _, _ = train_one_epoch(
                     train_dataset, device, model, criterion, optimizer, epoch, combo
                     )
@@ -1148,13 +1210,13 @@ def train_generator(
                             train_data, combo['batch_size'], sorted_chem_names, 
                             model, device, criterion, num_plots, plot_overlap_pca=plot_overlap_pca, 
                             save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
-                            test_or_train='Train'
+                            test_or_train='Train', carl_or_spec=carl_or_spec
                             )
                         pf.plot_and_save_generator_results(
                             test_data, combo['batch_size'], sorted_chem_names, 
                             model, device, criterion, num_plots, plot_overlap_pca=False, 
                             save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
-                            test_or_train='Train'
+                            test_or_train='Test', carl_or_spec=carl_or_spec
                             )
             
                 else:
@@ -1189,18 +1251,18 @@ def train_generator(
                     # check if val loss is improving for this model
                     epochs_without_validation_improvement = 0
                     lowest_val_model_loss = val_average_loss
-                    # best_epoch = epoch + 1  # Store the best epoch
+                    # best_epoch = epoch  # Store the best epoch
 
                     if val_average_loss < lowest_val_loss:
                         # if current epoch of current model is best performing (of all epochs and models so far), save model state
                         # Save the model
                         # torch.save(model.state_dict(), generator_path)
                         torch.save(model, generator_path)
-                        print(f'Saved best model at epoch {epoch+1}')
+                        print(f'Saved best model at epoch {epoch}')
                         lowest_val_loss = val_average_loss
                         best_hyperparams = combo
                     else:
-                        print(f'Model best validation loss at {epoch+1}')
+                        print(f'Model best validation loss at {epoch}')
                 
                 else:
                     epochs_without_validation_improvement += 1
@@ -1212,56 +1274,42 @@ def train_generator(
                     # "memory_used": memory_info.used, "memory_percent": memory_info.percent
                     })
 
-                if (epoch + 1) % 10 == 0 or epoch == 0:
-                    print('Epoch[{}/{}]:'.format(epoch+1, combo['epochs']))
+                if (epoch) % 10 == 0 or epoch == 0:
+                    print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')
                     print('-------------------------------------------')
     
             else:
-                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch+1}.')
-                wandb.log({'Early Stopping Ecoch':epoch+1})
+                print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
+                wandb.log({'Early Stopping Ecoch':epoch})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 pf.plot_and_save_generator_results(
                     train_data, combo['batch_size'], sorted_chem_names, 
                     model, device, criterion, num_plots, plot_overlap_pca=plot_overlap_pca, 
                     save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
-                    test_or_train='Train'
+                    test_or_train='Train', carl_or_spec=carl_or_spec
                     )
                 pf.plot_and_save_generator_results(
                     test_data, combo['batch_size'], sorted_chem_names, 
                     model, device, criterion, num_plots, plot_overlap_pca=False, 
                     save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name,
-                    test_or_train='Train'
+                    test_or_train='Test', carl_or_spec=carl_or_spec
                     )
-                # plot_and_save_generator_results(
-                #             test_data, combo['batch_size'], sorted_chem_names, 
-                #             model, device, criterion, num_plots, plot_overlap_pca=False, 
-                #             save_plots_to_wandb=True, show_wandb_run_name=show_wandb_run_name
-                #             )
-                # train_dataset = DataLoader(train_data, batch_size=combo['batch_size'])
-                # train_predicted_carls, train_output_name_encodings, _, _ = predict_embeddings(train_dataset, model, device, criterion)
-                # test_dataset = DataLoader(test_data, batch_size=combo['batch_size'])
-                # test_predicted_carls, test_output_name_encodings, _, _ = predict_embeddings(test_dataset, model, device, criterion)
-                
-                # for _ in range(num_plots):
-                #     random_carl = random.randint(0, len(test_data))
-                #     train_encodings_list = [enc for enc_list in train_output_name_encodings for enc in enc_list]
-                #     test_encodings_list = [enc for enc_list in test_output_name_encodings for enc in enc_list]
-                #     train_predicted_carls_list = [pred for pred_list in train_predicted_carls for pred in pred_list]
-                #     test_predicted_carls_list = [pred for pred_list in test_predicted_carls for pred in pred_list]
-                #     train_chem = sorted_chem_names[list(train_encodings_list[random_carl]).index(1)]
-                #     test_chem = sorted_chem_names[list(test_encodings_list[random_carl]).index(1)]
-                #     plot_carl_real_synthetic_comparison(train_data[random_carl][2].cpu(), train_predicted_carls_list[random_carl], 'Train', train_chem)
-                #     plot_carl_real_synthetic_comparison(test_data[random_carl][2].cpu(), test_predicted_carls_list[random_carl], 'Test', test_chem)
                 
                 break
 
         # at last epoch print model architecture details (this will also show up in wandb log)
         print('-------------------------------------------')
         print('-------------------------------------------')
-        print('Dataset: ', wandb_kwargs['dataset'])
-        print('Target Embeddings: ', wandb_kwargs['target_embedding'])
+        if 'dataset' in wandb_kwargs.keys():
+            print('Dataset: ', wandb_kwargs['dataset'])
+        elif 'input' in wandb_kwargs.keys():
+            print('Input data: ', wandb_kwargs['input'])
+        if 'target_embedding' in wandb_kwargs.keys():
+            print('Target Embeddings: ', wandb_kwargs['target_embedding'])
+        elif 'target' in wandb_kwargs.keys():
+            print('Target: ', wandb_kwargs['target'])
         print('-------------------------------------------')
         print('-------------------------------------------')
         print(model)

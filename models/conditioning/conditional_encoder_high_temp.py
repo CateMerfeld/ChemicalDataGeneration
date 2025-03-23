@@ -24,7 +24,7 @@ start_idx = 2
 stop_idx = -9
 # %%
 # Loading Data:
-file_path = '../../data/train_test_val_splits/train_carls_low_TemperatureKelvin.csv'
+file_path = '../../data/train_test_val_splits/train_carls_high_TemperatureKelvin.csv'
 train_carls = pd.read_csv(file_path)
 train_carls['Label'].value_counts()
 y_train, x_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
@@ -33,14 +33,14 @@ sorted_chem_names = list(train_carls.columns[-8:])
 del train_carls
 
 #%%
-file_path = '../../data/train_test_val_splits/val_carls_low_TemperatureKelvin.csv'
+file_path = '../../data/train_test_val_splits/val_carls_high_TemperatureKelvin.csv'
 val_carls = pd.read_csv(file_path)
 
 y_val, x_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
     val_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
 del val_carls
 #%%
-file_path = '../../data/train_test_val_splits/test_carls_low_TemperatureKelvin.csv'
+file_path = '../../data/train_test_val_splits/test_carls_high_TemperatureKelvin.csv'
 test_carls = pd.read_csv(file_path)
 y_test, x_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(
     test_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
@@ -63,12 +63,13 @@ all_true_embeddings = pd.concat([ims_embeddings, mass_spec_embeddings], axis=1)
 # Training Encoder on Carls:
 
 # Things that need to be changed for each encoder/dataset/target embedding
-notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/conditional_encoder.py'
+notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/conditional_encoder_high_temp.py'
 architecture = 'carl_encoder'
-dataset_type = 'low_temp_carls'
+dataset_type = 'high_temp_carls'
 target_embedding = 'ChemNet'
-encoder_type='_undertrained'
-encoder_path = f'../trained_models/low_temp_carl_to_chemnet_encoder{encoder_type}.pth'
+encoder_type=''
+data_condition = 'high'
+encoder_path = f'../trained_models/{data_condition}_temp_carl_to_chemnet_encoder{encoder_type}.pth'
 input_type = 'Carl'
 model_type = 'Encoder'
 
@@ -95,7 +96,7 @@ wandb_kwargs = {
 
 model_hyperparams = {
   'batch_size':[32],
-  'epochs': [30],
+  'epochs': [500],
   'learning_rate':[.0001],
   }
 

@@ -1,21 +1,21 @@
-# import seaborn as sns
+import seaborn as sns
 # from scipy.spatial import distance
 import matplotlib.pyplot as plt
 # from scipy.spatial import ConvexHull
 import numpy as np
 from sklearn.decomposition import PCA
 import pandas as pd
-# import wandb
-# import torch
-# from torch.utils.data import DataLoader
-# import functions as f
+import wandb
+import torch
+from torch.utils.data import DataLoader
+import functions as f
 from scipy.stats import zscore
-# import os
-# import random
+import os
+import random
 from sklearn.preprocessing import StandardScaler
 # import time
 
-# # Here are all the functions currently defined in this file. There is definitely overlap between some of these functions, 
+# # Here are the functions currently defined in this file. There is definitely overlap between some of these functions, 
 # # and some could be combined into a single function with optional arguments to handle different use cases.
 
 # def plot_ims_spectra_pca(data, sample_size=1000):
@@ -31,6 +31,99 @@ from sklearn.preprocessing import StandardScaler
 # def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_type, chem_label, log_wandb=False, show_wandb_run_name=True, criterion=None, run_name=None):
 # def plot_and_save_generator_results(data, batch_size, sorted_chem_names, model, device, criterion, num_plots, plot_overlap_pca=False, save_plots_to_wandb=True, show_wandb_run_name=True, test_or_train='Train'):
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+def calculate_average_spectrum_and_percentiles(data):
+    average_spectrum = np.mean(data, axis=0)
+    lower_bound = np.percentile(data, 25, axis=0)
+    upper_bound = np.percentile(data, 75, axis=0)
+    return average_spectrum, lower_bound, upper_bound
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+def plot_average_spectrum(
+        data_cond_low, data_cond_high, chem_label, 
+        condition, save_file_path_pt1=None, save_file_path_pt2=None,
+        synthetic_data=None, synthetic_condition_type=None
+        ):
+    """
+    Plot the average spectrum for a given dataset.
+
+    This function calculates the average spectrum for a given dataset and plots it.
+
+    Parameters:
+    ----------
+    data : pd.DataFrame
+        DataFrame containing the dataset to plot.
+
+    Returns:
+    -------
+    None
+        Displays the average spectrum plot.
+    """
+    avg_spectrum_low, lower_bound_low, upper_bound_low = calculate_average_spectrum_and_percentiles(data_cond_low)
+    avg_spectrum_high, lower_bound_high, upper_bound_high = calculate_average_spectrum_and_percentiles(data_cond_high)
+
+    # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
+    numbers = range(184, (len(avg_spectrum_low)//2)+184)
+
+    if synthetic_data is not None:
+        fig, axes = plt.subplots(1, 3, figsize=(30, 12), layout="constrained")
+        label_fontsize = 26
+        title_fontsize = 28
+        legend_fontsize = 24
+
+        fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
+
+        low_cond_title = f'Avg {chem_label} Low {condition} Spectra'
+        high_cond_title = f'Avg {chem_label} High {condition} Spectra'
+    else:
+        _, axes = plt.subplots(1, 2, figsize=(20, 8))
+        label_fontsize = 16
+        title_fontsize = 20
+        legend_fontsize = 14
+
+        low_cond_title = f'Average of {chem_label} Low {condition} Spectra'
+        high_cond_title = f'Average of {chem_label} High {condition} Spectra'
+
+    # Flatten the axes array for easy iteration
+    axes = axes.flatten()
+
+    axes[0].plot(numbers, avg_spectrum_low[:len(numbers)], label='Positive', color='orange')
+    axes[0].plot(numbers, avg_spectrum_low[len(numbers):], label='Negative', color='blue')
+    axes[0].fill_between(numbers, lower_bound_low[:len(numbers)], upper_bound_low[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+    axes[0].fill_between(numbers, lower_bound_low[len(numbers):], upper_bound_low[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+    axes[0].set_title(low_cond_title, fontsize=title_fontsize)
+    axes[0].set_xlabel('Drift Time', fontsize=label_fontsize)
+    axes[0].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+    axes[0].legend(fontsize=legend_fontsize)
+
+    axes[1].plot(numbers, avg_spectrum_high[:len(numbers)], label='Positive', color='orange')
+    axes[1].plot(numbers, avg_spectrum_high[len(numbers):], label='Negative', color='blue')
+    axes[1].fill_between(numbers, lower_bound_high[:len(numbers)], upper_bound_high[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+    axes[1].fill_between(numbers, lower_bound_high[len(numbers):], upper_bound_high[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+    axes[1].set_title(high_cond_title, fontsize=title_fontsize)
+    axes[1].set_xlabel('Drift Time', fontsize=label_fontsize)
+    axes[1].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+    axes[1].legend(fontsize=legend_fontsize)
+
+    if synthetic_data is not None:
+        avg_spectrum_synthic, lower_bound_synthic, upper_bound_synthic = calculate_average_spectrum_and_percentiles(synthetic_data)
+        axes[2].plot(numbers, avg_spectrum_synthic[:len(numbers)], label='Positive', color='orange')
+        axes[2].plot(numbers, avg_spectrum_synthic[len(numbers):], label='Negative', color='blue')
+        axes[2].fill_between(numbers, lower_bound_synthic[:len(numbers)], upper_bound_synthic[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+        axes[2].fill_between(numbers, lower_bound_synthic[len(numbers):], upper_bound_synthic[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+        axes[2].set_title(f'Avg Synthetic {chem_label} {synthetic_condition_type} {condition} Spectra', fontsize=title_fontsize)
+        axes[2].set_xlabel('Drift Time', fontsize=label_fontsize)
+        axes[2].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+        axes[2].legend(fontsize=legend_fontsize)
+
+    if save_file_path_pt1 is not None:
+        save_file_path = save_file_path_pt1 + chem_label + save_file_path_pt2
+        plt.savefig(save_file_path, format='png', dpi=300)
+
+    plt.show()
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -102,7 +195,6 @@ def plot_ims_spectra_pca(data, sample_size=1000):
     plt.title(f'IMS Train Spectra PCA', fontsize=18)
     plt.show()
 
-
 def plot_conditions_pca(
         condition_one, condition_two, save_file_path_pt1, 
         save_file_path_pt2, condition, sample_size=1000,
@@ -122,9 +214,6 @@ def plot_conditions_pca(
     condition_two.iloc[:, 2:-9] = scaled_data
     del scaled_data
 
-    # Create a color cycle for distinct colors
-    color_cycle = plt.gca()._get_lines.prop_cycler
-
     all_chemical_names = list(condition_one.columns[-8:])
 
     for chem in all_chemical_names:
@@ -135,8 +224,7 @@ def plot_conditions_pca(
         del full_data_chem
 
         print(f'Plotting {chem}...')
-        _, ax = plt.subplots(figsize=(8,6))
-        color = next(color_cycle)['color']
+        _, ax = plt.subplots(figsize=(12,8))
         condition_one_chem = condition_one[condition_one['Label'] == chem]
         if condition_one_chem.shape[0] > sample_size:
             condition_one_sample = condition_one_chem.sample(n=sample_size, random_state=42)
@@ -149,7 +237,7 @@ def plot_conditions_pca(
         filtered_data = condition_one_sample[(z_scores < z_score_threshold).all(axis=1)]
         
         transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
-        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color=color, label=f'{chem} Low {condition}')
+        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color='purple', label=f'{chem} Low {condition}')
 
         if chem in list(condition_two['Label']):
             condition_two_chem = condition_two[condition_two['Label'] == chem]
@@ -162,10 +250,12 @@ def plot_conditions_pca(
             filtered_data = condition_two_sample[(z_scores < z_score_threshold+1).all(axis=1)]
             # print(filtered_data.shape)
             
-            transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
-            # transformed_data = pca.transform(condition_two_sample[condition_two_sample['Label'] == chem].iloc[:, 2:-9])
-            color = next(color_cycle)['color']
-            ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color = color, label=f'{chem} High {condition}', marker='x')
+            if filtered_data.shape[0] > 1:
+                transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
+                # transformed_data = pca.transform(condition_two_sample[condition_two_sample['Label'] == chem].iloc[:, 2:-9])
+                ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color ='blue', label=f'{chem} High {condition}', marker='x')
+            else:
+                print(f'Chem {chem} not in condition two data')
         else:
             print(f'Chem {chem} not in condition two data')
         
@@ -771,7 +861,7 @@ def plot_pca(
 def plot_carl_real_synthetic_comparison(
         true_carl, synthetic_carl, results_type, chem_label, 
         log_wandb=False, show_wandb_run_name=False, criterion=None, 
-        run_name=None, save_plot_path=None):
+        run_name=None, save_plot_path=None, carl_or_spec='CARL'):
     
     _, axes = plt.subplots(1, 2, figsize=(14, 8))
 
@@ -786,7 +876,7 @@ def plot_carl_real_synthetic_comparison(
 
     axes[0].plot(numbers, true_carl[:len(numbers)], label='Positive')
     axes[0].plot(numbers, true_carl[len(numbers):], label='Negative')
-    axes[0].set_title(f'True {results_type} {chem_label} CARL', fontsize=20)
+    axes[0].set_title(f'True {results_type} {chem_label} {carl_or_spec}', fontsize=20)
     axes[0].set_xlabel('Drift Time', fontsize=16)
     axes[0].set_ylabel('Ion Intensity', fontsize=16)
     axes[0].set_ylim(min_y, max_y)
@@ -794,7 +884,7 @@ def plot_carl_real_synthetic_comparison(
 
     axes[1].plot(numbers, synthetic_carl[:len(numbers)], label='Positive')
     axes[1].plot(numbers, synthetic_carl[len(numbers):], label='Negative')
-    axes[1].set_title(f'Synthetic {results_type} {chem_label} CARL', fontsize=20)
+    axes[1].set_title(f'Synthetic {results_type} {chem_label} {carl_or_spec}', fontsize=20)
     axes[1].set_xlabel('Drift Time', fontsize=16)
     axes[1].set_ylabel('Ion Intensity', fontsize=16)
     axes[1].set_ylim(min_y, max_y)
@@ -922,7 +1012,8 @@ def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_ty
 def plot_and_save_generator_results(
     data, batch_size, sorted_chem_names, model, device, 
     criterion, num_plots, plot_overlap_pca=False, 
-    save_plots_to_wandb=True, show_wandb_run_name=True, test_or_train='Train'
+    save_plots_to_wandb=True, show_wandb_run_name=True, 
+    test_or_train='Train', carl_or_spec='CARL'
     ):
     # get predictions from trained model and plot them
     dataset = DataLoader(data, batch_size=batch_size)
@@ -935,7 +1026,7 @@ def plot_and_save_generator_results(
         chem = sorted_chem_names[list(encodings_list[random_carl]).index(1)]
         plot_carl_real_synthetic_comparison(
             data[random_carl][2].cpu(), predicted_carls_list[random_carl], test_or_train, 
-            chem, save_plots_to_wandb, show_wandb_run_name)
+            chem, save_plots_to_wandb, show_wandb_run_name, carl_or_spec=carl_or_spec)
 
     if plot_overlap_pca:
         true_spectra = [spec[2].cpu() for spec in data]

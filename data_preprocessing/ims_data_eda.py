@@ -5,7 +5,7 @@ start_time = time.time()
 import pandas as pd
 import sys
 import os
-# import importlib
+import importlib
 import sys
 end_time = time.time()
 print(f'Loaded in {round(end_time - start_time, 3)} seconds')
@@ -91,33 +91,97 @@ print(f'Loaded in {round(end_time - start_time, 3)} seconds')
 #     'TemperatureKelvin', condition_cutoff=302
 #     )
 # #%%
-print('Loading low temp data...')
+print('Loading low condition data...')
 start_time = time.time()
 # file_path = '../data/train_test_val_splits/train_carls_low_TemperatureKelvin.csv'
-# file_path = '../data/train_test_val_splits/val_carls_low_TemperatureKelvin.csv'
+# file_path = '../data/train_test_val_splits/val_carls_low_TemperatureKelvin.csv'/
+file_path = '../../scratch/train_spectra_low_TemperatureKelvin.csv'
+# file_path = '../../scratch/val_spectra_low_PressureBar.csv'
 # file_path = '/home/cmdunham/scratch/train_spectra_low_TemperatureKelvin.csv'
-file_path = '/home/cmdunham/scratch/train_spectra_cutoff_303_low_TemperatureKelvin.csv'
+# file_path = '/home/cmdunham/scratch/val_spectra_cutoff_303_low_TemperatureKelvin.csv'
 train_low_temp = pd.read_csv(file_path)
 train_low_temp = train_low_temp.sample(frac=.1, random_state=42)
 end_time = time.time()
 print(f'Loaded in {round(end_time - start_time, 3)} seconds')
-
-print('Loading high temp data...')
+#%%
+print('Loading high condition data...')
 start_time = time.time()
 # file_path = '../data/train_test_val_splits/train_carls_high_TemperatureKelvin.csv'
 # file_path = '../data/train_test_val_splits/val_carls_high_TemperatureKelvin.csv'
+# file_path = '../../scratch/val_spectra_high_PressureBar.csv'
+file_path = '../../scratch/train_spectra_high_TemperatureKelvin.csv'
 # file_path = '/home/cmdunham/scratch/train_spectra_high_TemperatureKelvin.csv'
-file_path = '/home/cmdunham/scratch/train_spectra_cutoff_303_high_TemperatureKelvin.csv'
+# file_path = '/home/cmdunham/scratch/val_spectra_cutoff_303_high_TemperatureKelvin.csv'
 train_high_temp = pd.read_csv(file_path)
 train_high_temp = train_high_temp.sample(frac=.8, random_state=42)
 end_time = time.time()
 print(f'Loaded in {round(end_time - start_time, 3)} seconds')
-# #%%
+#%%
 # # # importlib.reload(pf)
-save_file_path_pt1 = '../plots/low_vs_high_temp_'
+condition = 'PressureBar'
+save_file_path_pt1 = f'../plots/low_vs_high_{condition}_'
 save_file_path_pt2 = '_spectra.png'
+# def undersample_df(df, label_column):
+#     min_count = df[label_column].value_counts().min()
+#     return df.groupby(label_column).apply(lambda x: x.sample(min_count)).reset_index(drop=True)
+
+# train_low_temp_sample = undersample_df(train_low_temp, 'Label')
+# train_high_temp_sample = undersample_df(train_high_temp, 'Label')
+
+importlib.reload(pf)
+# for chem in train_high_temp['Label'].unique():
 pf.plot_conditions_pca(
-    train_low_temp, train_high_temp, 
+    train_low_temp.copy(), train_high_temp.copy(), 
     save_file_path_pt1, save_file_path_pt2, 
-    'Temp'
+    condition, sample_size=5000
     )
+#%%
+print('Low Temp Label Counts:')
+print(train_high_temp['Label'].value_counts())
+print('-----------------------')
+print('High Temp Label Counts:')
+print(train_low_temp['Label'].value_counts())
+
+
+# %%
+# condition = 'PressureBar'
+importlib.reload(pf)
+condition = 'TemperatureKelvin'
+avg_low_cond_spectra = []
+avg_high_cond_spectra = []
+for chem in train_high_temp['Label'].unique():
+    high_temp_chem = train_high_temp[train_high_temp['Label'] == chem]
+    low_temp_chem = train_low_temp[train_low_temp['Label'] == chem]
+    avg_low_cond_spectrum, _, _ = pf.calculate_average_spectrum_and_percentiles(low_temp_chem.iloc[:,2:-9])
+    avg_low_cond_spectra.append(avg_low_cond_spectrum)
+    avg_high_cond_spectrum, _, _ = pf.calculate_average_spectrum_and_percentiles(high_temp_chem.iloc[:,2:-9])
+    avg_high_cond_spectra.append(avg_high_cond_spectrum)
+    # pf.plot_average_spectrum(
+    #     low_temp_chem.iloc[:,2:-9], 
+    #     high_temp_chem.iloc[:,2:-9], 
+    #     chem, condition,
+    #     save_file_path_pt1, save_file_path_pt2
+    #     )
+# avg_low_cond_spectra = pd.DataFrame(avg_low_cond_spectra)
+# avg_low_cond_spectra['Label'] = train_high_temp['Label'].unique()
+# avg_low_cond_spectra.to_csv(f'../data/average_low_temp_spectra.csv', index=False)
+avg_high_cond_spectra = pd.DataFrame(avg_high_cond_spectra)
+avg_high_cond_spectra['Label'] = train_high_temp['Label'].unique()
+avg_high_cond_spectra.to_csv(f'../data/average_high_temp_spectra.csv', index=False)
+#%%  
+
+    
+# print(avg_high_temp_spectrum.shape)
+# #%%
+# chem = 'MES'
+# high_temp_chem = train_high_temp[train_high_temp['Label'] == chem]
+# low_temp_chem = train_low_temp[train_low_temp['Label'] == chem]
+# #%%
+# import importlib
+# importlib.reload(pf)
+# #%%
+# pf.plot_average_spectrum(
+#     low_temp_chem.iloc[:,2:-9], 
+#     high_temp_chem.iloc[:,2:-9], 
+#     chem, 'TemperatureKelvin'
+#     )

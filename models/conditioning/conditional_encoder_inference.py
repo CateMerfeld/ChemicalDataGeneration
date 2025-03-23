@@ -17,7 +17,8 @@ importlib.reload(pf)
 
 device = f.set_up_gpu()
 #%%
-encoder_path = '../trained_models/low_temp_carl_to_chemnet_encoder.pth'
+encoder_type = '_undertrained'
+encoder_path = f'../trained_models/low_temp_carl_to_chemnet_encoder{encoder_type}.pth'
 best_model = torch.load(encoder_path, weights_only=False)
 encoder_criterion = nn.MSELoss()
 batch_size = 16
@@ -53,7 +54,7 @@ predicted_embeddings, output_name_encodings, average_loss, input_carl_indices = 
     train_dataset, best_model, device, encoder_criterion)
 train_preds_df = f.format_preds_df(input_carl_indices, predicted_embeddings, output_name_encodings, sorted_chem_names)
 
-file_path = '../../data/encoder_embedding_predictions/conditioning_train_preds.csv'
+file_path = f'../../data/encoder_embedding_predictions/conditioning_train_preds{encoder_type}.csv'
 train_preds_df.to_csv(file_path, index=False)
 
 del x_train, y_train, train_chem_encodings_tensor, train_carl_indices_tensor
@@ -76,7 +77,7 @@ predicted_embeddings, output_name_encodings, average_loss, input_carl_indices = 
     val_dataset, best_model, device, encoder_criterion)
 val_preds_df = f.format_preds_df(input_carl_indices, predicted_embeddings, output_name_encodings, sorted_chem_names)
 
-file_path = '../../data/encoder_embedding_predictions/conditioning_val_preds.csv'
+file_path = f'../../data/encoder_embedding_predictions/conditioning_val_preds{encoder_type}.csv'
 val_preds_df.to_csv(file_path, index=False)
 
 del x_val, y_val, val_chem_encodings_tensor, val_carl_indices_tensor
@@ -99,13 +100,13 @@ predicted_embeddings, output_name_encodings, average_loss, input_carl_indices = 
     test_dataset, best_model, device, encoder_criterion)
 test_preds_df = f.format_preds_df(input_carl_indices, predicted_embeddings, output_name_encodings, sorted_chem_names)
 
-file_path = '../../data/encoder_embedding_predictions/conditioning_test_preds.csv'
+file_path = f'../../data/encoder_embedding_predictions/conditioning_test_preds{encoder_type}.csv'
 test_preds_df.to_csv(file_path, index=False)
 
 del x_test, y_test, test_chem_encodings_tensor, test_carl_indices_tensor
 
 #%%
-file_path = '../../data/encoder_embedding_predictions/conditioning_test_preds.csv'
+file_path = f'../../data/encoder_embedding_predictions/conditioning_test_preds{encoder_type}.csv'
 test_preds_df = pd.read_csv(file_path)
 ims_embeddings = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']][1:]).T
 cols = name_smiles_embedding_df.index[1:]

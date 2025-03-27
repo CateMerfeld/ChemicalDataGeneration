@@ -17,8 +17,10 @@ importlib.reload(pf)
 
 device = f.set_up_gpu()
 #%%
-encoder_type = '_undertrained'
-encoder_path = f'../trained_models/low_temp_carl_to_chemnet_encoder{encoder_type}.pth'
+encoder_type = ''
+condition_value_name = 'high_temp_'
+condition_value = 'high_'
+encoder_path = f'../trained_models/{condition_value_name}carl_to_chemnet_encoder{encoder_type}.pth'
 best_model = torch.load(encoder_path, weights_only=False)
 encoder_criterion = nn.MSELoss()
 batch_size = 16
@@ -36,7 +38,7 @@ start_idx = 2
 stop_idx = -9
 
 #%%
-file_path = '../../data/train_test_val_splits/train_carls_low_TemperatureKelvin.csv'
+file_path = f'../../data/train_test_val_splits/train_carls_{condition_value}TemperatureKelvin.csv'
 train_carls = pd.read_csv(file_path)
 y_train, x_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
     train_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
@@ -54,12 +56,12 @@ predicted_embeddings, output_name_encodings, average_loss, input_carl_indices = 
     train_dataset, best_model, device, encoder_criterion)
 train_preds_df = f.format_preds_df(input_carl_indices, predicted_embeddings, output_name_encodings, sorted_chem_names)
 
-file_path = f'../../data/encoder_embedding_predictions/conditioning_train_preds{encoder_type}.csv'
+file_path = f'../../data/encoder_embedding_predictions/{condition_value_name}conditioning_train_preds{encoder_type}.csv'
 train_preds_df.to_csv(file_path, index=False)
 
 del x_train, y_train, train_chem_encodings_tensor, train_carl_indices_tensor
 #%%
-file_path = '../../data/train_test_val_splits/val_carls_low_TemperatureKelvin.csv'
+file_path = f'../../data/train_test_val_splits/val_carls_{condition_value}TemperatureKelvin.csv'
 val_carls = pd.read_csv(file_path)
 y_val, x_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
     val_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
@@ -77,12 +79,12 @@ predicted_embeddings, output_name_encodings, average_loss, input_carl_indices = 
     val_dataset, best_model, device, encoder_criterion)
 val_preds_df = f.format_preds_df(input_carl_indices, predicted_embeddings, output_name_encodings, sorted_chem_names)
 
-file_path = f'../../data/encoder_embedding_predictions/conditioning_val_preds{encoder_type}.csv'
+file_path = f'../../data/encoder_embedding_predictions/{condition_value_name}conditioning_val_preds{encoder_type}.csv'
 val_preds_df.to_csv(file_path, index=False)
 
 del x_val, y_val, val_chem_encodings_tensor, val_carl_indices_tensor
 #%%
-file_path = '../../data/train_test_val_splits/test_carls_low_TemperatureKelvin.csv'
+file_path = f'../../data/train_test_val_splits/test_carls_{condition_value}TemperatureKelvin.csv'
 test_carls = pd.read_csv(file_path)
 y_test, x_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(
     test_carls, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
@@ -100,25 +102,25 @@ predicted_embeddings, output_name_encodings, average_loss, input_carl_indices = 
     test_dataset, best_model, device, encoder_criterion)
 test_preds_df = f.format_preds_df(input_carl_indices, predicted_embeddings, output_name_encodings, sorted_chem_names)
 
-file_path = f'../../data/encoder_embedding_predictions/conditioning_test_preds{encoder_type}.csv'
+file_path = f'../../data/encoder_embedding_predictions/{condition_value_name}conditioning_test_preds{encoder_type}.csv'
 test_preds_df.to_csv(file_path, index=False)
 
 del x_test, y_test, test_chem_encodings_tensor, test_carl_indices_tensor
 
-#%%
-file_path = f'../../data/encoder_embedding_predictions/conditioning_test_preds{encoder_type}.csv'
-test_preds_df = pd.read_csv(file_path)
-ims_embeddings = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']][1:]).T
-cols = name_smiles_embedding_df.index[1:]
-ims_embeddings.columns = cols
+# #%%
+# file_path = f'../../data/encoder_embedding_predictions/conditioning_test_preds{encoder_type}.csv'
+# test_preds_df = pd.read_csv(file_path)
+# ims_embeddings = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']][1:]).T
+# cols = name_smiles_embedding_df.index[1:]
+# ims_embeddings.columns = cols
 
-sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
-encodings_list = test_preds_df[sorted_chem_names].values.tolist()
-embeddings_only = test_preds_df.iloc[:,1:-8].copy()
-embeddings_only.columns = ims_embeddings.T.columns
-embeddings_only['Label'] = [sorted_chem_names[enc.index(1)] for enc in encodings_list]
+# sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
+# encodings_list = test_preds_df[sorted_chem_names].values.tolist()
+# embeddings_only = test_preds_df.iloc[:,1:-8].copy()
+# embeddings_only.columns = ims_embeddings.T.columns
+# embeddings_only['Label'] = [sorted_chem_names[enc.index(1)] for enc in encodings_list]
 
-pf.plot_emb_pca(
-    all_true_embeddings, embeddings_only, 'Test Low Temp', 'IMS', 
-    log_wandb=False, chemnet_embeddings_to_plot=ims_embeddings,
-    show_wandb_run_name=False)
+# pf.plot_emb_pca(
+#     all_true_embeddings, embeddings_only, 'Test Low Temp', 'IMS', 
+#     log_wandb=False, chemnet_embeddings_to_plot=ims_embeddings,
+#     show_wandb_run_name=False)

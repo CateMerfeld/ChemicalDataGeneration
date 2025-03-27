@@ -9,53 +9,92 @@ from torch.utils.data import TensorDataset, DataLoader
 import wandb
 import itertools
 import GPUtil
-from collections import Counter
+from collections import Counter, OrderedDict
 import dask.dataframe as dd
 import os
 # import random
 # import psutil
 import plotting_functions as pf
 from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+def get_onehot_labels(data, one_hot_columns_idx_list):
+    one_hot_columns = data.columns[one_hot_columns_idx_list[0]:one_hot_columns_idx_list[1]]
+    one_hot_labels = data[one_hot_columns].idxmax(axis=1)
+    return one_hot_labels
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def oversample_condition_data(data_to_oversample, data_to_match):
+# def oversample_condition_data(data_to_oversample, data_to_match):
+#     if 'Label' not in data_to_match.columns:
+#         # Extract the one-hot encoded columns
+#         one_hot_columns = data_to_match.columns[-8:]
+
+#         # Convert one-hot encodings to 'Label' column
+#         data_to_match['Label'] = data_to_match[one_hot_columns].idxmax(axis=1)
+
+#     # Not all chems have data for both conditions. 
+#     # Drop rows in data_to_match if their 'Label' is not in data_to_oversample['Label']
+#     labels_to_keep = data_to_oversample['Label'].unique()
+#     data_to_match = data_to_match[data_to_match['Label'].isin(labels_to_keep)]
+
+#     class_counts = data_to_match['Label'].value_counts()
+
+#     X = data_to_oversample.drop(columns=['Label'], axis=1)
+#     y = data_to_oversample['Label']
+
+#     ros = RandomOverSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
+#     X_resampled, y_resampled = ros.fit_resample(X, y)
+
+#     upsampled_data = pd.DataFrame(X_resampled, columns=X.columns).copy()
+#     upsampled_data['Label'] = y_resampled
+
+#     data_to_match = data_to_match.sort_values(by=['Label'])
+#     upsampled_data = upsampled_data.sort_values(by=['Label'])
+
+#     data_to_match.drop(columns=['Label'], inplace=True)
+#     return upsampled_data, data_to_match
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def resample_condition_data(data_to_resample, data_to_match, sampling_technique='over'):
     if 'Label' not in data_to_match.columns:
-        # Extract the one-hot encoded columns
-        one_hot_columns = data_to_match.columns[-8:]
-
-        # Convert one-hot encodings to 'Label' column
-        data_to_match['Label'] = data_to_match[one_hot_columns].idxmax(axis=1)
-
+        data_to_match['Label'] = get_onehot_labels(data_to_match, one_hot_columns_idx_list=[-8, None])
+    
     # Not all chems have data for both conditions. 
-    # Drop rows in data_to_match if their 'Label' is not in data_to_oversample['Label']
-    labels_to_keep = data_to_oversample['Label'].unique()
-    data_to_match = data_to_match[data_to_match['Label'].isin(labels_to_keep)]
+    # Drop rows of each dataframe if their 'Label' is not in the other dataframe
+    data_to_resample = data_to_resample[data_to_resample['Label'].isin(data_to_match['Label'].unique())]
+    data_to_match = data_to_match[data_to_match['Label'].isin(data_to_resample['Label'].unique())]
 
     class_counts = data_to_match['Label'].value_counts()
 
-    X = data_to_oversample.drop(columns=['Label'], axis=1)
-    y = data_to_oversample['Label']
+    X = data_to_resample.drop(columns=['Label'], axis=1)
+    y = data_to_resample['Label']
 
-    ros = RandomOverSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
-    X_resampled, y_resampled = ros.fit_resample(X, y)
+    if sampling_technique == 'over':
+        sampler = RandomOverSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
+    elif sampling_technique == 'under':
+        sampler = RandomUnderSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
+    X_resampled, y_resampled = sampler.fit_resample(X, y)
 
-    upsampled_data = pd.DataFrame(X_resampled, columns=X.columns).copy()
-    upsampled_data['Label'] = y_resampled
+    resampled_data = pd.DataFrame(X_resampled, columns=X.columns).copy()
+    resampled_data['Label'] = y_resampled
 
     data_to_match = data_to_match.sort_values(by=['Label'])
-    upsampled_data = upsampled_data.sort_values(by=['Label'])
+    resampled_data = resampled_data.sort_values(by=['Label'])
 
     data_to_match.drop(columns=['Label'], inplace=True)
-    return upsampled_data, data_to_match
-
+    return resampled_data, data_to_match
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
-
 def format_preds_df(input_indices, predicted_embeddings, output_name_encodings, sorted_chem_names):
     input_indices = [idx for idx_list in input_indices for idx in idx_list]
     predicted_embeddings = [emb for emb_list in predicted_embeddings for emb in emb_list]
@@ -499,12 +538,13 @@ class IMStoOneHotEncoder(nn.Module):
       nn.LeakyReLU(inplace=True),
       nn.Linear(381, 196),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(196, 8)
+      nn.Linear(196, 8),
     )
 
   def forward(self, x):
     x = self.encoder(x)
     return x
+
 #%%
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -535,6 +575,8 @@ class OneHottoChemNetEncoder(nn.Module):
     x = self.encoder(x)
     return x
 #%%
+
+
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------

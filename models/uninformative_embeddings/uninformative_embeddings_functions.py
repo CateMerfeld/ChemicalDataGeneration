@@ -22,14 +22,19 @@ class Encoder(nn.Module):
     super().__init__()
 
     layers = OrderedDict()
-    size_reduction_per_layer = (input_size - output_size)/n_layers
-    for i in range(n_layers-1):
-      layer_input_size = input_size - int(size_reduction_per_layer)*i
-      layer_output_size = input_size - int(size_reduction_per_layer)*(i+1)
-      layers[f'fc{i}'] = nn.Linear(layer_input_size, layer_output_size)
-      layers[f'relu{i}'] = nn.LeakyReLU(inplace=True)
+    if n_layers > 1:
+        size_reduction_per_layer = (input_size - output_size)/n_layers
+        for i in range(n_layers-1):
+            layer_input_size = input_size - int(size_reduction_per_layer)*i
+            layer_output_size = input_size - int(size_reduction_per_layer)*(i+1)
+            layers[f'fc{i}'] = nn.Linear(layer_input_size, layer_output_size)
+            layers[f'relu{i}'] = nn.LeakyReLU(inplace=True)
 
-    layers['final'] = nn.Linear(layer_output_size, output_size)
+        layers['final'] = nn.Linear(layer_output_size, output_size)
+
+    else:
+        layers['final'] = nn.Linear(input_size, output_size)
+
     self.encoder = nn.Sequential(layers)
 
   def forward(self, x):

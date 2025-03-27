@@ -21,10 +21,10 @@ loss = 'CrossEntropyLoss'
 
 early_stopping_threshold = 15
 lr_scheduler_patience = 5
-n_layers_list = [1,]#2,3,4]
+n_layers_list = [1]#3,4]
 model_hyperparams = {
   'batch_size':[32],
-  'epochs': [10],
+  'epochs': [2],
   'learning_rate':[.00001],
   }
 
@@ -72,7 +72,7 @@ y_train, x_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.cre
 del train_spectra
 
 
-#%%
+# #%%
 file_path = '../../../scratch/val_data.feather'
 val_spectra = pd.read_feather(file_path)
 y_val, x_val, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
@@ -90,18 +90,16 @@ del test_spectra
 file_path = '../../data/name_smiles_embedding_file.csv'
 smiles_chemnet_embeddings_df = f.format_embedding_df(file_path)
 chemnet_embeddings = pd.DataFrame([emb for emb in smiles_chemnet_embeddings_df['Embedding Floats']][1:]).T
-# cols = smiles_chemnet_embeddings_df.index[1:]
 cols = [f"{col} ChemNet" for col in smiles_chemnet_embeddings_df.index[1:]]
 chemnet_embeddings.columns = cols
 
-onehot_embeddings = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']][1:]).T
-cols = name_smiles_embedding_df.index[1:]
+onehot_embeddings = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']]).T
 onehot_embeddings.columns = cols
-zeros_df = pd.DataFrame(np.zeros((2, 7)), columns=onehot_embeddings.columns)
-onehot_embeddings = pd.concat([zeros_df, onehot_embeddings], axis=0)
-all_true_embeddings = pd.concat([chemnet_embeddings, onehot_embeddings], axis=1).reset_index(drop=True)
-# all_true_embeddings.fillna(0, inplace=True)
-#%%
+# padding onehot embeddings with zeros to match chemnet embeddings
+zeros_df = pd.DataFrame(np.zeros((504, 8)), columns=onehot_embeddings.columns)
+onehot_embeddings = pd.concat([zeros_df, onehot_embeddings], axis=0).reset_index(drop=True)
+all_true_embeddings = pd.concat([chemnet_embeddings, onehot_embeddings], axis=1)
+# #%%
 
 train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_carl_indices_tensor)
 val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_carl_indices_tensor)

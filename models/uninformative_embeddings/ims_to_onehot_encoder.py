@@ -21,10 +21,10 @@ loss = 'CrossEntropyLoss'
 
 early_stopping_threshold = 15
 lr_scheduler_patience = 5
-n_layers_list = [1]#3,4]
+n_layers_list = [3,4]
 model_hyperparams = {
   'batch_size':[32],
-  'epochs': [2],
+  'epochs': [100],
   'learning_rate':[.00001],
   }
 
@@ -115,6 +115,7 @@ for n_layers in n_layers_list:
         model_type, base_model, train_data, val_data, test_data, device, config, wandb_kwargs,
         all_true_embeddings, true_embeddings, model_hyperparams, sorted_chem_names, 
         encoder_path, criterion, input_type='IMS', embedding_type='OneHot',
-        early_stop_threshold=early_stopping_threshold, lr_scheduler=True, patience=lr_scheduler_patience,
+        early_stop_threshold=early_stopping_threshold, lr_scheduler=True, 
+        patience=lr_scheduler_patience, save_emb_pca_to_wandb=False
         )
 # %%

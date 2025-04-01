@@ -1,5 +1,5 @@
 import seaborn as sns
-# from scipy.spatial import distance
+from scipy.spatial import distance
 import matplotlib.pyplot as plt
 # from scipy.spatial import ConvexHull
 import numpy as np

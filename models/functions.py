@@ -158,24 +158,24 @@ def run_generator(
         ):
     
     device = set_up_gpu()
-    train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = create_individual_chemical_dataset_tensors(
-    file_path_dict['train_carls_file_path'], file_path_dict['train_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    train_embeddings_tensor, train_data_tensor, train_chem_encodings_tensor, train_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['train_data_file_path'], file_path_dict['train_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
     )
-    val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = create_individual_chemical_dataset_tensors(
-    file_path_dict['val_carls_file_path'], file_path_dict['val_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    val_embeddings_tensor, val_data_tensor, val_chem_encodings_tensor, val_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['val_data_file_path'], file_path_dict['val_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
     )
-    test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = create_individual_chemical_dataset_tensors(
-    file_path_dict['test_carls_file_path'], file_path_dict['test_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    test_embeddings_tensor, test_data_tensor, test_chem_encodings_tensor, test_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['test_data_file_path'], file_path_dict['test_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
     )
 
-    train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor)
-    val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor)
-    test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor)
+    train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_data_tensor, train_indices_tensor)
+    val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_data_tensor, val_indices_tensor)
+    test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_data_tensor, test_indices_tensor)
 
     # remove from memory since information is now stored in train/val/test datasets
-    del train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor
-    del val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor
-    del test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor
+    del train_embeddings_tensor, train_chem_encodings_tensor, train_data_tensor, train_indices_tensor
+    del val_embeddings_tensor, val_chem_encodings_tensor, val_data_tensor, val_indices_tensor
+    del test_embeddings_tensor, test_chem_encodings_tensor, test_data_tensor, test_indices_tensor
 
     config = {
         'wandb_entity': 'catemerfeld',

@@ -45,6 +45,8 @@ wandb_kwargs = {
 
 generator_save_path_pt_1 = 'trained_models/'
 generator_save_path_pt_2 = 'group_generator.pth'
+synthetic_data_save_path_pt_1 = '../../scratch/synthetic_data/'
+synthetic_data_save_path_pt_2 = 'synthetic_test_spectra.csv'
 train_file_path = '../data/carls/train_carls_one_per_spec.feather'
 train_embeddings_file_path = '../data/encoder_embedding_predictions/train_embeddings.csv'
 val_file_path = '../data/carls/val_carls_one_per_spec.feather'
@@ -117,6 +119,37 @@ for group in chem_groups:
         carl_or_spec=target_type
     )
 #%%
+batch_size = 16
+
+for group in chem_groups:
+    group_file_path = '_'.join(group)
+    generator_path = '_'.join([generator_save_path_pt_1,group_file_path,generator_save_path_pt_2])
+    preds_save_path = '_'.join([synthetic_data_save_path_pt_1,group_file_path,synthetic_data_save_path_pt_2])
+
+    test_data = pd.read_feather(test_file_path)
+    test_embeddings_df = pd.read_csv(test_embeddings_file_path)
+
+    test_data = test_data[test_data[group].any(axis=1)]
+    test_cols = test_data.columns[start_idx:stop_idx]
+    test_embeddings_df = test_embeddings_df[test_embeddings_df[group].any(axis=1)] 
+    x_test, y_test, test_chem_encodings_tensor, test_indices_tensor = f.create_dataset_tensors_for_generator(
+        test_data, test_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
+
+    del test_data, test_embeddings_df
+
+    test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_indices_tensor)
+    test_dataset = DataLoader(test_data, batch_size)
+
+    model = f.load_model(generator_path, device=device)
+    test_preds, test_chem_name_encodings, _, test_indices = f.predict_embeddings(test_dataset, model, device, criterion)
+
+    test_chem_name_encodings_list = [enc for enc_list in test_chem_name_encodings for enc in enc_list]
+    test_labels = [sorted_chem_names[list(enc).index(1)] for enc in test_chem_name_encodings_list]
+
+    synthetic_spectra = [pred for pred_list in test_preds for pred in pred_list]
+    synthetic_spectra_df = pd.DataFrame(synthetic_spectra, columns=test_cols)
+    synthetic_spectra_df['Label'] = test_labels
+    synthetic_spectra_df.to_csv(preds_save_path, index=False)
 
 # # # Get predictions and save synthetic spectra
 # # chem_to_run='MES'

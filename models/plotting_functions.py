@@ -44,7 +44,7 @@ def calculate_average_spectrum_and_percentiles(data):
 # ------------------------------------------------------------------------------------------
 def plot_average_spectrum(
         data_cond_low, data_cond_high, chem_label, 
-        condition_name, condition_1_value, condition_2_value,
+        condition_name ='', condition_1_value='', condition_2_value='',
         save_file_path_pt1=None, save_file_path_pt2=None,
         synthetic_data=None,
         synthetic_condition_type=None
@@ -78,16 +78,16 @@ def plot_average_spectrum(
 
         fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
 
-        condition_1_title = f'Avg {chem_label} {condition_1_value} {condition_name} Spectra'
-        condition_2_title = f'Avg {chem_label} {condition_2_value} {condition_name} Spectra'
+        condition_1_title = f'Avg {chem_label}{condition_1_value}{condition_name}Spectra'
+        condition_2_title = f'Avg {chem_label}{condition_2_value}{condition_name}Spectra'
     else:
         _, axes = plt.subplots(1, 2, figsize=(20, 8))
         label_fontsize = 16
         title_fontsize = 20
         legend_fontsize = 14
 
-        condition_1_title = f'Average of {chem_label} {condition_1_value} {condition_name} Spectra'
-        condition_2_title = f'Average of {chem_label} {condition_2_value} {condition_name} Spectra'
+        condition_1_title = f'Average of {chem_label}{condition_1_value}{condition_name}Spectra'
+        condition_2_title = f'Average of {chem_label}{condition_2_value}{condition_name}Spectra'
 
     # Flatten the axes array for easy iteration
     axes = axes.flatten()
@@ -114,8 +114,6 @@ def plot_average_spectrum(
         avg_spectrum_synthic, lower_bound_synthic, upper_bound_synthic = calculate_average_spectrum_and_percentiles(synthetic_data)
         axes[2].plot(numbers, avg_spectrum_synthic[:len(numbers)], label='Positive', color='orange')
         axes[2].plot(numbers, avg_spectrum_synthic[len(numbers):], label='Negative', color='blue')
-        # print(lower_bound_synthic[:10])
-        # print(upper_bound_synthic[:10])
         axes[2].fill_between(numbers, lower_bound_synthic[:len(numbers)], upper_bound_synthic[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
         axes[2].fill_between(numbers, lower_bound_synthic[len(numbers):], upper_bound_synthic[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
         axes[2].set_title(f'Avg Synthetic {chem_label} {synthetic_condition_type} {condition_name} Spectra', fontsize=title_fontsize)

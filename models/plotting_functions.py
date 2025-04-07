@@ -46,8 +46,8 @@ def plot_average_spectrum(
         data_cond_low, data_cond_high, chem_label, 
         condition_name ='', condition_1_value='', condition_2_value='',
         save_file_path_pt1=None, save_file_path_pt2=None,
-        synthetic_data=None,
-        synthetic_condition_type=None
+        synthetic_data=None, synthetic_condition_type=None,
+        plot_1_type='', plot_2_type=''
         ):
     """
     Plot the average spectrum for a given dataset.
@@ -78,16 +78,17 @@ def plot_average_spectrum(
 
         fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
 
-        condition_1_title = f'Avg {chem_label}{condition_1_value}{condition_name}Spectra'
-        condition_2_title = f'Avg {chem_label}{condition_2_value}{condition_name}Spectra'
+        condition_1_title = f'Avg {chem_label}{condition_1_value}{condition_name} Spectra'
+        condition_2_title = f'Avg {plot_2_type}{chem_label}{condition_2_value}{condition_name} Spectra'
     else:
-        _, axes = plt.subplots(1, 2, figsize=(20, 8))
+        _, axes = plt.subplots(1, 2, figsize=(14, 8))
         label_fontsize = 16
         title_fontsize = 20
         legend_fontsize = 14
 
-        condition_1_title = f'Average of {chem_label}{condition_1_value}{condition_name}Spectra'
-        condition_2_title = f'Average of {chem_label}{condition_2_value}{condition_name}Spectra'
+        condition_1_title = f'Average of {plot_1_type}{chem_label}{condition_1_value}{condition_name} Spectra'
+        # plot_type argument for synthetic data
+        condition_2_title = f'Average of {plot_2_type}{chem_label}{condition_2_value}{condition_name} Spectra'
 
     # Flatten the axes array for easy iteration
     axes = axes.flatten()

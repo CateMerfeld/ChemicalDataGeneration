@@ -9,37 +9,46 @@ import random
 #%%
 importlib.reload(f)
 #%%
-result_type = 'spectrum'
-model_type = 'group_generators'
+# result_type = 'spectrum'
+result_type = 'CARL'
+model_type = 'universal_generator'
 plot_type = 'real_vs_synthetic'
 save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
 save_file_path_pt2 = f'_{result_type}.png'
-synthetic_data_save_path_pt_1 = f'../../scratch/synthetic_data/{result_type}/{model_type}/'
-synthetic_data_save_path_pt_2 = 'synthetic_test_spectra.csv'
+# synthetic_data_path = 
+synthetic_data_path_pt_1 = f'../../scratch/synthetic_data/{result_type}/{model_type}/'
+synthetic_data_path_pt_2 = 'synthetic_test_spectra.csv'
 
+sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 chem_groups = [['DMMP', 'TEPO'], ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
 
 # test_file_path = '../data/carls/test_carls_one_per_spec.feather'
 test_file_path = '../../scratch/test_data.feather'
 experimental_data = pd.read_feather(test_file_path)
 
+# # for group generators
+# for group in chem_groups:
+#     group_file_path = '_'.join(group)
+#     synthetic_data_path = '_'.join([synthetic_data_path_pt_1,group_file_path,synthetic_data_path_pt_2])
+#     synthetic_data = pd.read_csv(synthetic_data_path)
 
-for group in chem_groups:
-    group_file_path = '_'.join(group)
-    synthetic_data_path = '_'.join([synthetic_data_save_path_pt_1,group_file_path,synthetic_data_save_path_pt_2])
-    synthetic_data = pd.read_csv(synthetic_data_path)
+#     for chem in group:
+# synthetic_data_path = f'../../scratch/synthetic_data/{result_type}/{model_type}/_synthetic_test_spectra.csv'
+# synthetic_data = pd.read_csv(synthetic_data_path)
+synthetic_data_path = f'../../scratch/synthetic_data/{result_type}/{model_type}/_synthetic_test_spectra.feather'
+synthetic_data = pd.read_feather(synthetic_data_path)
+for chem in sorted_chem_names:
+    print(f'Plotting {chem}...')
+    experimental_chem_data = experimental_data[experimental_data['Label'] == chem].iloc[:,2:-9]
+    synthetic_chem_data = synthetic_data[synthetic_data['Label'] == chem].iloc[:,:-2]
 
-    for chem in group:
-        experimental_chem_data = experimental_data[experimental_data['Label'] == chem].iloc[:,2:-9]
-        synthetic_chem_data = synthetic_data[synthetic_data['Label'] == chem].iloc[:,:-1]
-
-        pf.plot_average_spectrum(
-            experimental_chem_data, synthetic_chem_data, 
-            chem_label=chem, 
-            save_file_path_pt1=save_file_path_pt1, 
-            save_file_path_pt2=save_file_path_pt2,
-            plot_1_type='Experimental ', plot_2_type='Synthetic '
-            )
+    pf.plot_average_spectrum(
+        experimental_chem_data, synthetic_chem_data, 
+        chem_label=chem, 
+        save_file_path_pt1=save_file_path_pt1, 
+        save_file_path_pt2=save_file_path_pt2,
+        plot_1_type='Experimental ', plot_2_type='Synthetic '
+        )
 
 
 #%%

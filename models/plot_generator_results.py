@@ -1,10 +1,10 @@
 #%%
 import pandas as pd
-import torch.nn as nn
+# import torch.nn as nn
 import importlib
 import functions as f
 import plotting_functions as pf
-import random
+# import random
 
 #%%
 importlib.reload(f)
@@ -15,40 +15,102 @@ model_type = 'universal_generator'
 plot_type = 'real_vs_synthetic'
 save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
 save_file_path_pt2 = f'_{result_type}.png'
-# synthetic_data_path = 
+
+synthetic_data_file_ending = 'feather'
 synthetic_data_path_pt_1 = f'../../scratch/synthetic_data/{result_type}/{model_type}/'
-synthetic_data_path_pt_2 = 'synthetic_test_spectra.csv'
+synthetic_data_path_pt_2 = f'synthetic_test_spectra.{synthetic_data_file_ending}'
+test_file_path = '../../scratch/test_data.feather'
+experimental_start_idx = 2
+experimental_end_idx = -9
+synthetic_end_idx = -1
 
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
-chem_groups = [['DMMP', 'TEPO'], ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
 
-# test_file_path = '../data/carls/test_carls_one_per_spec.feather'
-test_file_path = '../../scratch/test_data.feather'
+if model_type == 'group_generator':
+    chem_groups = [['DMMP', 'TEPO'], ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
+else:
+    chem_groups = None
+
 experimental_data = pd.read_feather(test_file_path)
 
-# # for group generators
-# for group in chem_groups:
-#     group_file_path = '_'.join(group)
-#     synthetic_data_path = '_'.join([synthetic_data_path_pt_1,group_file_path,synthetic_data_path_pt_2])
+def load_data(file_path_parts_list, synthetic_data_file_ending):
+    """
+    Load data from a file path constructed from the provided parts.
+    Args:
+        file_path_parts_list (list): List of strings representing parts of the file path.   
+        synthetic_data_file_ending (str): The file ending of the synthetic data file.
+    Returns:
+        pd.DataFrame: The loaded data as a pandas DataFrame.
+    """
+    file_path = '_'.join(file_path_parts_list)
+    if synthetic_data_file_ending == 'feather':
+        data = pd.read_feather(file_path)
+    elif synthetic_data_file_ending == 'csv':
+        data = pd.read_csv(file_path)
+    else:
+        raise ValueError(f"Unsupported file ending: {synthetic_data_file_ending}")
+    return data
+
+if chem_groups is not None:
+    for group in chem_groups:
+        group_file_path = '_'.join(group)
+        synthetic_data = load_data([synthetic_data_path_pt_1, group_file_path, synthetic_data_path_pt_2], synthetic_data_file_ending)
+
+        for chem in group:
+            print(f'Plotting {chem}...')
+            experimental_chem_data = experimental_data[experimental_data['Label'] == chem].iloc[:,experimental_start_idx:experimental_end_idx]
+            synthetic_chem_data = synthetic_data[synthetic_data['Label'] == chem].iloc[:,:synthetic_end_idx]
+            pf.plot_average_spectrum(
+                experimental_chem_data, synthetic_chem_data, 
+                chem_label=chem, 
+                save_file_path_pt1=save_file_path_pt1, 
+                save_file_path_pt2=save_file_path_pt2,
+                plot_1_type='Experimental ', plot_2_type='Synthetic '
+                )
+else:
+    synthetic_data = load_data([synthetic_data_path_pt_1,synthetic_data_path_pt_2], synthetic_data_file_ending)
+    
+    for chem in sorted_chem_names:
+        print(f'Plotting {chem}...')
+        experimental_chem_data = experimental_data[experimental_data['Label'] == chem].iloc[:,experimental_start_idx:experimental_end_idx]
+        synthetic_chem_data = synthetic_data[synthetic_data['Label'] == chem].iloc[:,:synthetic_end_idx]
+        pf.plot_average_spectrum(
+            experimental_chem_data, synthetic_chem_data, 
+            chem_label=chem, 
+            save_file_path_pt1=save_file_path_pt1, 
+            save_file_path_pt2=save_file_path_pt2,
+            plot_1_type='Experimental ', plot_2_type='Synthetic '
+            )
+###############################################
+
+# # # for group generators
+# # for group in chem_groups:
+# #     group_file_path = '_'.join(group)
+# #     synthetic_data_path = '_'.join([synthetic_data_path_pt_1,group_file_path,synthetic_data_path_pt_2])
+# #     synthetic_data = pd.read_csv(synthetic_data_path)
+
+# #     for chem in group:
+# # synthetic_data = pd.read_csv(synthetic_data_path)
+
+# # for universal generator
+# synthetic_data_path = '_'.join([synthetic_data_path_pt_1,synthetic_data_path_pt_2])
+# if synthetic_data_file_ending == 'feather':
+#     synthetic_data = pd.read_feather(synthetic_data_path)
+# elif synthetic_data_file_ending == 'csv':
 #     synthetic_data = pd.read_csv(synthetic_data_path)
 
-#     for chem in group:
-# synthetic_data_path = f'../../scratch/synthetic_data/{result_type}/{model_type}/_synthetic_test_spectra.csv'
-# synthetic_data = pd.read_csv(synthetic_data_path)
-synthetic_data_path = f'../../scratch/synthetic_data/{result_type}/{model_type}/_synthetic_test_spectra.feather'
-synthetic_data = pd.read_feather(synthetic_data_path)
-for chem in sorted_chem_names:
-    print(f'Plotting {chem}...')
-    experimental_chem_data = experimental_data[experimental_data['Label'] == chem].iloc[:,2:-9]
-    synthetic_chem_data = synthetic_data[synthetic_data['Label'] == chem].iloc[:,:-2]
+# for chem in sorted_chem_names:
+#     print(f'Plotting {chem}...')
+#     experimental_chem_data = experimental_data[experimental_data['Label'] == chem].iloc[:,2:-9]
+#     synthetic_chem_data = synthetic_data[synthetic_data['Label'] == chem].iloc[:,:-2]
 
-    pf.plot_average_spectrum(
-        experimental_chem_data, synthetic_chem_data, 
-        chem_label=chem, 
-        save_file_path_pt1=save_file_path_pt1, 
-        save_file_path_pt2=save_file_path_pt2,
-        plot_1_type='Experimental ', plot_2_type='Synthetic '
-        )
+#     pf.plot_average_spectrum(
+#         experimental_chem_data, synthetic_chem_data, 
+#         chem_label=chem, 
+#         save_file_path_pt1=save_file_path_pt1, 
+#         save_file_path_pt2=save_file_path_pt2,
+#         plot_1_type='Experimental ', plot_2_type='Synthetic '
+#         )
 
 
 #%%

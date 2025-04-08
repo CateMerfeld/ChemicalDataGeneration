@@ -43,11 +43,11 @@ def calculate_average_spectrum_and_percentiles(data):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 def plot_average_spectrum(
-        data_cond_low, data_cond_high, chem_label, 
+        left_plot_data, middle_plot_data, chem_label, 
         condition_name ='', condition_1_value='', condition_2_value='',
         save_file_path_pt1=None, save_file_path_pt2=None,
-        synthetic_data=None, synthetic_condition_type=None,
-        plot_1_type='', plot_2_type=''
+        right_plot_data=None, synthetic_condition_type=None,
+        left_plot_type='', middle_plot_type=''
         ):
     """
     Plot the average spectrum for a given dataset.
@@ -64,13 +64,13 @@ def plot_average_spectrum(
     None
         Displays the average spectrum plot.
     """
-    avg_spectrum_low, lower_bound_low, upper_bound_low = calculate_average_spectrum_and_percentiles(data_cond_low)
-    avg_spectrum_high, lower_bound_high, upper_bound_high = calculate_average_spectrum_and_percentiles(data_cond_high)
+    avg_spectrum_left, lower_bound_left, upper_bound_left = calculate_average_spectrum_and_percentiles(left_plot_data)
+    avg_spectrum_middle, lower_bound_middle, upper_bound_middle = calculate_average_spectrum_and_percentiles(middle_plot_data)
 
     # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
-    numbers = range(184, (len(avg_spectrum_low)//2)+184)
+    numbers = range(184, (len(avg_spectrum_left)//2)+184)
 
-    if synthetic_data is not None:
+    if right_plot_data is not None:
         fig, axes = plt.subplots(1, 3, figsize=(30, 12), layout="constrained")
         label_fontsize = 26
         title_fontsize = 28
@@ -78,45 +78,45 @@ def plot_average_spectrum(
 
         fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
 
-        condition_1_title = f'Avg {chem_label}{condition_1_value}{condition_name} Spectra'
-        condition_2_title = f'Avg {plot_2_type}{chem_label}{condition_2_value}{condition_name} Spectra'
+        left_plot_title = f'Avg {chem_label}{condition_1_value}{condition_name} Spectra'
+        middle_plot_title = f'Avg {middle_plot_type}{chem_label}{condition_2_value}{condition_name} Spectra'
     else:
         _, axes = plt.subplots(1, 2, figsize=(14, 8))
         label_fontsize = 16
         title_fontsize = 20
         legend_fontsize = 14
 
-        condition_1_title = f'Average of {plot_1_type}{chem_label}{condition_1_value}{condition_name} Spectra'
+        left_plot_title = f'Average of {left_plot_type}{chem_label}{condition_1_value}{condition_name} Spectra'
         # plot_type argument for synthetic data
-        condition_2_title = f'Average of {plot_2_type}{chem_label}{condition_2_value}{condition_name} Spectra'
+        middle_plot_title = f'Average of {middle_plot_type}{chem_label}{condition_2_value}{condition_name} Spectra'
 
     # Flatten the axes array for easy iteration
     axes = axes.flatten()
 
-    axes[0].plot(numbers, avg_spectrum_low[:len(numbers)], label='Positive', color='orange')
-    axes[0].plot(numbers, avg_spectrum_low[len(numbers):], label='Negative', color='blue')
-    axes[0].fill_between(numbers, lower_bound_low[:len(numbers)], upper_bound_low[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
-    axes[0].fill_between(numbers, lower_bound_low[len(numbers):], upper_bound_low[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
-    axes[0].set_title(condition_1_title, fontsize=title_fontsize)
+    axes[0].plot(numbers, avg_spectrum_left[:len(numbers)], label='Positive', color='orange')
+    axes[0].plot(numbers, avg_spectrum_left[len(numbers):], label='Negative', color='blue')
+    axes[0].fill_between(numbers, lower_bound_left[:len(numbers)], upper_bound_left[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+    axes[0].fill_between(numbers, lower_bound_left[len(numbers):], upper_bound_left[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+    axes[0].set_title(left_plot_title, fontsize=title_fontsize)
     axes[0].set_xlabel('Drift Time', fontsize=label_fontsize)
     axes[0].set_ylabel('Ion Intensity', fontsize=label_fontsize)
     axes[0].legend(fontsize=legend_fontsize)
 
-    axes[1].plot(numbers, avg_spectrum_high[:len(numbers)], label='Positive', color='orange')
-    axes[1].plot(numbers, avg_spectrum_high[len(numbers):], label='Negative', color='blue')
-    axes[1].fill_between(numbers, lower_bound_high[:len(numbers)], upper_bound_high[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
-    axes[1].fill_between(numbers, lower_bound_high[len(numbers):], upper_bound_high[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
-    axes[1].set_title(condition_2_title, fontsize=title_fontsize)
+    axes[1].plot(numbers, avg_spectrum_middle[:len(numbers)], label='Positive', color='orange')
+    axes[1].plot(numbers, avg_spectrum_middle[len(numbers):], label='Negative', color='blue')
+    axes[1].fill_between(numbers, lower_bound_middle[:len(numbers)], upper_bound_middle[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+    axes[1].fill_between(numbers, lower_bound_middle[len(numbers):], upper_bound_middle[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+    axes[1].set_title(middle_plot_title, fontsize=title_fontsize)
     axes[1].set_xlabel('Drift Time', fontsize=label_fontsize)
     axes[1].set_ylabel('Ion Intensity', fontsize=label_fontsize)
     axes[1].legend(fontsize=legend_fontsize)
 
-    if synthetic_data is not None:
-        avg_spectrum_synthic, lower_bound_synthic, upper_bound_synthic = calculate_average_spectrum_and_percentiles(synthetic_data)
-        axes[2].plot(numbers, avg_spectrum_synthic[:len(numbers)], label='Positive', color='orange')
-        axes[2].plot(numbers, avg_spectrum_synthic[len(numbers):], label='Negative', color='blue')
-        axes[2].fill_between(numbers, lower_bound_synthic[:len(numbers)], upper_bound_synthic[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
-        axes[2].fill_between(numbers, lower_bound_synthic[len(numbers):], upper_bound_synthic[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+    if right_plot_data is not None:
+        avg_spectrum_right, lower_bound_right, upper_bound_right = calculate_average_spectrum_and_percentiles(right_plot_data)
+        axes[2].plot(numbers, avg_spectrum_right[:len(numbers)], label='Positive', color='orange')
+        axes[2].plot(numbers, avg_spectrum_right[len(numbers):], label='Negative', color='blue')
+        axes[2].fill_between(numbers, lower_bound_right[:len(numbers)], upper_bound_right[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+        axes[2].fill_between(numbers, lower_bound_right[len(numbers):], upper_bound_right[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
         axes[2].set_title(f'Avg Synthetic {chem_label} {synthetic_condition_type} {condition_name} Spectra', fontsize=title_fontsize)
         axes[2].set_xlabel('Drift Time', fontsize=label_fontsize)
         axes[2].set_ylabel('Ion Intensity', fontsize=label_fontsize)

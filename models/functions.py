@@ -17,7 +17,25 @@ import os
 import plotting_functions as pf
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
+from signal import signal, SIGALRM, alarm
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
+class Timeout(Exception):
+    ...
+
+def get_input(time_limit=120):
+    def handler(*_):
+        raise Timeout
+    old_handler = signal(SIGALRM, handler)
+    alarm(time_limit)
+    try:
+        return input(f'Generate synthetic data using best trained model? (y/n) ')
+    except Timeout:
+        print('Time limit exceeded. Exiting script.')
+    finally:
+        signal(SIGALRM, old_handler)
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------

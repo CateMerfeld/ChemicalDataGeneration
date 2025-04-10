@@ -16,10 +16,10 @@ import time
 importlib.reload(f)
 
 #%%
-best_hyperparameters = {'batch_size':16}
+# best_hyperparameters = {'batch_size':16}
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_generator.py'
 target_type = 'spectrum'
-architecture = 'universal_generator'
+architecture = 'group_generator'
 loss = 'MSELoss'
 criterion = nn.MSELoss()
 input_type = 'carl_embeddings'
@@ -33,7 +33,7 @@ device = f.set_up_gpu()
 
 model_hyperparams = {
     'batch_size':[16],
-    'epochs': [50],
+    'epochs': [1],
     'learning_rate':[.01],
     }
 
@@ -64,79 +64,81 @@ test_avg_bkg_file_path = '../../scratch/test_avg_bkg.csv'
 
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 
-# config = {
-#     'wandb_entity': 'catemerfeld',
-#     'wandb_project': 'ims_encoder_decoder',
-#     'gpu':True,
-#     'threads':1,
-# }
+config = {
+    'wandb_entity': 'catemerfeld',
+    'wandb_project': 'ims_encoder_decoder',
+    'gpu':True,
+    'threads':1,
+}
 
 chem_groups = [['DMMP', 'TEPO'], ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
 
-# # # If doing group generators this should be uncommented and next code blocks indented
-# # for group in chem_groups:
-# #     group_file_path = '_'.join(group)
-# #     generator_save_path = '_'.join([generator_save_path_pt_1,group_file_path,generator_save_path_pt_2])
+# If doing group generators this should be uncommented and next code blocks indented
+# Lines that only apply to group generators marked with #####
+#####
+for group in chem_groups:
+    group_file_path = '_'.join(group)
+    generator_save_path = '_'.join([generator_save_path_pt_1,group_file_path,generator_save_path_pt_2])
+    wandb_kwargs['group']=group
+    #####
 
-#     # wandb_kwargs['group']=group
-# # Loading data needs to be redone for each group because keeping the entire dataset in memory + the group subset is too much
-# train_data = pd.read_feather(train_file_path)
-# train_embeddings_df = pd.read_csv(train_embeddings_file_path)
+    # Loading data needs to be redone for each group because keeping the entire dataset in memory + the group subset is too much
+    train_data = pd.read_feather(train_file_path)
+    train_embeddings_df = pd.read_csv(train_embeddings_file_path)
+    
+    #####
+    train_data = train_data[train_data[group].any(axis=1)] 
+    train_embeddings_df = train_embeddings_df[train_embeddings_df[group].any(axis=1)] 
+    #####
 
-# # train_data = train_data[train_data[group].any(axis=1)] 
-# # train_embeddings_df = train_embeddings_df[train_embeddings_df[group].any(axis=1)] 
+    x_train, y_train, train_chem_encodings_tensor, train_indices_tensor = f.create_dataset_tensors_for_generator(
+        train_data, train_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
 
-# x_train, y_train, train_chem_encodings_tensor, train_indices_tensor = f.create_dataset_tensors_for_generator(
-#     train_data, train_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
+    del train_data, train_embeddings_df
 
-# del train_data, train_embeddings_df
+    #%%
+    val_data = pd.read_feather(val_file_path)
+    val_embeddings_df = pd.read_csv(val_embeddings_file_path)
 
-# #%%
-# val_data = pd.read_feather(val_file_path)
-# val_embeddings_df = pd.read_csv(val_embeddings_file_path)
+    #####
+    val_data = val_data[val_data[group].any(axis=1)] 
+    val_embeddings_df = val_embeddings_df[val_embeddings_df[group].any(axis=1)]
+    #####
 
-# # val_data = val_data[val_data[group].any(axis=1)] 
-# # val_embeddings_df = val_embeddings_df[val_embeddings_df[group].any(axis=1)]
+    x_val, y_val, val_chem_encodings_tensor, val_indices_tensor = f.create_dataset_tensors_for_generator(
+        val_data, val_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
+    del val_data, val_embeddings_df
+    # %%
+    test_data = pd.read_feather(test_file_path)
+    test_embeddings_df = pd.read_csv(test_embeddings_file_path)
 
-# x_val, y_val, val_chem_encodings_tensor, val_indices_tensor = f.create_dataset_tensors_for_generator(
-#     val_data, val_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
-# del val_data, val_embeddings_df
-# # %%
-# test_data = pd.read_feather(test_file_path)
-# test_embeddings_df = pd.read_csv(test_embeddings_file_path)
+    #####
+    test_data = test_data[test_data[group].any(axis=1)]
+    test_embeddings_df = test_embeddings_df[test_embeddings_df[group].any(axis=1)] 
+    #####
 
-# # test_data = test_data[test_data[group].any(axis=1)]
-# # test_embeddings_df = test_embeddings_df[test_embeddings_df[group].any(axis=1)] 
+    x_test, y_test, test_chem_encodings_tensor, test_indices_tensor = f.create_dataset_tensors_for_generator(
+        test_data, test_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
 
-# x_test, y_test, test_chem_encodings_tensor, test_indices_tensor = f.create_dataset_tensors_for_generator(
-#     test_data, test_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
+    del test_data, test_embeddings_df
 
-# del test_data, test_embeddings_df
-
-# #%%
-# train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_indices_tensor)
-# val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_indices_tensor)
-# test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_indices_tensor)
+    #%%
+    train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_indices_tensor)
+    val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_indices_tensor)
+    test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_indices_tensor)
 
 
-# best_hyperparameters = f.train_generator(
-#     train_data, val_data, test_data, device, config,
-#     wandb_kwargs, model_hyperparams, sorted_chem_names,
-#     generator_save_path, save_plots_to_wandb=True,
-#     early_stop_threshold=wandb_kwargs['early stopping threshold'], 
-#     num_plots=num_plots, # pretrained_model_path=generator_load_path,
-#     carl_or_spec=target_type
-# )
+    best_hyperparameters = f.train_generator(
+        train_data, val_data, test_data, device, config,
+        wandb_kwargs, model_hyperparams, sorted_chem_names,
+        generator_save_path, save_plots_to_wandb=True,
+        early_stop_threshold=wandb_kwargs['early stopping threshold'], 
+        num_plots=num_plots, # pretrained_model_path=generator_load_path,
+        carl_or_spec=target_type
+    )
 #%%
 
-generate_synthetic_data = 'n'
-print("Generate synthetic data using best trained model? (y/n)")
-start_time = time.time()
-
-while time.time() - start_time < 120:
-    generate_synthetic_data = input()
-    if generate_synthetic_data:
-        break
+generate_synthetic_data = f.get_input()
 
 if generate_synthetic_data == 'y':
     print('Generating synthetic data...')

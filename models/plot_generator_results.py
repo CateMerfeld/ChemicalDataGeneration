@@ -11,7 +11,7 @@ importlib.reload(f)
 #%%
 middle_plot_result_type = 'CARL'
 right_plot_result_type = 'spectrum'
-model_type = 'universal_generator'
+model_type = 'group_generator'
 # plot_type = 'real_vs_synthetic'
 result_type = 'CARL'
 plot_type = 'model_comparison'
@@ -24,19 +24,22 @@ else:
     save_file_path_pt2 = f'_{result_type}.png'
 
 
-middle_plot_data_file_ending = 'feather'   
+middle_plot_data_file_ending = 'csv'   
 right_plot_data_file_ending = 'csv'
 
 test_file_path = '../../scratch/test_data.feather'
 left_plot_start_idx = 2
-left_plot_end_idx = -9
+left_plot_stop_idx = -9
 
-middle_plot_stop_idx = -1
-right_plot_stop_idx = -2
+middle_plot_stop_idx = -2
+right_plot_stop_idx = -1
 
 left_plot_type = 'Experimental '
 middle_plot_type = 'CARL '
-right_plot_type = 'Synthetic '
+right_plot_type = 'Spectra '
+
+# Everything below this line should not need to be changed
+##########################################################
 
 middle_plot_data_path_pt_1 = f'../../scratch/synthetic_data/{middle_plot_result_type}/{model_type}/'
 middle_plot_data_path_pt_2 = f'synthetic_test_spectra.{middle_plot_data_file_ending}'
@@ -53,22 +56,22 @@ else:
 
 left_plot_data = pd.read_feather(test_file_path)
 
-def load_data(file_path_parts_list, synthetic_data_file_ending):
+def load_data(file_path_parts_list, file_ending):
     """
     Load data from a file path constructed from the provided parts.
     Args:
         file_path_parts_list (list): List of strings representing parts of the file path.   
-        synthetic_data_file_ending (str): The file ending of the synthetic data file.
+        file_ending (str): The file ending of the synthetic data file.
     Returns:
         pd.DataFrame: The loaded data as a pandas DataFrame.
     """
     file_path = '_'.join(file_path_parts_list)
-    if synthetic_data_file_ending == 'feather':
+    if file_ending == 'feather':
         data = pd.read_feather(file_path)
-    elif synthetic_data_file_ending == 'csv':
+    elif file_ending == 'csv':
         data = pd.read_csv(file_path)
     else:
-        raise ValueError(f"Unsupported file ending: {synthetic_data_file_ending}")
+        raise ValueError(f"Unsupported file ending: {file_ending}")
     return data
 
 
@@ -78,14 +81,17 @@ if chem_groups is not None:
     for group in chem_groups:
         group_file_path = '_'.join(group)
         middle_plot_data = load_data([middle_plot_data_path_pt_1, group_file_path, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
+        # print(middle_plot_data.head())
         right_plot_data = load_data([right_plot_data_path_pt_1, group_file_path, right_plot_data_path_pt_2], right_plot_data_file_ending)
+        # print(right_plot_data.head())
+        # break
 
         pf.plot_average_spectrum(
             left_plot_data, middle_plot_data, chem_names=group, 
             save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
             left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
             right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
-            left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_end_idx,
+            left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
             middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
             )
       
@@ -97,9 +103,12 @@ else:
         save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
         left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
         right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
-        left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_end_idx,
+        left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
         middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
         )
+
+
+
 ###############################################
 
 # # # for group generators

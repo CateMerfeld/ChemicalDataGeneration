@@ -79,13 +79,13 @@ def plot_average_spectrum(
 
         if right_plot_data is not None:
             fig, axes = plt.subplots(1, 3, figsize=(30, 12), layout="constrained")
-            label_fontsize = 26
-            title_fontsize = 28
+            label_fontsize = 34
+            title_fontsize = 38
             legend_fontsize = 24
 
             fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
 
-            left_plot_title = f'Avg {middle_plot_type}{chem_label}{condition_1_value}{condition_name} Spectra'
+            left_plot_title = f'Avg {left_plot_type}{chem_label}{condition_1_value}{condition_name} Spectra'
             middle_plot_title = f'Avg {middle_plot_type}{chem_label}{condition_2_value}{condition_name} Spectra'
             right_plot_title = f'Avg {right_plot_type}{chem_label}{condition_3_value}{condition_name} Spectra'
 
@@ -146,6 +146,10 @@ def plot_ims_spectrum(spectrum, chem_label, real_or_synthetic):
     numbers = range(184, (len(spectrum)//2)+184)
 
     plt.plot(numbers, spectrum[:len(numbers)], label='Positive')
+    plt.axvline(x=200, color='red', linestyle='--', label='Threshold at 200')
+    plt.axvline(x=250, color='red', linestyle='--', label='Threshold at 250')
+    plt.axvline(x=300, color='red', linestyle='--', label='Threshold at 300')
+
     plt.plot(numbers, spectrum[len(numbers):], label='Negative')
     plt.title(f'{real_or_synthetic} {chem_label} Spectrum', fontsize=20)
     plt.xlabel('Drift Time', fontsize=16)
@@ -940,6 +944,7 @@ def plot_carl_real_synthetic_comparison(
         plt.savefig(save_plot_path, format='png', dpi=300)
 
     plt.show()
+    plt.close()
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------

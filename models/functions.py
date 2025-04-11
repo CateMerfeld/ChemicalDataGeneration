@@ -31,7 +31,8 @@ def get_input(time_limit=120):
     old_handler = signal(SIGALRM, handler)
     alarm(time_limit)
     try:
-        return input(f'Generate synthetic data using best trained model? (y/n) ')
+        alarm(0)
+        return input(f'Generate predictions using best trained model? (y/n) ')
     except Timeout:
         print('Time limit exceeded. Exiting script.')
     finally:
@@ -117,12 +118,12 @@ def format_preds_df(input_indices, predicted_embeddings, output_name_encodings, 
     input_indices = [idx for idx_list in input_indices for idx in idx_list]
     predicted_embeddings = [emb for emb_list in predicted_embeddings for emb in emb_list]
     output_name_encodings = [enc for enc_list in output_name_encodings for enc in enc_list]
-    test_preds_df = pd.DataFrame(predicted_embeddings)
-    test_preds_df.insert(0, 'index', input_indices)
+    preds_df = pd.DataFrame(predicted_embeddings)
+    preds_df.insert(0, 'index', input_indices)
     name_encodings_df = pd.DataFrame(output_name_encodings)
     name_encodings_df.columns = sorted_chem_names
-    test_preds_df = pd.concat([test_preds_df, name_encodings_df], axis=1)
-    return test_preds_df
+    preds_df = pd.concat([preds_df, name_encodings_df], axis=1)
+    return preds_df
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -419,7 +420,22 @@ def train_one_epoch(
     return average_loss, predicted_embeddings, output_name_encodings
   else:
     return average_loss
-  
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+# def format_embedding_predictions(predicted_embeddings, input_indices, output_name_encodings, sorted_chem_names):
+#     # input_indices = [idx for idx_list in input_indices for idx in idx_list]
+#     input_indices = [int(idx) for idx in input_indices]
+#     predicted_embeddings = [emb for emb_list in predicted_embeddings for emb in emb_list]
+#     output_name_encodings = [enc for enc_list in output_name_encodings for enc in enc_list]
+#     preds_df = pd.DataFrame(predicted_embeddings)
+#     preds_df.insert(0, 'index', input_indices)
+#     name_encodings_df = pd.DataFrame(output_name_encodings)
+#     name_encodings_df.columns = sorted_chem_names
+#     preds_df = pd.concat([preds_df, name_encodings_df], axis=1)
+#     return preds_df
+
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -463,7 +479,7 @@ def predict_embeddings(dataset, model, device, criterion, reparameterization=Fal
     output_name_encodings = []
     input_spectra_indices = []
 
-    print('Predicting embeddings...')
+    # print('Predicting embeddings...')
     with torch.no_grad():
         for batch, name_encodings, true_embeddings, spectra_indices in dataset:
             batch = batch.to(device)

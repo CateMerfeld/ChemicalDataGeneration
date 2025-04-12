@@ -18,6 +18,27 @@ import plotting_functions as pf
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
 from signal import signal, SIGALRM, alarm
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+def load_data(file_path_parts_list, file_ending):
+    """
+    Load data from a file path constructed from the provided parts.
+    Args:
+        file_path_parts_list (list): List of strings representing parts of the file path.   
+        file_ending (str): The file ending of the synthetic data file.
+    Returns:
+        pd.DataFrame: The loaded data as a pandas DataFrame.
+    """
+    file_path = '_'.join(file_path_parts_list)
+    if file_ending == 'feather':
+        data = pd.read_feather(file_path)
+    elif file_ending == 'csv':
+        data = pd.read_csv(file_path)
+    else:
+        raise ValueError(f"Unsupported file ending: {file_ending}")
+    return data
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -123,6 +144,7 @@ def format_preds_df(input_indices, predicted_embeddings, output_name_encodings, 
     name_encodings_df = pd.DataFrame(output_name_encodings)
     name_encodings_df.columns = sorted_chem_names
     preds_df = pd.concat([preds_df, name_encodings_df], axis=1)
+    preds_df.columns = preds_df.columns.astype(str)
     return preds_df
 
 # ------------------------------------------------------------------------------------------

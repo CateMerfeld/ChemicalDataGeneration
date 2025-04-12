@@ -13,26 +13,28 @@ import pandas as pd
 
 # import matplotlib.pyplot as plt
 
-def load_data_scale_reactant_ion_peak(file_path, scaling_factor=.1, rip_start_col='184', rip_stop_col='300'):
-    """
-    Load data from a feather file and scale the reactant ion peak to 1.
-    
-    Parameters:
-    file_path (str): Path to the feather file containing data.
-    scaling_factor (float): Factor by which to scale the reactant ion peak.
-    rip_start_idx (int): Start index for the reactant ion peak.
-    rip_stop_idx (int): Stop index for the reactant ion peak.
-    
-    Returns:
-    pd.DataFrame: DataFrame containing the scaled data.
-    """
+def load_data(file_path):
     if file_path.endswith('.feather'):
         data = pd.read_feather(file_path)
     elif file_path.endswith('.csv'):
         data = pd.read_csv(file_path)
     else:
         raise ValueError("Unsupported file format. Please provide a .feather or .csv file.")
+    return data
+
+def scale_reactant_ion_peak(data, scaling_factor=.1, rip_start_col='184', rip_stop_col='300'):
+    """
+    Scale reactant ion peak by a given factor.
     
+    Parameters:
+    scaling_factor (float): Factor by which to scale the reactant ion peak.
+    rip_start_col (int): Start column name for the reactant ion peak.
+    rip_stop_col (int): Stop column name for the reactant ion peak.
+    
+    Returns:
+    pd.DataFrame: DataFrame containing the scaled data.
+    """
+
     for spec_type in ['p_', 'n_']:
         rip_start_idx = data.columns.get_loc(f'{spec_type}{rip_start_col}')
         rip_stop_idx = data.columns.get_loc(f'{spec_type}{rip_stop_col}')

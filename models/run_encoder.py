@@ -27,9 +27,9 @@ start_idx = 2
 stop_idx = -9
 
 model_hyperparams = {
-  'batch_size':[32],
+  'batch_size':[16, 32],
   'epochs': [100],
-  'learning_rate':[.00001],
+  'learning_rate':[.00001, .000001],
   }
 
 encoder_criterion = nn.MSELoss()
@@ -44,29 +44,29 @@ test_file_path = f'../../scratch/PHIL/test_phils_scaled_to_{scaling_factor}_pct.
 # train_file_path = '../../../scratch/train_data.feather'
 # val_file_path = '../../../scratch/val_data.feather'
 # test_file_path = '../../../scratch/test_data.feather'
-train_preds_file_path = f'../../scratch/{dataset_type}/train_embedding_preds_{scaling_factor}_pct_scaling.feather'
-val_preds_file_path = f'../../scratch/{dataset_type}/val_embedding_preds_{scaling_factor}_pct_scaling.feather'
-test_preds_file_path = f'../../scratch/{dataset_type}/test_embedding_preds_{scaling_factor}_pct_scaling.feather'
+train_preds_file_path = f'../../scratch/{dataset_type}/train_embedding_preds_scaled_to_{scaling_factor}_pct.feather'
+val_preds_file_path = f'../../scratch/{dataset_type}/val_embedding_preds_scaled_to_{scaling_factor}_pct.feather'
+test_preds_file_path = f'../../scratch/{dataset_type}/test_embedding_preds_scaled_to_{scaling_factor}_pct.feather'
 
 
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
-# config = {
-#     'wandb_entity': 'catemerfeld',
-#     'wandb_project': 'ims_encoder_decoder',
-#     'gpu':True,
-#     'threads':1,
-# }
+config = {
+    'wandb_entity': 'catemerfeld',
+    'wandb_project': 'ims_encoder_decoder',
+    'gpu':True,
+    'threads':1,
+}
 
-# os.environ['WANDB_NOTEBOOK_NAME'] = notebook_name
+os.environ['WANDB_NOTEBOOK_NAME'] = notebook_name
 
-# wandb_kwargs = {
-#     'architecture': architecture,
-#     'optimizer':'AdamW',
-#     'loss': loss,
-#     'dataset': dataset_type,
-#     'target_embedding': target_embedding,
-#     'early stopping threshold':early_stopping_threshold
-# }
+wandb_kwargs = {
+    'architecture': architecture,
+    'optimizer':'AdamW',
+    'loss': loss,
+    'dataset': dataset_type,
+    'target_embedding': target_embedding,
+    'early stopping threshold':early_stopping_threshold
+}
 
 device = f.set_up_gpu()
 #%%
@@ -93,21 +93,21 @@ test_data = pd.read_csv(test_file_path)
 y_test, x_test, test_chem_encodings_tensor, test_indices_tensor = f.create_dataset_tensors(
     test_data, name_smiles_embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
 del test_data
-#%%
+# %%
 
-# train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_indices_tensor)
-# val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_indices_tensor)
-# test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_indices_tensor)
+train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_indices_tensor)
+val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_indices_tensor)
+test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_indices_tensor)
 
 
-# best_hyperparams = f.train_model(
-#     model_type, train_data, val_data, test_data,
-#     device, config, wandb_kwargs,
-#     embeddings_df , name_smiles_embedding_df, model_hyperparams, 
-#     sorted_chem_names, encoder_save_path, save_emb_pca_to_wandb=True,
-#     input_type=dataset_type, embedding_type=target_embedding,
-#     early_stop_threshold=early_stopping_threshold, lr_scheduler=True, patience=lr_scheduler_patience,
-#     )
+best_hyperparams = f.train_model(
+    model_type, train_data, val_data, test_data,
+    device, config, wandb_kwargs,
+    embeddings_df , name_smiles_embedding_df, model_hyperparams, 
+    sorted_chem_names, encoder_save_path, save_emb_pca_to_wandb=True,
+    input_type=dataset_type, embedding_type=target_embedding,
+    early_stop_threshold=early_stopping_threshold, lr_scheduler=True, patience=lr_scheduler_patience,
+    )
 
 #%%
 generate_embeddings = f.get_input()
@@ -147,7 +147,7 @@ if generate_embeddings == 'y':
         output_name_encodings, sorted_chem_names
         )
 
-    train_preds_df.to_feather(train_preds_file_path, index=False)
+    train_preds_df.to_feather(train_preds_file_path)#, index=False)
 
     # del train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor, train_preds_df
     # #%%
@@ -171,7 +171,7 @@ if generate_embeddings == 'y':
         output_name_encodings, sorted_chem_names
         )
 
-    val_preds_df.to_feather(val_preds_file_path, index=False)
+    val_preds_df.to_feather(val_preds_file_path)#, index=False)
     #%%
     print('Generating test embeddings...')
 
@@ -194,8 +194,7 @@ if generate_embeddings == 'y':
         output_name_encodings, sorted_chem_names
         )
 
-    test_preds_df.to_feather(test_preds_file_path, index=False)
+    test_preds_df.to_feather(test_preds_file_path)#, index=False)
 
-# # del test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor
 else:
     print('Not generating embeddings.')

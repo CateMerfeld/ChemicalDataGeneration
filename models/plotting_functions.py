@@ -215,26 +215,35 @@ def plot_ims_spectra_pca(data, sample_size=1000):
 
 def plot_conditions_pca(
         condition_one, condition_two, save_file_path_pt1, 
-        save_file_path_pt2, condition, sample_size=1000,
-        z_score_threshold=2,
+        save_file_path_pt2, data_one_name, data_two_name, 
+        sample_size=1000, z_score_threshold=2, 
+        data_split = 'Condition', fit_to_all=True, 
+        condition_two_start_idx=2, condition_two_stop_idx=-9,
         ):
     scaler = StandardScaler()
-    full_data = pd.concat([condition_one, condition_two], ignore_index=True)
+    if fit_to_all:
+        # Fit scaler to all data
+        full_data = pd.concat([condition_one, condition_two], ignore_index=True)
+    else:
+        # Fit scaler to condition one data only
+        full_data = condition_one.copy()
+
     scaler.fit(full_data.iloc[:, 2:-9])
+    
+    # scaled_full_data = scaler.transform(full_data.iloc[:, 2:-9])
+    full_data.iloc[:, 2:-9] = scaler.transform(full_data.iloc[:, 2:-9])#scaled_full_data
+    # del scaled_full_data
 
-    scaled_full_data = scaler.transform(full_data.iloc[:, 2:-9])
-    full_data.iloc[:, 2:-9] = scaled_full_data
-    del scaled_full_data
-
-    scaled_data = scaler.transform(condition_one.iloc[:, 2:-9])
-    condition_one.iloc[:, 2:-9] = scaled_data
-    scaled_data = scaler.transform(condition_two.iloc[:, 2:-9])
-    condition_two.iloc[:, 2:-9] = scaled_data
-    del scaled_data
-
+    # scaled_data = scaler.transform(condition_one.iloc[:, 2:-9])
+    condition_one.iloc[:, 2:-9] = scaler.transform(condition_one.iloc[:, 2:-9])#scaled_data
+    # scaled_data = scaler.transform(condition_two.iloc[:, 2:-9])
+    condition_two.iloc[:, condition_two_start_idx:condition_two_stop_idx] = scaler.transform(condition_two.iloc[:, condition_two_start_idx:condition_two_stop_idx])#scaled_data
+    # del scaled_data
+    print('here')
     all_chemical_names = list(condition_one.columns[-8:])
 
     for chem in all_chemical_names:
+        print(chem)
         # Fit PCA on all spectra for a given chemical
         pca = PCA(n_components=2)
         full_data_chem = full_data[full_data['Label'] == chem]
@@ -255,7 +264,7 @@ def plot_conditions_pca(
         filtered_data = condition_one_sample[(z_scores < z_score_threshold).all(axis=1)]
         
         transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
-        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color='purple', label=f'{chem} Low {condition}')
+        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color='purple', label=f'{chem} {data_one_name}')
 
         if chem in list(condition_two['Label']):
             condition_two_chem = condition_two[condition_two['Label'] == chem]
@@ -264,14 +273,14 @@ def plot_conditions_pca(
             else:
                 condition_two_sample = condition_two_chem
             # print(condition_two_sample.shape)
-            z_scores = np.abs(zscore(condition_two_sample.iloc[:, 2:-9]))
+            z_scores = np.abs(zscore(condition_two_sample.iloc[:, condition_two_start_idx:condition_two_stop_idx]))
             filtered_data = condition_two_sample[(z_scores < z_score_threshold+1).all(axis=1)]
             # print(filtered_data.shape)
             
             if filtered_data.shape[0] > 1:
-                transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
+                transformed_data = pca.transform(filtered_data.iloc[:, condition_two_start_idx:condition_two_stop_idx])
                 # transformed_data = pca.transform(condition_two_sample[condition_two_sample['Label'] == chem].iloc[:, 2:-9])
-                ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color ='blue', label=f'{chem} High {condition}', marker='x')
+                ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color ='blue', label=f'{chem} {data_two_name}', marker='x')
             else:
                 print(f'Chem {chem} not in condition two data')
         else:
@@ -283,7 +292,7 @@ def plot_conditions_pca(
 
         plt.xticks([])
         plt.yticks([])
-        plt.title(f'{chem} IMS Spectra by Condition PCA', fontsize=18)
+        plt.title(f'{chem} IMS Spectra by {data_split} PCA', fontsize=18)
         save_file_path = save_file_path_pt1 + chem + save_file_path_pt2
         plt.savefig(save_file_path, format='png', dpi=300)
         plt.show()

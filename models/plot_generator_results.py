@@ -9,34 +9,37 @@ import plotting_functions as pf
 #%%
 importlib.reload(f)
 #%%
-middle_plot_result_type = 'CARL'
-right_plot_result_type = 'spectrum'
-model_type = 'group_generator'
+middle_plot_result_type = 'PHIL'
+right_plot_result_type = 'CARL'
+# model type options: 'group_generator', 'universal_generator', 'individual_generators'
+model_type = 'universal_generator'
 # plot_type = 'real_vs_synthetic'
-result_type = 'CARL'
+result_type = 'PHIL'
 plot_type = 'model_comparison'
 
 if plot_type == 'model_comparison':
     save_file_path_pt1 = f'../plots/{plot_type}/'
-    save_file_path_pt2 = f'_{model_type}.png'
+    save_file_path_pt2 = f'_{middle_plot_result_type}_{right_plot_result_type}_{model_type}.png'
 else:
     save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
     save_file_path_pt2 = f'_{result_type}.png'
 
 
-middle_plot_data_file_ending = 'csv'   
-right_plot_data_file_ending = 'csv'
+middle_plot_data_file_ending = 'feather'   
+right_plot_data_file_ending = 'feather'
 
 test_file_path = '../../scratch/test_data.feather'
 left_plot_start_idx = 2
 left_plot_stop_idx = -9
 
+middle_plot_start_idx = 0
 middle_plot_stop_idx = -2
 right_plot_stop_idx = -1
 
 left_plot_type = 'Experimental '
-middle_plot_type = 'CARL '
-right_plot_type = 'Spectra '
+middle_plot_type = 'PHIL '
+right_plot_type = 'CARL '
+data_split = 'PHIL vs CARL'
 
 # Everything below this line should not need to be changed
 ##########################################################
@@ -50,29 +53,11 @@ right_plot_data_path_pt_2 = f'synthetic_test_spectra.{right_plot_data_file_endin
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 
 if model_type == 'group_generator':
-    chem_groups = [['DMMP', 'TEPO'], ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
+    chem_groups = [['DMMP', 'TEPO']]#, ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
 else:
     chem_groups = None
 
 left_plot_data = pd.read_feather(test_file_path)
-
-def load_data(file_path_parts_list, file_ending):
-    """
-    Load data from a file path constructed from the provided parts.
-    Args:
-        file_path_parts_list (list): List of strings representing parts of the file path.   
-        file_ending (str): The file ending of the synthetic data file.
-    Returns:
-        pd.DataFrame: The loaded data as a pandas DataFrame.
-    """
-    file_path = '_'.join(file_path_parts_list)
-    if file_ending == 'feather':
-        data = pd.read_feather(file_path)
-    elif file_ending == 'csv':
-        data = pd.read_csv(file_path)
-    else:
-        raise ValueError(f"Unsupported file ending: {file_ending}")
-    return data
 
 
 # left_plot_data = experimental_data.iloc[:,experimental_start_idx:experimental_end_idx]
@@ -80,33 +65,43 @@ def load_data(file_path_parts_list, file_ending):
 if chem_groups is not None:
     for group in chem_groups:
         group_file_path = '_'.join(group)
-        middle_plot_data = load_data([middle_plot_data_path_pt_1, group_file_path, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
-        # print(middle_plot_data.head())
-        right_plot_data = load_data([right_plot_data_path_pt_1, group_file_path, right_plot_data_path_pt_2], right_plot_data_file_ending)
-        # print(right_plot_data.head())
-        # break
+        middle_plot_data = f.load_data([middle_plot_data_path_pt_1, group_file_path, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
+        right_plot_data = f.load_data([right_plot_data_path_pt_1, group_file_path, right_plot_data_path_pt_2], right_plot_data_file_ending)
 
-        pf.plot_average_spectrum(
-            left_plot_data, middle_plot_data, chem_names=group, 
-            save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
-            left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
-            right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
-            left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
-            middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
-            )
+        # pf.plot_average_spectrum(
+        #     left_plot_data, middle_plot_data, chem_names=group, 
+        #     save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
+        #     left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
+        #     right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
+        #     left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
+        #     middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
+        #     )
+        
+        # pf.plot_conditions_pca(
+        #     left_plot_data, right_plot_data, save_file_path_pt1, save_file_path_pt2,
+        #     data_one_name=left_plot_type, data_two_name=right_plot_type, data_split=data_split,
+        #     fit_to_all=False
+        #     )
       
 else:
-    middle_plot_data = load_data([middle_plot_data_path_pt_1, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
-    right_plot_data = load_data([right_plot_data_path_pt_1, right_plot_data_path_pt_2], right_plot_data_file_ending)
-    pf.plot_average_spectrum(
-        left_plot_data, middle_plot_data, chem_names=sorted_chem_names, 
-        save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
-        left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
-        right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
-        left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
-        middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
-        )
-
+    middle_plot_data = f.load_data([middle_plot_data_path_pt_1, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
+    # right_plot_data = f.load_data([right_plot_data_path_pt_1, right_plot_data_path_pt_2], right_plot_data_file_ending)
+    # pf.plot_average_spectrum(
+    #     left_plot_data, middle_plot_data, chem_names=sorted_chem_names, 
+    #     save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
+    #     left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
+    #     right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
+    #     left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
+    #     middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
+    #     )
+    # print(middle_plot_data.head())
+    save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
+    save_file_path_pt2 = f'_{result_type}_pca.png'
+    pf.plot_conditions_pca(
+            left_plot_data, middle_plot_data, save_file_path_pt1, save_file_path_pt2,
+            data_one_name=left_plot_type, data_two_name=middle_plot_type, data_split=data_split,
+            fit_to_all=False, condition_two_start_idx=middle_plot_start_idx, condition_two_stop_idx=middle_plot_stop_idx,
+            )
 
 
 ###############################################

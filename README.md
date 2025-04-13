@@ -46,7 +46,7 @@ Mathematical notation rules applied throughout this project are taken from [this
 
 ## Naming and Formatting Conventions:
 File systems - Preprocessing technique (e.g. spectrum, CARL) -> model (encoder, decoder) + '_results' -> training dataset (e.g. universal, group) + f'_{model}'
-  * Example: Figures -> CARL -> encoder_results -> group_encoder
+  * Example: plots -> CARL -> encoder_results -> group_encoder
 
 Data file column names for n columns - 
   * Col number:    0,    1,      2,   ..., n-len(classes), n-len(classes)-1, ...,     n

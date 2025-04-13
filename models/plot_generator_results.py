@@ -95,8 +95,11 @@ else:
     #     middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
     #     )
     # print(middle_plot_data.head())
-    save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
-    save_file_path_pt2 = f'_{result_type}_pca.png'
+    # save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
+    # save_file_path_pt2 = f'_{result_type}_pca.png'
+
+    save_file_path_pt1 = f'../plots/{plot_type}/'
+    save_file_path_pt2 = f'_experimental_{middle_plot_result_type}_{model_type}_pca.png'
     pf.plot_conditions_pca(
             left_plot_data, middle_plot_data, save_file_path_pt1, save_file_path_pt2,
             data_one_name=left_plot_type, data_two_name=middle_plot_type, data_split=data_split,

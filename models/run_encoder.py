@@ -12,7 +12,7 @@ sys.path.append(parent_dir)
 import functions as f
 
 #%%
-best_hyperparams = {'batch_size':32}
+
 # Things that need to be changed for each encoder/dataset/target embedding
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_encoder.py'
 architecture = 'ims_to_ChemNet_encoder'
@@ -26,15 +26,28 @@ lr_scheduler_patience = 5
 start_idx = 2
 stop_idx = -9
 
+# # generate_embeddings allows user to decide whether or not to generate embeddings based off of model performance. 
+# # If set to None, user will be prompted to enter 'y' or 'n' after training.
+
+# generate_embeddings = None
+generate_embeddings = 'y'
+
+# # best_hyperparameters is the output of training the encoder.
+# # If running this file for prediction only (using a pre-trained model),
+# # set best_hyperparameters['batch_size'] to the batch size used to train the model. 
+# best_hyperparams = {'batch_size':16}
+
 model_hyperparams = {
-  'batch_size':[16, 32],
+  'batch_size':[16],#, 32],
   'epochs': [100],
-  'learning_rate':[.00001, .000001],
+  'learning_rate':[.00001]#,, .000001],
   }
 
 encoder_criterion = nn.MSELoss()
 
-scaling_factor = 25
+scaling_factor = 10
+
+
 encoder_save_path = f'trained_models/{dataset_type}/{scaling_factor}_pct_scaling.pth'
 name_smiles_embedding_df_file_path = '../../scratch/name_smiles_embedding_file.csv'
 mass_spec_name_smiles_embedding_df_file_path = '../data/mass_spec_name_smiles_embedding_file.csv'
@@ -110,7 +123,8 @@ best_hyperparams = f.train_model(
     )
 
 #%%
-generate_embeddings = f.get_input()
+if generate_embeddings == None:
+    generate_embeddings = f.get_input()
 
 if generate_embeddings == 'y':
     batch_size = best_hyperparams['batch_size']

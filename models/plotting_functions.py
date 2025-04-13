@@ -945,7 +945,7 @@ def plot_carl_real_synthetic_comparison(
 
     if log_wandb:
         plt.savefig('tmp_plot.png', format='png', dpi=300)
-        wandb.log({'Comparison of Real and Synthetic CARLs': wandb.Image('tmp_plot.png')})
+        wandb.log({'Comparison of Real and Synthetic Data': wandb.Image('tmp_plot.png')})
 
     plt.tight_layout()
 

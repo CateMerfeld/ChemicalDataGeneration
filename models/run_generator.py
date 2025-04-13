@@ -22,7 +22,7 @@ import preprocessing_functions as ppf
 importlib.reload(f)
 
 #%%
-best_hyperparameters = {'batch_size':16}
+# best_hyperparameters = {'batch_size':16}
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_generator.py'
 target_type = 'PHIL'
 architecture = 'group_generator'
@@ -35,7 +35,7 @@ num_plots = 5
 scaling_string = 25
 scaling_factor = .25
 
-# generate_synthetic_data = f.get_input()
+# generate_synthetic_data = None
 generate_synthetic_data = 'y'
 
 start_idx = 2
@@ -44,9 +44,9 @@ device = f.set_up_gpu()
 
 
 model_hyperparams = {
-    'batch_size':[16],
+    'batch_size':[16, 32],
     'epochs': [100],
-    'learning_rate':[.01],
+    'learning_rate':[.01, .001],
     }
 
 wandb_kwargs = {
@@ -158,6 +158,8 @@ for group in chem_groups:
         carl_or_spec=target_type
     )
     #%%
+if generate_synthetic_data == None:
+    generate_synthetic_data = f.get_input()
 
 if generate_synthetic_data == 'y':
     print('Generating synthetic data...')

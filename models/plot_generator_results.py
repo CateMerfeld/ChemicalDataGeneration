@@ -9,8 +9,9 @@ import plotting_functions as pf
 #%%
 importlib.reload(f)
 #%%
-middle_plot_result_type = 'PHIL'
+middle_plot_result_type = 'PHIL_25_pct'
 right_plot_result_type = 'CARL'
+left_plot_result_type = 'experimental'
 # model type options: 'group_generator', 'universal_generator', 'individual_generators'
 model_type = 'universal_generator'
 # plot_type = 'real_vs_synthetic'
@@ -59,52 +60,76 @@ else:
 
 left_plot_data = pd.read_feather(test_file_path)
 
-
 # left_plot_data = experimental_data.iloc[:,experimental_start_idx:experimental_end_idx]
 
-if chem_groups is not None:
-    for group in chem_groups:
-        group_file_path = '_'.join(group)
-        middle_plot_data = f.load_data([middle_plot_data_path_pt_1, group_file_path, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
-        right_plot_data = f.load_data([right_plot_data_path_pt_1, group_file_path, right_plot_data_path_pt_2], right_plot_data_file_ending)
 
-        # pf.plot_average_spectrum(
-        #     left_plot_data, middle_plot_data, chem_names=group, 
-        #     save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
-        #     left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
-        #     right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
-        #     left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
-        #     middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
-        #     )
-        
-        # pf.plot_conditions_pca(
-        #     left_plot_data, right_plot_data, save_file_path_pt1, save_file_path_pt2,
-        #     data_one_name=left_plot_type, data_two_name=right_plot_type, data_split=data_split,
-        #     fit_to_all=False
-        #     )
-      
-else:
-    middle_plot_data = f.load_data([middle_plot_data_path_pt_1, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
-    # right_plot_data = f.load_data([right_plot_data_path_pt_1, right_plot_data_path_pt_2], right_plot_data_file_ending)
-    # pf.plot_average_spectrum(
-    #     left_plot_data, middle_plot_data, chem_names=sorted_chem_names, 
-    #     save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
-    #     left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
-    #     right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
-    #     left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
-    #     middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
+middle_plot_data = f.load_data([middle_plot_data_path_pt_1, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
+print(middle_plot_data.shape)
+right_plot_data = f.load_data([right_plot_data_path_pt_1, right_plot_data_path_pt_2], right_plot_data_file_ending)
+for chem in sorted_chem_names:
+    save_plot_path = f'../plots/{plot_type}/{chem}_{left_plot_result_type}_vs_{middle_plot_result_type}_{model_type}_pca.png'
+    pf.plot_generation_results_pca_single_chem_side_by_side(
+        left_plot_data, middle_plot_data, sorted_chem_names, results_type=middle_plot_type,
+        sample_size=1000, chem_of_interest=chem, save_plot_path=save_plot_path,
+        true_spectra_start_idx=left_plot_start_idx, true_spectra_stop_idx=left_plot_stop_idx, 
+        synthetic_spectra_stop_idx=middle_plot_stop_idx,
+        )
+    # save_plot_path = f'../plots/{plot_type}/{chem}_{left_plot_result_type}_vs_{right_plot_result_type}_{model_type}_pca.png'
+    # pf.plot_generation_results_pca_single_chem_side_by_side(
+    #     left_plot_data, right_plot_data, sorted_chem_names, results_type=right_plot_type,
+    #     sample_size=1000, chem_of_interest=chem, save_plot_path=save_plot_path,
+    #     true_spectra_start_idx=left_plot_start_idx, true_spectra_stop_idx=left_plot_stop_idx, 
+    #     synthetic_spectra_stop_idx=right_plot_stop_idx,
     #     )
-    # print(middle_plot_data.head())
-    # save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
-    # save_file_path_pt2 = f'_{result_type}_pca.png'
 
-    save_file_path_pt1 = f'../plots/{plot_type}/'
-    save_file_path_pt2 = f'_experimental_{middle_plot_result_type}_{model_type}_pca.png'
-    pf.plot_conditions_pca(
-            left_plot_data, middle_plot_data, save_file_path_pt1, save_file_path_pt2,
-            data_one_name=left_plot_type, data_two_name=middle_plot_type, data_split=data_split,
-            fit_to_all=False, condition_two_start_idx=middle_plot_start_idx, condition_two_stop_idx=middle_plot_stop_idx,
-            )
+# if chem_groups is not None:
+#     for group in chem_groups:
+#         group_file_path = '_'.join(group)
+#         middle_plot_data = f.load_data([middle_plot_data_path_pt_1, group_file_path, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
+#         right_plot_data = f.load_data([right_plot_data_path_pt_1, group_file_path, right_plot_data_path_pt_2], right_plot_data_file_ending)
+
+#         # pf.plot_average_spectrum(
+#         #     left_plot_data, middle_plot_data, chem_names=group, 
+#         #     save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
+#         #     left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
+#         #     right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
+#         #     left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
+#         #     middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
+#         #     )
+        
+#         # pf.plot_conditions_pca(
+#         #     left_plot_data, right_plot_data, save_file_path_pt1, save_file_path_pt2,
+#         #     data_one_name=left_plot_type, data_two_name=right_plot_type, data_split=data_split,
+#         #     fit_to_all=False
+#         #     )
+      
+# else:
+#     middle_plot_data = f.load_data([middle_plot_data_path_pt_1, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
+#     # right_plot_data = f.load_data([right_plot_data_path_pt_1, right_plot_data_path_pt_2], right_plot_data_file_ending)
+#     # pf.plot_average_spectrum(
+#     #     left_plot_data, middle_plot_data, chem_names=sorted_chem_names, 
+#     #     save_file_path_pt1=save_file_path_pt1, save_file_path_pt2=save_file_path_pt2,
+#     #     left_plot_type=left_plot_type, middle_plot_type=middle_plot_type,
+#     #     right_plot_data=right_plot_data, right_plot_type=right_plot_type, condition_3_value='',
+#     #     left_plot_start_idx=left_plot_start_idx, left_plot_stop_idx=left_plot_stop_idx,
+#     #     middle_plot_stop_idx=middle_plot_stop_idx, right_plot_stop_idx=right_plot_stop_idx,
+#     #     )
+#     # print(middle_plot_data.head())
+#     # save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
+#     # save_file_path_pt2 = f'_{result_type}_pca.png'
+
+#     save_file_path_pt1 = f'../plots/{plot_type}/'
+#     save_file_path_pt2 = f'_experimental_{middle_plot_result_type}_{model_type}_pca.png'
+
+#     # pf.plot_generation_results_pca()
+#     # pf.plot_generation_results_pca_single_chem_side_by_side()
+
+#     # pf.plot_conditions_pca(
+#     #         left_plot_data, middle_plot_data, save_file_path_pt1, save_file_path_pt2,
+#     #         data_one_name=left_plot_type, data_two_name=middle_plot_type, data_split=data_split,
+#     #         fit_to_all=False, condition_two_start_idx=middle_plot_start_idx, condition_two_stop_idx=middle_plot_stop_idx,
+#     #         )
+
 
 
 ###############################################

@@ -141,20 +141,27 @@ def plot_average_spectrum(
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
-def plot_ims_spectrum(spectrum, chem_label, real_or_synthetic):
+def plot_ims_spectrum(
+        spectrum, chem_label, real_or_synthetic, 
+        preprocessing_type='Spectrum', save_plot_path=None,
+        rip_start_col=184, rip_stop_col=300
+        ):
     # x axis should run from lowest drift time (184) to highest drift time (184 + len(spectrum)//2)
     numbers = range(184, (len(spectrum)//2)+184)
 
     plt.plot(numbers, spectrum[:len(numbers)], label='Positive')
-    plt.axvline(x=200, color='red', linestyle='--', label='Threshold at 200')
-    plt.axvline(x=250, color='red', linestyle='--', label='Threshold at 250')
-    plt.axvline(x=300, color='red', linestyle='--', label='Threshold at 300')
+    plt.axvline(x=rip_start_col, color='red', linestyle='--')#, label=f'Threshold at 200')
+    plt.axvline(x=rip_stop_col, color='red', linestyle='--')#, label='Threshold at 250')
+    # plt.axvline(x=300, color='red', linestyle='--', label='Threshold at 300')
 
     plt.plot(numbers, spectrum[len(numbers):], label='Negative')
-    plt.title(f'{real_or_synthetic} {chem_label} Spectrum', fontsize=20)
+    plt.title(f'{real_or_synthetic} {chem_label} {preprocessing_type}', fontsize=20)
     plt.xlabel('Drift Time', fontsize=16)
     plt.ylabel('Ion Intensity', fontsize=16)
     plt.legend(fontsize=14)
+
+    if save_plot_path is not None:
+        plt.savefig(save_plot_path, format='png', dpi=300)
     plt.show()
 
 # ------------------------------------------------------------------------------------------
@@ -696,11 +703,14 @@ def plot_generation_results_pca_single_chem_side_by_side(
         true_spectra, synthetic_spectra, chem_labels, results_type, sample_size=None, 
         chem_of_interest=None, log_wandb=False, mse_insert=None, 
         insert_position=[0.05, 0.05], show_wandb_run_name=False, 
-        x_lims=None, y_lims=None, save_plot_path=None):
+        x_lims=None, y_lims=None, save_plot_path=None, 
+        true_spectra_start_idx=0, true_spectra_stop_idx=-1, 
+        synthetic_spectra_start_idx=0, synthetic_spectra_stop_idx=-1,
+        ):
     
     # if pca is None:
     pca = PCA(n_components=2)
-    pca.fit(true_spectra.iloc[:,:-1])
+    pca.fit(true_spectra.iloc[:,true_spectra_start_idx:true_spectra_stop_idx])
 
     _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
@@ -712,8 +722,8 @@ def plot_generation_results_pca_single_chem_side_by_side(
         ax1.set_ylim(y_lims[0], y_lims[1])
         ax2.set_ylim(y_lims[0], y_lims[1])
     if x_lims is None: # if plot boundaries are not specified, set them so that scales are consistent between plots
-        true_transformed = pca.transform(true_spectra.iloc[:, :-1])
-        synthetic_transformed = pca.transform(synthetic_spectra.iloc[:, :-1])
+        true_transformed = pca.transform(true_spectra.iloc[:, true_spectra_start_idx:true_spectra_stop_idx])
+        synthetic_transformed = pca.transform(synthetic_spectra.iloc[:, synthetic_spectra_start_idx:synthetic_spectra_stop_idx])
         x_lims = [
             min(true_transformed[:, 0].min(), synthetic_transformed[:, 0].min()) * 1.2, 
             max(true_transformed[:, 0].max(), synthetic_transformed[:, 0].max()) * 1.2
@@ -736,14 +746,21 @@ def plot_generation_results_pca_single_chem_side_by_side(
     # Plot for true spectra
     for chem, color in zip(chem_labels, color_cycle):
         color = color['color']
-        transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
+        transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, true_spectra_start_idx:true_spectra_stop_idx])
         
+        marker_size = 10
+
         if chem_of_interest is not None:
             marker_size = 50 if chem == chem_of_interest else 10
             if chem == chem_of_interest:
                 ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
+                synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, synthetic_spectra_start_idx:synthetic_spectra_stop_idx]
+        
+                if synthetic_chem.shape[0] > 0:
+                    transformed_synthetic_spectra = pca.transform(synthetic_chem)
+                    ax2.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
             else:
-                true_sample = true_spectra[true_spectra['Label'] == chem].iloc[:, :-1].sample(n=10, random_state=42)
+                true_sample = true_spectra[true_spectra['Label'] == chem].iloc[:, true_spectra_start_idx:true_spectra_stop_idx].sample(n=10, random_state=42)
                 transformed_sample = pca.transform(true_sample)
                 ax1.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
                 ax2.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
@@ -752,11 +769,7 @@ def plot_generation_results_pca_single_chem_side_by_side(
         # else:
         #     ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
         
-        synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
-        
-        if synthetic_chem.shape[0] > 0:
-            transformed_synthetic_spectra = pca.transform(synthetic_chem)
-            ax2.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='o', label=chem, color=color, s=50)
+
     
     # if chem_of_interest is not None:
     ax1.set_title(f'Experimental {results_type} Spectra PCA {chem_of_interest}', fontsize=18)
@@ -793,8 +806,8 @@ def plot_generation_results_pca_single_chem_side_by_side(
         plt.savefig('tmp_plot.png', format='png', dpi=300)
         wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
     if save_plot_path is not None:
-        plot_path = os.path.join(save_plot_path, f'{chem_of_interest}_real_synthetic_pca_comparison.png')
-        plt.savefig(plot_path, format='png', dpi=300)
+        # plot_path = os.path.join(save_plot_path, f'{chem_of_interest}_real_synthetic_pca_comparison.png')
+        plt.savefig(save_plot_path, format='png', dpi=300)
 
     plt.show()
 

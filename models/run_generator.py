@@ -22,21 +22,21 @@ import preprocessing_functions as ppf
 importlib.reload(f)
 
 #%%
-# best_hyperparameters = {'batch_size':16}
+best_hyperparameters = {'batch_size':16}
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_generator.py'
 target_type = 'PHIL'
-architecture = 'group_generator'
+architecture = 'universal_generator'
 loss = 'MSELoss'
 criterion = nn.MSELoss()
 input_type = 'phil_embeddings'
 early_stopping_threshold = 10
 num_plots = 5
-# model_type = 'individual_generators'
-scaling_string = 25
+scaling_string = '25'
 scaling_factor = .25
 
 # generate_synthetic_data = None
 generate_synthetic_data = 'y'
+train_model = 'no'
 
 start_idx = 2
 stop_idx = -9
@@ -91,25 +91,31 @@ config = {
     'threads':1,
 }
 
-chem_groups = [['DMMP', 'TEPO'], ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
+if architecture == 'group_generator':
+    chem_groups = [['DMMP', 'TEPO'], ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
+elif architecture == 'universal_generator':
+    chem_groups = ['all chemicals']
+
 
 
 # If doing group generators this should be uncommented and next code blocks indented
 # Lines that only apply to group generators marked with #####
-####
+###
 for group in chem_groups:
-    group_file_path = '_'.join(group)
-    generator_save_path = '_'.join([generator_save_path_pt_1,group_file_path,generator_save_path_pt_2])
-    wandb_kwargs['group']=group
-    #####
+    if chem_groups[0] != 'all chemicals':
+        group_file_path = '_'.join(group)
+        generator_save_path = '_'.join([generator_save_path_pt_1,group_file_path,generator_save_path_pt_2])
+        wandb_kwargs['group']=group
+        #####
 
     # Loading data needs to be redone for each group because keeping the entire dataset in memory + the group subset is too much
     train_data = ppf.load_data(train_file_path)
     train_embeddings_df = ppf.load_data(train_embeddings_file_path)
 
     #####
-    train_data = train_data[train_data[group].any(axis=1)] 
-    train_embeddings_df = train_embeddings_df[train_embeddings_df[group].any(axis=1)] 
+    if chem_groups[0] != 'all chemicals':
+        train_data = train_data[train_data[group].any(axis=1)] 
+        train_embeddings_df = train_embeddings_df[train_embeddings_df[group].any(axis=1)] 
     #####
 
     x_train, y_train, train_chem_encodings_tensor, train_indices_tensor = f.create_dataset_tensors_for_generator(
@@ -121,75 +127,88 @@ for group in chem_groups:
     val_data = ppf.load_data(val_file_path)
     val_embeddings_df = ppf.load_data(val_embeddings_file_path)
 
-    #####
-    val_data = val_data[val_data[group].any(axis=1)] 
-    val_embeddings_df = val_embeddings_df[val_embeddings_df[group].any(axis=1)]
-    #####
+    # #####
+    if chem_groups[0] != 'all chemicals':
+        val_data = val_data[val_data[group].any(axis=1)] 
+        val_embeddings_df = val_embeddings_df[val_embeddings_df[group].any(axis=1)]
+    # #####
 
     x_val, y_val, val_chem_encodings_tensor, val_indices_tensor = f.create_dataset_tensors_for_generator(
         val_data, val_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
     del val_data, val_embeddings_df
     # %%
     test_data = ppf.load_data(test_file_path)
+    test_cols = test_data.columns[start_idx:stop_idx]
     test_embeddings_df = ppf.load_data(test_embeddings_file_path)
 
-    #####
-    test_data = test_data[test_data[group].any(axis=1)]
-    test_embeddings_df = test_embeddings_df[test_embeddings_df[group].any(axis=1)] 
-    #####
+    # #####
+    if chem_groups[0] != 'all chemicals':
+        test_data = test_data[test_data[group].any(axis=1)]
+        test_embeddings_df = test_embeddings_df[test_embeddings_df[group].any(axis=1)] 
+    # #####
 
     x_test, y_test, test_chem_encodings_tensor, test_indices_tensor = f.create_dataset_tensors_for_generator(
         test_data, test_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
 
     del test_data, test_embeddings_df
 
-    #%%
-    train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_indices_tensor)
-    val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_indices_tensor)
     test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_indices_tensor)
-
-
-    best_hyperparameters = f.train_generator(
-        train_data, val_data, test_data, device, config,
-        wandb_kwargs, model_hyperparams, sorted_chem_names,
-        generator_save_path, save_plots_to_wandb=True,
-        early_stop_threshold=wandb_kwargs['early stopping threshold'], 
-        num_plots=num_plots, # pretrained_model_path=generator_load_path,
-        carl_or_spec=target_type
-    )
     #%%
-if generate_synthetic_data == None:
-    generate_synthetic_data = f.get_input()
+    if train_model == 'yes':
+        train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_indices_tensor)
+        val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_indices_tensor)
 
-if generate_synthetic_data == 'y':
-    print('Generating synthetic data...')
-    batch_size = best_hyperparameters['batch_size']
+        best_hyperparameters = f.train_generator(
+            train_data, val_data, test_data, device, config,
+            wandb_kwargs, model_hyperparams, sorted_chem_names,
+            generator_save_path, save_plots_to_wandb=True,
+            early_stop_threshold=wandb_kwargs['early stopping threshold'], 
+            num_plots=num_plots, # pretrained_model_path=generator_load_path,
+            carl_or_spec=target_type
+        )
+        #%%
+    if generate_synthetic_data == None:
+        generate_synthetic_data = f.get_input()
 
-    # for group generators
-    for group in chem_groups:
-        print(f'Generating data for group: {group}')
-        group_file_path = '_'.join(group)
-        generator_path = '_'.join([generator_save_path_pt_1,group_file_path,generator_save_path_pt_2])
-        preds_save_path = '_'.join([synthetic_data_save_path_pt_1,group_file_path,synthetic_data_save_path_pt_2])
-    
-    # # for universal generator
-    # generator_path = generator_save_path
-    # preds_save_path = '_'.join([synthetic_data_save_path_pt_1,synthetic_data_save_path_pt_2])
+    if generate_synthetic_data == 'y':
+        if chem_groups[0] != 'all chemicals':
+            print(f'Generating data for group: {group}')
+            group_file_path = '_'.join(group)
+            generator_path = '_'.join([generator_save_path_pt_1,group_file_path,generator_save_path_pt_2])
+            preds_save_path = '_'.join([synthetic_data_save_path_pt_1,group_file_path,synthetic_data_save_path_pt_2])
+        if chem_groups[0] == 'all chemicals':
+            print('Generating synthetic data...')
+            generator_path = generator_save_path
+            preds_save_path = '_'.join([synthetic_data_save_path_pt_1,synthetic_data_save_path_pt_2])
+            
+        batch_size = best_hyperparameters['batch_size']
 
-        # Everything below indented for group gens
-        test_data = ppf.load_data(test_file_path)
-        test_embeddings_df = ppf.load_data(test_embeddings_file_path)
-        test_cols = test_data.columns[start_idx:stop_idx]
+        # ####
+        # # for group generators
+        # for group in chem_groups:
+        #     print(f'Generating data for group: {group}')
+        #     group_file_path = '_'.join(group)
+        #     generator_path = '_'.join([generator_save_path_pt_1,group_file_path,generator_save_path_pt_2])
+        #     preds_save_path = '_'.join([synthetic_data_save_path_pt_1,group_file_path,synthetic_data_save_path_pt_2])
+        # #####
 
-        test_data = test_data[test_data[group].any(axis=1)]
-        test_embeddings_df = test_embeddings_df[test_embeddings_df[group].any(axis=1)] 
 
-        x_test, y_test, test_chem_encodings_tensor, test_indices_tensor = f.create_dataset_tensors_for_generator(
-            test_data, test_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
+        # # Everything below indented for group gens
+        # test_data = ppf.load_data(test_file_path)
+        # test_embeddings_df = ppf.load_data(test_embeddings_file_path)
+        # test_cols = test_data.columns[start_idx:stop_idx]
 
-        del test_data, test_embeddings_df
+        # # #####
+        # # test_data = test_data[test_data[group].any(axis=1)]
+        # # test_embeddings_df = test_embeddings_df[test_embeddings_df[group].any(axis=1)] 
+        # # #####
 
-        test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_indices_tensor)
+        # x_test, y_test, test_chem_encodings_tensor, test_indices_tensor = f.create_dataset_tensors_for_generator(
+        #     test_data, test_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
+
+        # del test_data, test_embeddings_df
+
+        # test_data = TensorDataset(x_test, test_chem_encodings_tensor, y_test, test_indices_tensor)
         test_dataset = DataLoader(test_data, batch_size)
 
         model = f.load_model(generator_path, device=device)#, weights_only=False)
@@ -227,5 +246,5 @@ if generate_synthetic_data == 'y':
             )
         
         synthetic_spectra_df.to_feather(preds_save_path)#, index=False)
-else:
-    print('Skipping synthetic data generation...')
+    else:
+        print('Skipping synthetic data generation...')

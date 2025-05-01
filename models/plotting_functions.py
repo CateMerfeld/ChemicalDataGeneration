@@ -31,6 +31,82 @@ from sklearn.preprocessing import StandardScaler
 # def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_type, chem_label, log_wandb=False, show_wandb_run_name=True, criterion=None, run_name=None):
 # def plot_and_save_generator_results(data, batch_size, sorted_chem_names, model, device, criterion, num_plots, plot_overlap_pca=False, save_plots_to_wandb=True, show_wandb_run_name=True, test_or_train='Train'):
 
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+def plot_comparison_multiple_spectra_per_plot(
+        dataset1, dataset2, dataset1_type, dataset2_type, 
+        chem_label, save_plot_path=None, num_spectra=10,
+        custom_top_row_cutoff=None, custom_bottom_row_cutoff=None,
+        ):
+    """
+    Plot comparison of two datasets with multiple spectra per plot.
+    This function generates a 2x2 grid of subplots comparing two datasets.
+    Parameters:
+    ----------
+    dataset1 : pd.DataFrame
+        DataFrame containing the first dataset to plot.
+    dataset2 : pd.DataFrame
+        DataFrame containing the second dataset to plot.
+    dataset1_type : str
+        Type of the first dataset (e.g., 'Train Spectra', 'Test CARLs', etc.).
+    dataset2_type : str
+        Type of the second dataset.
+    chem_label : str
+        Name of the chemical to plot.
+    save_plot_path : str, optional
+        Path to save the plot. If None, the plot will not be saved.
+    """
+    _, axes = plt.subplots(2, 2, figsize=(20, 14))
+
+    # Flatten the axes array for easy iteration
+    axes = axes.flatten()
+
+    # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
+    numbers = range(184, (dataset1.shape[1]//2)+184)
+
+    axes[0].set_title(f'{chem_label} Positive {dataset1_type}', fontsize=24)
+    axes[1].set_title(f'{chem_label} Positive {dataset2_type}', fontsize=24)
+    axes[2].set_title(f'{chem_label} Negative {dataset1_type}', fontsize=24)
+    axes[3].set_title(f'{chem_label} Negative {dataset2_type}', fontsize=24)
+
+    for i, (row1, row2) in enumerate(zip(dataset1.iterrows(), dataset2.iterrows())):
+        if i >= num_spectra:
+            break
+        spec1 = row1[1].values
+        spec2 = row2[1].values
+        # if custom_top_row_cutoff is None:
+        #     axes[0].plot(numbers, spec1[:len(numbers)])
+        #     axes[1].plot(numbers, spec2[:len(numbers)])
+        # else:
+        #     axes[0].plot(numbers, spec1[custom_top_row_cutoff[0]:custom_top_row_cutoff[1]])
+        #     axes[1].plot(numbers, spec2[custom_top_row_cutoff[0]:custom_top_row_cutoff[1]])
+
+        # if custom_bottom_row_cutoff is None:
+        #     axes[2].plot(numbers, spec1[len(numbers):])
+        #     axes[3].plot(numbers, spec2[len(numbers):])
+        # else:
+        #     axes[2].plot(numbers, spec1[custom_bottom_row_cutoff[0]:custom_bottom_row_cutoff[1]])
+        #     axes[3].plot(numbers, spec2[custom_bottom_row_cutoff[0]:custom_bottom_row_cutoff[1]])
+        axes[0].plot(numbers, spec1[:len(numbers)])
+        axes[1].plot(numbers, spec2[:len(numbers)])
+        axes[2].plot(numbers, spec1[len(numbers):])
+        axes[3].plot(numbers, spec2[len(numbers):])
+
+    for ax in axes:
+            ax.set_xlabel('Drift Time', fontsize=16)
+            ax.set_ylabel('Ion Intensity', fontsize=16)
+            # ax.legend(fontsize=14)
+    
+    # Adjust subplot layout to prevent overlap between titles and x-labels
+    plt.tight_layout()
+    if save_plot_path is not None:
+        plt.savefig(save_plot_path, format='png', dpi=300)
+
+    plt.show()
+    
+
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------

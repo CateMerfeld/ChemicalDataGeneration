@@ -1,3 +1,7 @@
+#%%
+#%%
+
+#%%
 # General script to run generator model
 #%%
 # Load Packages and Files:
@@ -21,11 +25,17 @@ import preprocessing_functions as ppf
 # Reload the functions module after updates
 importlib.reload(f)
 
+# generate_synthetic_data = None
+generate_synthetic_data = 'y'
+train_model = 'yes'
+# best_hyperparameters = {'batch_size':16}
+
+generator_load_path = None
+
 #%%
-best_hyperparameters = {'batch_size':16}
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_generator.py'
 target_type = 'PHIL'
-architecture = 'universal_generator'
+architecture = 'group_generator'
 loss = 'MSELoss'
 criterion = nn.MSELoss()
 input_type = 'phil_embeddings'
@@ -34,19 +44,15 @@ num_plots = 5
 scaling_string = '25'
 scaling_factor = .25
 
-# generate_synthetic_data = None
-generate_synthetic_data = 'y'
-train_model = 'no'
-
 start_idx = 2
 stop_idx = -9
 device = f.set_up_gpu()
 
 
 model_hyperparams = {
-    'batch_size':[16, 32],
+    'batch_size':[32],#, 32],
     'epochs': [100],
-    'learning_rate':[.01, .001],
+    'learning_rate':[.001]#, .001],
     }
 
 wandb_kwargs = {
@@ -95,8 +101,6 @@ if architecture == 'group_generator':
     chem_groups = [['DMMP', 'TEPO'], ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
 elif architecture == 'universal_generator':
     chem_groups = ['all chemicals']
-
-
 
 # If doing group generators this should be uncommented and next code blocks indented
 # Lines that only apply to group generators marked with #####
@@ -163,7 +167,7 @@ for group in chem_groups:
             wandb_kwargs, model_hyperparams, sorted_chem_names,
             generator_save_path, save_plots_to_wandb=True,
             early_stop_threshold=wandb_kwargs['early stopping threshold'], 
-            num_plots=num_plots, # pretrained_model_path=generator_load_path,
+            num_plots=num_plots, pretrained_model_path=generator_load_path,
             carl_or_spec=target_type
         )
         #%%

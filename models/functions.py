@@ -1234,10 +1234,11 @@ def train_generator(
         save_plots_to_wandb = True, early_stop_threshold=10, 
         show_wandb_run_name=True, lr_scheduler = True, 
         num_plots = 1, patience=5, plot_overlap_pca=False, 
-        model_type='Generator', pretrained_model_path=False,
+        model_type='Generator', pretrained_model_path=None,
         carl_or_spec = 'CARL'
         ):
-    # wandb.finish()
+    if save_plots_to_wandb:
+        wandb.finish()
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
     lowest_val_loss = np.inf
 
@@ -1259,7 +1260,7 @@ def train_generator(
         lowest_val_model_loss = np.inf
         
         # load pretrained model if provided, otherwise create new model
-        if pretrained_model_path:
+        if pretrained_model_path is not None:
             model = load_model(pretrained_model_path, freeze_layers=combo['freeze_layers'])
         else:
             if model_type == 'Generator':
@@ -1365,12 +1366,8 @@ def train_generator(
                 else:
                     epochs_without_validation_improvement += 1
 
-                # # log losses and memory stats to wandb
-                # memory_info = psutil.virtual_memory()
-                wandb.log({
-                    f"{model_type} Training Loss": average_loss, f"{model_type} Validation Loss": val_average_loss, 
-                    # "memory_used": memory_info.used, "memory_percent": memory_info.percent
-                    })
+                # log losses to wandb
+                wandb.log({f"{model_type} Training Loss": average_loss, f"{model_type} Validation Loss": val_average_loss})
 
                 if (epoch) % 10 == 0 or epoch == 0:
                     print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
@@ -1380,7 +1377,7 @@ def train_generator(
     
             else:
                 print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
-                wandb.log({'Early Stopping Ecoch':epoch})
+                wandb.log({'Early Stopping Epoch':epoch})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 pf.plot_and_save_generator_results(
                     train_data, combo['batch_size'], sorted_chem_names, 

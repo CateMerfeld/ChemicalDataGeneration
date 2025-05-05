@@ -1,41 +1,67 @@
 #%%
 import pandas as pd
-#%%
+##%%
 # import torch.nn as nn
 import functions as f
 import plotting_functions as pf
 # import random
-#%%
+##%%
 import importlib
-#%%
+##%%
 importlib.reload(pf)
 #%%
-chem_label = 'MES'
-save_plot_path=f'../plots/CARL/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in.png'
+# chem_label = 'DEM'
+# chem_list = ['DtBP', 'MES']
+# chem_list = ['DMMP', 'TEPO']
+chem_list = ['DEM', 'DPM', 'DEB']
+preprocessing_type = 'CARL'
+
+# save_plot_path=f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot.png'
+# save_plot_path=f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in.png'
+# save_plot_path=f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in_rip.png'
 #%%
-synthetic_data_path = '../../scratch/synthetic_data/CARL/group_generator/_DtBP_MES_synthetic_test_spectra.csv'
-synthetic_data = pd.read_csv(synthetic_data_path)
-#%%
-# synthetic_phil_path = 
+if preprocessing_type == 'CARL':
+    # synthetic_data_path = f'../../scratch/synthetic_data/{preprocessing_type}/group_generator/_DtBP_MES_synthetic_test_spectra.csv'
+    # synthetic_data_path = f'../../scratch/synthetic_data/{preprocessing_type}/group_generator/_DMMP_TEPO_synthetic_test_spectra.csv'
+    synthetic_data_path = f'../../scratch/synthetic_data/{preprocessing_type}/group_generator/_DEM_DPM_DEB_synthetic_test_spectra.csv'
+    synthetic_data = pd.read_csv(synthetic_data_path)
+elif preprocessing_type == 'PHIL':
+    # synthetic_data_path = f'../../scratch/synthetic_data/{preprocessing_type}/group_generator/_DtBP_MES_synthetic_test_spectra.feather'
+    # synthetic_data_path = f'../../scratch/synthetic_data/{preprocessing_type}/group_generator/_DMMP_TEPO_synthetic_test_spectra.feather'
+    synthetic_data_path = f'../../scratch/synthetic_data/{preprocessing_type}/group_generator/_DEM_DPM_DEB_synthetic_test_spectra.feather'
+    synthetic_data = pd.read_feather(synthetic_data_path)
 
 #%%
 experimental_data_path = '../../scratch/test_data.feather'
 experimental_data = pd.read_feather(experimental_data_path)
 #%%
-chem_synthetic_data = synthetic_data[synthetic_data['Label'] == chem_label].iloc[:,:-2]
-chem_synthetic_data = chem_synthetic_data.sample(n=30, random_state=10, ignore_index=True)
+for chem_label in chem_list:
+    chem_synthetic_data = synthetic_data[synthetic_data['Label'] == chem_label].iloc[:,:-2]
+    chem_synthetic_data = chem_synthetic_data.sample(n=30, random_state=10, ignore_index=True)
 
-chem_experimental_data = experimental_data[experimental_data['Label'] == chem_label].iloc[:,2:-9]
-chem_experimental_data = chem_experimental_data.sample(n=30, random_state=42, ignore_index=True)
+    chem_experimental_data = experimental_data[experimental_data['Label'] == chem_label].iloc[:,2:-9]
+    chem_experimental_data = chem_experimental_data.sample(n=30, random_state=42, ignore_index=True)
 #%%
-importlib.reload(pf)
-pf.plot_comparison_multiple_spectra_per_plot(
-    chem_experimental_data, chem_synthetic_data,
-    dataset1_type='Experimental Test Spectra', dataset2_type='Synthetic Test Spectra from CARLs',
-    chem_label=chem_label, save_plot_path=save_plot_path, 
-    custom_top_row_cutoff=[650,850], custom_bottom_row_cutoff=[650,850]
-    )
+    plot_list = [
+        # [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot.png', None],
+        # [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in.png', [650, 800]],
+        [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in_rip.png', [200, 300]]
+        ]
+    # importlib.reload(pf)
+    for save_plot_path, cutoff in plot_list:
+        pf.plot_comparison_multiple_spectra_per_plot(
+            chem_experimental_data, chem_synthetic_data,
+            dataset1_type='Experimental Test Spectra', dataset2_type=f'Synthetic Test Spectra from {preprocessing_type}s',
+            chem_label=chem_label, save_plot_path=save_plot_path, 
+            # custom_top_row_cutoff=[650,850], custom_bottom_row_cutoff=[650,850]
+            # custom_top_row_cutoff=[200,300], custom_bottom_row_cutoff=[200,300]
+            custom_top_row_cutoff=cutoff, custom_bottom_row_cutoff=cutoff
+            )
 
+# ---------------------------------------
+# ---------------------------------------
+# ---------------------------------------
+# ---------------------------------------
 #%%
 # importlib.reload(f)
 # #%%

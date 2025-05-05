@@ -31,7 +31,11 @@ def load_data(file_path_parts_list, file_ending):
     Returns:
         pd.DataFrame: The loaded data as a pandas DataFrame.
     """
-    file_path = '_'.join(file_path_parts_list)
+    if len(file_path_parts_list) > 1:
+        file_path = '_'.join(file_path_parts_list)
+    else:
+        file_path = file_path_parts_list[0]
+        
     if file_ending == 'feather':
         data = pd.read_feather(file_path)
     elif file_ending == 'csv':

@@ -1,5 +1,6 @@
 #%%
 import pandas as pd
+#%%
 # import torch.nn as nn
 import functions as f
 import plotting_functions as pf
@@ -9,10 +10,10 @@ import importlib
 #%%
 importlib.reload(pf)
 #%%
-chem_label = 'DMMP'
-save_plot_path=f'../plots/CARL/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot.png'
+chem_label = 'MES'
+save_plot_path=f'../plots/CARL/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in.png'
 #%%
-synthetic_data_path = '../../scratch/synthetic_data/CARL/group_generator/_DMMP_TEPO_synthetic_test_spectra.csv'
+synthetic_data_path = '../../scratch/synthetic_data/CARL/group_generator/_DtBP_MES_synthetic_test_spectra.csv'
 synthetic_data = pd.read_csv(synthetic_data_path)
 #%%
 # synthetic_phil_path = 
@@ -24,8 +25,6 @@ experimental_data = pd.read_feather(experimental_data_path)
 chem_synthetic_data = synthetic_data[synthetic_data['Label'] == chem_label].iloc[:,:-2]
 chem_synthetic_data = chem_synthetic_data.sample(n=30, random_state=10, ignore_index=True)
 
-print(chem_synthetic_data.head(10))
-#%%
 chem_experimental_data = experimental_data[experimental_data['Label'] == chem_label].iloc[:,2:-9]
 chem_experimental_data = chem_experimental_data.sample(n=30, random_state=42, ignore_index=True)
 #%%
@@ -33,7 +32,8 @@ importlib.reload(pf)
 pf.plot_comparison_multiple_spectra_per_plot(
     chem_experimental_data, chem_synthetic_data,
     dataset1_type='Experimental Test Spectra', dataset2_type='Synthetic Test Spectra from CARLs',
-    chem_label=chem_label, save_plot_path=save_plot_path
+    chem_label=chem_label, save_plot_path=save_plot_path, 
+    custom_top_row_cutoff=[650,850], custom_bottom_row_cutoff=[650,850]
     )
 
 #%%

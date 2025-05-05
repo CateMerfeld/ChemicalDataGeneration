@@ -76,23 +76,26 @@ def plot_comparison_multiple_spectra_per_plot(
             break
         spec1 = row1[1].values
         spec2 = row2[1].values
-        # if custom_top_row_cutoff is None:
-        #     axes[0].plot(numbers, spec1[:len(numbers)])
-        #     axes[1].plot(numbers, spec2[:len(numbers)])
-        # else:
-        #     axes[0].plot(numbers, spec1[custom_top_row_cutoff[0]:custom_top_row_cutoff[1]])
-        #     axes[1].plot(numbers, spec2[custom_top_row_cutoff[0]:custom_top_row_cutoff[1]])
+        if custom_top_row_cutoff is None:
+            axes[0].plot(numbers, spec1[:len(numbers)])
+            axes[1].plot(numbers, spec2[:len(numbers)])
+        else:
+            numbers = range(custom_top_row_cutoff[0], custom_top_row_cutoff[1])
+            axes[0].plot(numbers, spec1[custom_top_row_cutoff[0]-184:custom_top_row_cutoff[1]-184])
+            axes[1].plot(numbers, spec2[custom_top_row_cutoff[0]-184:custom_top_row_cutoff[1]-184])
 
-        # if custom_bottom_row_cutoff is None:
-        #     axes[2].plot(numbers, spec1[len(numbers):])
-        #     axes[3].plot(numbers, spec2[len(numbers):])
-        # else:
-        #     axes[2].plot(numbers, spec1[custom_bottom_row_cutoff[0]:custom_bottom_row_cutoff[1]])
-        #     axes[3].plot(numbers, spec2[custom_bottom_row_cutoff[0]:custom_bottom_row_cutoff[1]])
-        axes[0].plot(numbers, spec1[:len(numbers)])
-        axes[1].plot(numbers, spec2[:len(numbers)])
-        axes[2].plot(numbers, spec1[len(numbers):])
-        axes[3].plot(numbers, spec2[len(numbers):])
+        if custom_bottom_row_cutoff is None:
+            axes[2].plot(numbers, spec1[len(numbers):])
+            axes[3].plot(numbers, spec2[len(numbers):])
+        else:
+            numbers = range(custom_bottom_row_cutoff[0], custom_bottom_row_cutoff[1])
+            # add 654 ((len(spectrum)/2) + 184) to account for the offset and negative spectra
+            axes[2].plot(numbers, spec1[custom_bottom_row_cutoff[0]+654:custom_bottom_row_cutoff[1]+654])
+            axes[3].plot(numbers, spec2[custom_bottom_row_cutoff[0]+654:custom_bottom_row_cutoff[1]+654])
+        # axes[0].plot(numbers, spec1[:len(numbers)])
+        # axes[1].plot(numbers, spec2[:len(numbers)])
+        # axes[2].plot(numbers, spec1[len(numbers):])
+        # axes[3].plot(numbers, spec2[len(numbers):])
 
     for ax in axes:
             ax.set_xlabel('Drift Time', fontsize=16)
@@ -220,15 +223,15 @@ def plot_average_spectrum(
 def plot_ims_spectrum(
         spectrum, chem_label, real_or_synthetic, 
         preprocessing_type='Spectrum', save_plot_path=None,
-        rip_start_col=184, rip_stop_col=300
+        rip_start_col=None, rip_stop_col=None
         ):
     # x axis should run from lowest drift time (184) to highest drift time (184 + len(spectrum)//2)
     numbers = range(184, (len(spectrum)//2)+184)
 
     plt.plot(numbers, spectrum[:len(numbers)], label='Positive')
-    plt.axvline(x=rip_start_col, color='red', linestyle='--')#, label=f'Threshold at 200')
-    plt.axvline(x=rip_stop_col, color='red', linestyle='--')#, label='Threshold at 250')
-    # plt.axvline(x=300, color='red', linestyle='--', label='Threshold at 300')
+    if rip_start_col is not None:
+        plt.axvline(x=rip_start_col, color='red', linestyle='--')
+        plt.axvline(x=rip_stop_col, color='red', linestyle='--')
 
     plt.plot(numbers, spectrum[len(numbers):], label='Negative')
     plt.title(f'{real_or_synthetic} {chem_label} {preprocessing_type}', fontsize=20)

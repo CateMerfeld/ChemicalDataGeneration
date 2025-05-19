@@ -13,6 +13,35 @@ import pandas as pd
 
 # import matplotlib.pyplot as plt
 
+def reformat_spectra_df(df):
+    """
+    Transforms the 'Spectrum' column of a DataFrame into a new DataFrame where
+    the 'SMILES' column is used as column headers and the formatted 'Spectrum'
+    column becomes the data.
+
+    Parameters:
+    df (pd.DataFrame): Input DataFrame with 'SMILES' and 'Spectrum' columns.
+
+    Returns:
+    pd.DataFrame: Transformed DataFrame.
+    """
+    transformed_data = {}
+
+    for _, row in df.iterrows():
+        smiles = row['SMILES']
+        spectrum = row['Spectrum'].split(' ')
+        indices = [round(float(pair.split(':')[0])) for pair in spectrum]
+        values = [float(pair.split(':')[1]) for pair in spectrum]
+
+        max_index = max(indices)
+        spectrum_df = pd.DataFrame(np.zeros((max_index + 1, 1)), columns=[smiles])
+        for idx, val in zip(indices, values):
+            spectrum_df.at[idx, smiles] = val
+
+        transformed_data[smiles] = spectrum_df[smiles]
+
+    return pd.concat(transformed_data.values(), axis=1)
+
 def load_data(file_path):
     if file_path.endswith('.feather'):
         data = pd.read_feather(file_path)

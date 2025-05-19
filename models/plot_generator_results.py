@@ -35,28 +35,28 @@ elif preprocessing_type == 'PHIL':
 experimental_data_path = '../../scratch/test_data.feather'
 experimental_data = pd.read_feather(experimental_data_path)
 #%%
-for chem_label in chem_list:
-    chem_synthetic_data = synthetic_data[synthetic_data['Label'] == chem_label].iloc[:,:-2]
-    chem_synthetic_data = chem_synthetic_data.sample(n=30, random_state=10, ignore_index=True)
+# # plot multiple spectra in one plot
+# for chem_label in chem_list:
+#     chem_synthetic_data = synthetic_data[synthetic_data['Label'] == chem_label].iloc[:,:-2]
+#     chem_synthetic_data = chem_synthetic_data.sample(n=30, random_state=10, ignore_index=True)
 
-    chem_experimental_data = experimental_data[experimental_data['Label'] == chem_label].iloc[:,2:-9]
-    chem_experimental_data = chem_experimental_data.sample(n=30, random_state=42, ignore_index=True)
-#%%
-    plot_list = [
-        # [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot.png', None],
-        # [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in.png', [650, 800]],
-        [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in_rip.png', [200, 300]]
-        ]
-    # importlib.reload(pf)
-    for save_plot_path, cutoff in plot_list:
-        pf.plot_comparison_multiple_spectra_per_plot(
-            chem_experimental_data, chem_synthetic_data,
-            dataset1_type='Experimental Test Spectra', dataset2_type=f'Synthetic Test Spectra from {preprocessing_type}s',
-            chem_label=chem_label, save_plot_path=save_plot_path, 
-            # custom_top_row_cutoff=[650,850], custom_bottom_row_cutoff=[650,850]
-            # custom_top_row_cutoff=[200,300], custom_bottom_row_cutoff=[200,300]
-            custom_top_row_cutoff=cutoff, custom_bottom_row_cutoff=cutoff
-            )
+#     chem_experimental_data = experimental_data[experimental_data['Label'] == chem_label].iloc[:,2:-9]
+#     chem_experimental_data = chem_experimental_data.sample(n=30, random_state=42, ignore_index=True)
+# #%%
+#     plot_list = [
+#         # [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot.png', None],
+#         # [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in.png', [650, 800]],
+#         [f'../plots/{preprocessing_type}/generator_results/group_generator/{chem_label}_experimental_vs_synthetic_multiple_spectra_same_plot_zoomed_in_rip.png', [200, 300]]]
+#     # importlib.reload(pf)
+#     for save_plot_path, cutoff in plot_list:
+#         pf.plot_comparison_multiple_spectra_per_plot(
+#             chem_experimental_data, chem_synthetic_data,
+#             dataset1_type='Experimental Test Spectra', dataset2_type=f'Synthetic Test Spectra from {preprocessing_type}s',
+#             chem_label=chem_label, save_plot_path=save_plot_path, 
+#             # custom_top_row_cutoff=[650,850], custom_bottom_row_cutoff=[650,850]
+#             # custom_top_row_cutoff=[200,300], custom_bottom_row_cutoff=[200,300]
+#             custom_top_row_cutoff=cutoff, custom_bottom_row_cutoff=cutoff
+#             )
 
 # ---------------------------------------
 # ---------------------------------------
@@ -65,41 +65,48 @@ for chem_label in chem_list:
 #%%
 # importlib.reload(f)
 # #%%
+
+
 # middle_plot_result_type = 'PHIL'
-# right_plot_result_type = 'CARL'
-# left_plot_result_type = 'experimental'
-# # model type options: 'group_generator', 'universal_generator', 'individual_generators'
+right_plot_result_type = 'CARL'
+left_plot_result_type = 'experimental'
+# model type options: 'group_generator', 'universal_generator', 'individual_generators'
 # model_type = 'universal_generator'
-# # plot_type = 'real_vs_synthetic'
-# result_type = 'PHIL'
-# plot_type = 'model_comparison'
+model_type = 'group_generator'
+# plot_type = 'real_vs_synthetic'
+result_type = 'PHIL'
+plot_type = 'model_comparison'
 
-# if plot_type == 'model_comparison':
-#     save_file_path_pt1 = f'../plots/{plot_type}/'
-#     save_file_path_pt2 = f'_{middle_plot_result_type}_{right_plot_result_type}_{model_type}.png'
-# else:
-#     save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
-#     save_file_path_pt2 = f'_{result_type}.png'
+if plot_type == 'model_comparison':
+    save_file_path_pt1 = f'../plots/{plot_type}/'
+    save_file_path_pt2 = f'_{left_plot_result_type}_{right_plot_result_type}_{model_type}.png'
+else:
+    save_file_path_pt1 = f'../plots/{result_type}/generator_results/{model_type}/{plot_type}_'
+    save_file_path_pt2 = f'_{result_type}.png'
 
 
-# middle_plot_data_file_ending = 'feather'   
-# right_plot_data_file_ending = 'feather'
+middle_plot_data_file_ending = 'feather'   
+right_plot_data_file_ending = 'csv'
 
-# test_file_path = '../../scratch/test_data.feather'
-# left_plot_start_idx = 2
-# left_plot_stop_idx = -9
+test_file_path = '../../scratch/test_data.feather'
+left_plot_start_idx = 2
+left_plot_stop_idx = -9
 
-# middle_plot_start_idx = 0
-# middle_plot_stop_idx = -2
-# right_plot_stop_idx = -1
+middle_plot_start_idx = 0
+middle_plot_stop_idx = -2
+right_plot_stop_idx = -1
 
-# left_plot_type = 'Experimental '
+left_plot_type = 'Experimental '
 # middle_plot_type = 'PHIL '
-# right_plot_type = 'CARL '
-# data_split = 'Spectrum vs CARL'
+right_plot_type = 'CARL '
+data_split = 'Spectrum vs CARL'
 
-# # Everything below this line should not need to be changed
-# ##########################################################
+# right_plot_data_path = f'../../scratch/synthetic_data/{right_plot_result_type}/{model_type}/_DtBP_MES_synthetic_test_spectra.{right_plot_data_file_ending}'
+# right_plot_data_path = f'../../scratch/synthetic_data/{right_plot_result_type}/{model_type}/_DMMP_TEPO_synthetic_test_spectra.{right_plot_data_file_ending}'
+right_plot_data_path = f'../../scratch/synthetic_data/{right_plot_result_type}/{model_type}/_DEM_DPM_DEB_synthetic_test_spectra.{right_plot_data_file_ending}'
+
+# Everything below this line should not need to be changed
+##########################################################
 
 # middle_plot_data_path_pt_1 = f'../../scratch/synthetic_data/{middle_plot_result_type}/{model_type}/'
 # middle_plot_data_path_pt_2 = f'synthetic_test_spectra.{middle_plot_data_file_ending}'
@@ -107,30 +114,35 @@ for chem_label in chem_list:
 # right_plot_data_path_pt_1 = f'../../scratch/synthetic_data/{right_plot_result_type}/{model_type}/'
 # right_plot_data_path_pt_2 = f'synthetic_test_spectra.{right_plot_data_file_ending}'
 
-# sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
+sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
+# plot_chems = ['DtBP', 'MES']
+# plot_chems = ['DMMP', 'TEPO']
+plot_chems = ['DEM', 'DPM', 'DEB']
 
 # if model_type == 'group_generator':
-#     chem_groups = [['DMMP', 'TEPO']]#, ['DEM', 'DPM', 'DEB'], ['DtBP', 'MES']]
+#     chem_groups = [['DtBP', 'MES']]#['DMMP', 'TEPO']]#, ['DEM', 'DPM', 'DEB'], ]
 # else:
 #     chem_groups = None
 
-# left_plot_data = pd.read_feather(test_file_path)
+left_plot_data = pd.read_feather(test_file_path)
+right_plot_data = pd.read_csv(right_plot_data_path)
 
-# # left_plot_data = experimental_data.iloc[:,experimental_start_idx:experimental_end_idx]
+# left_plot_data = experimental_data.iloc[:,experimental_start_idx:experimental_end_idx]
 
 
-# # middle_plot_data = f.load_data([middle_plot_data_path_pt_1, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
+# middle_plot_data = f.load_data([middle_plot_data_path_pt_1, middle_plot_data_path_pt_2], middle_plot_data_file_ending)
 
 # right_plot_data = f.load_data([right_plot_data_path_pt_1, right_plot_data_path_pt_2], right_plot_data_file_ending)
-# for chem in sorted_chem_names:
-#     save_plot_path = f'../plots/{plot_type}/{chem}_{left_plot_result_type}_vs_{middle_plot_result_type}_{model_type}_pca.png'
-#     pf.plot_generation_results_pca_single_chem_side_by_side(
-#         left_plot_data, right_plot_data, sorted_chem_names, results_type=right_plot_type,
-#         sample_size=1000, chem_of_interest=chem, save_plot_path=save_plot_path,
-#         true_spectra_start_idx=left_plot_start_idx, true_spectra_stop_idx=left_plot_stop_idx, 
-#         synthetic_spectra_stop_idx=middle_plot_stop_idx,
-#         )
-#     # save_plot_path = f'../plots/{plot_type}/{chem}_{left_plot_result_type}_vs_{right_plot_result_type}_{model_type}_pca.png'
+for chem in sorted_chem_names:
+    if chem in plot_chems:
+        save_plot_path = f'../plots/{plot_type}/{chem}_{left_plot_result_type}_vs_{right_plot_result_type}_{model_type}_pca.png'
+        pf.plot_generation_results_pca_single_chem_side_by_side(
+            left_plot_data, right_plot_data, sorted_chem_names, results_type=right_plot_type,
+            sample_size=1000, chem_of_interest=chem, save_plot_path=save_plot_path,
+            true_spectra_start_idx=left_plot_start_idx, true_spectra_stop_idx=left_plot_stop_idx, 
+            synthetic_spectra_stop_idx=middle_plot_stop_idx,
+            )
+    # save_plot_path = f'../plots/{plot_type}/{chem}_{left_plot_result_type}_vs_{right_plot_result_type}_{model_type}_pca.png'
 #     # pf.plot_generation_results_pca_single_chem_side_by_side(
 #     #     left_plot_data, right_plot_data, sorted_chem_names, results_type=right_plot_type,
 #     #     sample_size=1000, chem_of_interest=chem, save_plot_path=save_plot_path,

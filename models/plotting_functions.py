@@ -819,35 +819,33 @@ def plot_generation_results_pca_single_chem_side_by_side(
     # Create a color cycle for distinct colors
     color_cycle = plt.gca()._get_lines.prop_cycler
 
-    if sample_size is not None:
-        true_spectra = true_spectra.sample(n=sample_size, random_state=42)
-
     # Plot for true spectra
     for chem, color in zip(chem_labels, color_cycle):
-        color = color['color']
-        transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, true_spectra_start_idx:true_spectra_stop_idx])
+        true_spectra_chem = true_spectra[true_spectra['Label'] == chem]
+        if sample_size is not None and true_spectra_chem.shape[0] > sample_size:
+            true_spectra_chem = true_spectra_chem.sample(n=sample_size, random_state=42)
+        transformed_true_spectra = pca.transform(true_spectra_chem.iloc[:, true_spectra_start_idx:true_spectra_stop_idx])
         
+        color = color['color']
         marker_size = 10
 
-        if chem_of_interest is not None:
-            marker_size = 50 if chem == chem_of_interest else 10
-            if chem == chem_of_interest:
-                ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
-                synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, synthetic_spectra_start_idx:synthetic_spectra_stop_idx]
-        
-                if synthetic_chem.shape[0] > 0:
-                    transformed_synthetic_spectra = pca.transform(synthetic_chem)
-                    ax2.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
-            else:
-                true_sample = true_spectra[true_spectra['Label'] == chem].iloc[:, true_spectra_start_idx:true_spectra_stop_idx].sample(n=10, random_state=42)
-                transformed_sample = pca.transform(true_sample)
-                ax1.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
-                ax2.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
-        # ax2.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', color=color, s=1)
-            # ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-        # else:
-        #     ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-        
+        # if chem_of_interest is not None:
+        marker_size = 50 if chem == chem_of_interest else 10
+        if chem == chem_of_interest:
+            ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
+            synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, synthetic_spectra_start_idx:synthetic_spectra_stop_idx]
+    
+            if synthetic_chem.shape[0] > 0:
+                if sample_size is not None and synthetic_chem.shape[0] > sample_size:
+                    synthetic_chem = synthetic_chem.sample(n=sample_size, random_state=42)
+                    # print(synthetic_chem.shape)
+                transformed_synthetic_spectra = pca.transform(synthetic_chem)
+                ax2.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
+        else:
+            true_sample = true_spectra[true_spectra['Label'] == chem].iloc[:, true_spectra_start_idx:true_spectra_stop_idx].sample(n=10, random_state=42)
+            transformed_sample = pca.transform(true_sample)
+            ax1.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
+            ax2.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)       
 
     
     # if chem_of_interest is not None:

@@ -88,7 +88,7 @@ notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/carl_encoder.py'
 architecture = 'carl_encoder'
 dataset_type = 'carls'
 target_embedding = 'ChemNet'
-encoder_path = 'trained_models/carl_to_chemnet_encoder_reparameterization.pth'
+encoder_path = 'trained_models/carl_to_chemnet_encoder_.pth'
 
 config = {
     'wandb_entity': 'catemerfeld',
@@ -112,8 +112,8 @@ wandb_kwargs = {
 }
 
 model_hyperparams = {
-  'batch_size':[32],
-  'epochs': [500],
+  'batch_size':[32,64],
+  'epochs': [100, 500],
   'learning_rate':[.00001],
   }
 

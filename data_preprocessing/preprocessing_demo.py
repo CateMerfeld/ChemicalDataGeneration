@@ -22,6 +22,17 @@ def reformat_spectra_df(df):
     for _, row in df.iterrows():
         smiles = row['SMILES']
         spectrum = row['Spectrum'].split(' ')
+        # print(int('123456'))
+        print(spectrum)
+        # spectrum = [pair.replace("'", "") for pair in spectrum]
+        # print(spectrum)
+        # for pair in spectrum:
+        #     print(pair)
+        #     print(pair.split(':')[0], pair.split(':')[1])
+        print(spectrum[0][0])
+        if spectrum[0][0] == 'k':
+            spectrum = spectrum[1:]
+
         indices = [round(float(pair.split(':')[0])) for pair in spectrum]
         values = [float(pair.split(':')[1]) for pair in spectrum]
 
@@ -39,12 +50,12 @@ def reformat_spectra_df(df):
 # Example usage
 df = pd.DataFrame({
     'SMILES': ['CCO', 'CCN'],
-    'Spectrum': ['3.4:125 4.6:857 13.9:20.3', '2.1:50 5.5:100 10.2:75']
+    'Spectrum': ['k3.4:125 4.6:857 13.9:20.3', '2.1:50 5.5:100 10.2:75']
 })
-print(df)
+# print(df)
 
 result_df = reformat_spectra_df(df)
-print(result_df)
+# print(result_df)
 #%%
 
 #%%

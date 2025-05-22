@@ -5,6 +5,11 @@ import torch
 import pandas as pd
 import numpy as np
 #%%
+import os
+import sys
+#%%
+import GPUtil
+#%%
 def reformat_spectra_df(df):
     """
     Transforms the 'Spectrum' column of a DataFrame into a new DataFrame where
@@ -59,7 +64,7 @@ result_df = reformat_spectra_df(df)
 #%%
 
 #%%
-def get_chemnet_emb_from_smiles(smiles_list):
+def get_chemnet_emb_from_smiles(smiles_list, device):
     """
     Get ChemNet embeddings from a list of SMILES strings.
 
@@ -82,7 +87,40 @@ def get_chemnet_emb_from_smiles(smiles_list):
                 smiles_emb_dict[smiles] = 'unknown'
 
     return smiles_emb_dict
+#%%
+def set_up_gpu():
+    if torch.cuda.is_available():
+        # Get the list of GPUs
+        gpus = GPUtil.getGPUs()
 
+        # Find the GPU with the most free memory
+        best_gpu = max(gpus, key=lambda gpu: gpu.memoryFree)
+
+        # Print details about the selected GPU
+        print(f"Selected GPU ID: {best_gpu.id}")
+        print(f"  Name: {best_gpu.name}")
+        print(f"  Memory Free: {best_gpu.memoryFree} MB")
+        print(f"  Memory Used: {best_gpu.memoryUsed} MB")
+        print(f"  GPU Load: {best_gpu.load * 100:.2f}%")
+
+        # Set the device for later use
+        device = torch.device(f'cuda:{best_gpu.id}')
+        print('Current device ID: ', device)
+
+        # Set the current device in PyTorch
+        torch.cuda.set_device(best_gpu.id)
+    else:
+        device = torch.device('cpu')
+        print('Using CPU')
+        
+
+    # Confirm the currently selected device in PyTorch
+    print("PyTorch current device ID:", torch.cuda.current_device())
+    print("PyTorch current device name:", torch.cuda.get_device_name(torch.cuda.current_device()))
+
+    return device
+
+device = set_up_gpu()
 smiles_list = ['CCO', 'CCN', 'CCOCC']
-emb_dict = get_chemnet_emb_from_smiles(smiles_list)
+emb_dict = get_chemnet_emb_from_smiles(smiles_list, device)
 print(emb_dict)

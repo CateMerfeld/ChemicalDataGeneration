@@ -1,5 +1,5 @@
 import seaborn as sns
-# from scipy.spatial import distance
+from scipy.spatial import distance
 import matplotlib.pyplot as plt
 # from scipy.spatial import ConvexHull
 import numpy as np
@@ -31,6 +31,85 @@ from sklearn.preprocessing import StandardScaler
 # def plot_spectra_real_synthetic_comparison(true_spec, synthetic_spec, results_type, chem_label, log_wandb=False, show_wandb_run_name=True, criterion=None, run_name=None):
 # def plot_and_save_generator_results(data, batch_size, sorted_chem_names, model, device, criterion, num_plots, plot_overlap_pca=False, save_plots_to_wandb=True, show_wandb_run_name=True, test_or_train='Train'):
 
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+def plot_comparison_multiple_spectra_per_plot(
+        dataset1, dataset2, dataset1_type, dataset2_type, 
+        chem_label, save_plot_path=None, num_spectra=10,
+        custom_top_row_cutoff=None, custom_bottom_row_cutoff=None,
+        ):
+    """
+    Plot comparison of two datasets with multiple spectra per plot.
+    This function generates a 2x2 grid of subplots comparing two datasets.
+    Parameters:
+    ----------
+    dataset1 : pd.DataFrame
+        DataFrame containing the first dataset to plot.
+    dataset2 : pd.DataFrame
+        DataFrame containing the second dataset to plot.
+    dataset1_type : str
+        Type of the first dataset (e.g., 'Train Spectra', 'Test CARLs', etc.).
+    dataset2_type : str
+        Type of the second dataset.
+    chem_label : str
+        Name of the chemical to plot.
+    save_plot_path : str, optional
+        Path to save the plot. If None, the plot will not be saved.
+    """
+    _, axes = plt.subplots(2, 2, figsize=(20, 14))
+
+    # Flatten the axes array for easy iteration
+    axes = axes.flatten()
+
+    # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
+    numbers = range(184, (dataset1.shape[1]//2)+184)
+
+    axes[0].set_title(f'{chem_label} Positive {dataset1_type}', fontsize=24)
+    axes[1].set_title(f'{chem_label} Positive {dataset2_type}', fontsize=24)
+    axes[2].set_title(f'{chem_label} Negative {dataset1_type}', fontsize=24)
+    axes[3].set_title(f'{chem_label} Negative {dataset2_type}', fontsize=24)
+
+    for i, (row1, row2) in enumerate(zip(dataset1.iterrows(), dataset2.iterrows())):
+        if i >= num_spectra:
+            break
+        spec1 = row1[1].values
+        spec2 = row2[1].values
+        if custom_top_row_cutoff is None:
+            axes[0].plot(numbers, spec1[:len(numbers)])
+            axes[1].plot(numbers, spec2[:len(numbers)])
+        else:
+            numbers = range(custom_top_row_cutoff[0], custom_top_row_cutoff[1])
+            axes[0].plot(numbers, spec1[custom_top_row_cutoff[0]-184:custom_top_row_cutoff[1]-184])
+            axes[1].plot(numbers, spec2[custom_top_row_cutoff[0]-184:custom_top_row_cutoff[1]-184])
+
+        if custom_bottom_row_cutoff is None:
+            axes[2].plot(numbers, spec1[len(numbers):])
+            axes[3].plot(numbers, spec2[len(numbers):])
+        else:
+            numbers = range(custom_bottom_row_cutoff[0], custom_bottom_row_cutoff[1])
+            # add 654 ((len(spectrum)/2) + 184) to account for the offset and negative spectra
+            axes[2].plot(numbers, spec1[custom_bottom_row_cutoff[0]+654:custom_bottom_row_cutoff[1]+654])
+            axes[3].plot(numbers, spec2[custom_bottom_row_cutoff[0]+654:custom_bottom_row_cutoff[1]+654])
+        # axes[0].plot(numbers, spec1[:len(numbers)])
+        # axes[1].plot(numbers, spec2[:len(numbers)])
+        # axes[2].plot(numbers, spec1[len(numbers):])
+        # axes[3].plot(numbers, spec2[len(numbers):])
+
+    for ax in axes:
+            ax.set_xlabel('Drift Time', fontsize=16)
+            ax.set_ylabel('Ion Intensity', fontsize=16)
+            # ax.legend(fontsize=14)
+    
+    # Adjust subplot layout to prevent overlap between titles and x-labels
+    plt.tight_layout()
+    if save_plot_path is not None:
+        plt.savefig(save_plot_path, format='png', dpi=300)
+
+    plt.show()
+    
+
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -43,9 +122,13 @@ def calculate_average_spectrum_and_percentiles(data):
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 def plot_average_spectrum(
-        data_cond_low, data_cond_high, chem_label, 
-        condition, save_file_path_pt1=None, save_file_path_pt2=None,
-        synthetic_data=None, synthetic_condition_type=None
+        left_plot_data, middle_plot_data, chem_names, 
+        condition_name ='', condition_1_value='', condition_2_value='',
+        save_file_path_pt1=None, save_file_path_pt2=None,
+        left_plot_type='', middle_plot_type='',
+        right_plot_data=None, right_plot_type='', condition_3_value='',
+        left_plot_start_idx=2, left_plot_stop_idx=-9,
+        middle_plot_stop_idx=-2, right_plot_stop_idx=-2,
         ):
     """
     Plot the average spectrum for a given dataset.
@@ -62,81 +145,102 @@ def plot_average_spectrum(
     None
         Displays the average spectrum plot.
     """
-    avg_spectrum_low, lower_bound_low, upper_bound_low = calculate_average_spectrum_and_percentiles(data_cond_low)
-    avg_spectrum_high, lower_bound_high, upper_bound_high = calculate_average_spectrum_and_percentiles(data_cond_high)
+    for chem_label in chem_names:
+        print(f'Plotting {chem_label}...')
+        left_plot_chem_data = left_plot_data[left_plot_data['Label'] == chem_label].iloc[:, left_plot_start_idx:left_plot_stop_idx]
+        middle_plot_chem_data = middle_plot_data[middle_plot_data['Label'] == chem_label].iloc[:, :middle_plot_stop_idx]
 
-    # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
-    numbers = range(184, (len(avg_spectrum_low)//2)+184)
+        avg_spectrum_left, lower_bound_left, upper_bound_left = calculate_average_spectrum_and_percentiles(left_plot_chem_data)
+        avg_spectrum_middle, lower_bound_middle, upper_bound_middle = calculate_average_spectrum_and_percentiles(middle_plot_chem_data)
 
-    if synthetic_data is not None:
-        fig, axes = plt.subplots(1, 3, figsize=(30, 12), layout="constrained")
-        label_fontsize = 26
-        title_fontsize = 28
-        legend_fontsize = 24
+        # x axis should run from lowest drift time (184) to highest drift time (184 + len(true_carl)//2)
+        numbers = range(184, (len(avg_spectrum_left)//2)+184)
 
-        fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
+        if right_plot_data is not None:
+            fig, axes = plt.subplots(1, 3, figsize=(30, 12), layout="constrained")
+            label_fontsize = 34
+            title_fontsize = 38
+            legend_fontsize = 24
 
-        low_cond_title = f'Avg {chem_label} Low {condition} Spectra'
-        high_cond_title = f'Avg {chem_label} High {condition} Spectra'
-    else:
-        _, axes = plt.subplots(1, 2, figsize=(20, 8))
-        label_fontsize = 16
-        title_fontsize = 20
-        legend_fontsize = 14
+            fig.set_constrained_layout_pads(w_pad=40./72., h_pad=40./72.,)
 
-        low_cond_title = f'Average of {chem_label} Low {condition} Spectra'
-        high_cond_title = f'Average of {chem_label} High {condition} Spectra'
+            left_plot_title = f'Avg {left_plot_type}{chem_label}{condition_1_value}{condition_name} Spectra'
+            middle_plot_title = f'Avg {middle_plot_type}{chem_label}{condition_2_value}{condition_name} Spectra'
+            right_plot_title = f'Avg {right_plot_type}{chem_label}{condition_3_value}{condition_name} Spectra'
 
-    # Flatten the axes array for easy iteration
-    axes = axes.flatten()
+            right_plot_chem_data = right_plot_data[right_plot_data['Label'] == chem_label].iloc[:, :right_plot_stop_idx]
+            avg_spectrum_right, lower_bound_right, upper_bound_right = calculate_average_spectrum_and_percentiles(right_plot_chem_data)
+        else:
+            _, axes = plt.subplots(1, 2, figsize=(14, 8))
+            label_fontsize = 16
+            title_fontsize = 20
+            legend_fontsize = 14
 
-    axes[0].plot(numbers, avg_spectrum_low[:len(numbers)], label='Positive', color='orange')
-    axes[0].plot(numbers, avg_spectrum_low[len(numbers):], label='Negative', color='blue')
-    axes[0].fill_between(numbers, lower_bound_low[:len(numbers)], upper_bound_low[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
-    axes[0].fill_between(numbers, lower_bound_low[len(numbers):], upper_bound_low[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
-    axes[0].set_title(low_cond_title, fontsize=title_fontsize)
-    axes[0].set_xlabel('Drift Time', fontsize=label_fontsize)
-    axes[0].set_ylabel('Ion Intensity', fontsize=label_fontsize)
-    axes[0].legend(fontsize=legend_fontsize)
+            left_plot_title = f'Average of {left_plot_type}{chem_label}{condition_1_value}{condition_name} Spectra'
+            # plot_type argument for synthetic data
+            middle_plot_title = f'Average of {middle_plot_type}{chem_label}{condition_2_value}{condition_name} Spectra'
 
-    axes[1].plot(numbers, avg_spectrum_high[:len(numbers)], label='Positive', color='orange')
-    axes[1].plot(numbers, avg_spectrum_high[len(numbers):], label='Negative', color='blue')
-    axes[1].fill_between(numbers, lower_bound_high[:len(numbers)], upper_bound_high[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
-    axes[1].fill_between(numbers, lower_bound_high[len(numbers):], upper_bound_high[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
-    axes[1].set_title(high_cond_title, fontsize=title_fontsize)
-    axes[1].set_xlabel('Drift Time', fontsize=label_fontsize)
-    axes[1].set_ylabel('Ion Intensity', fontsize=label_fontsize)
-    axes[1].legend(fontsize=legend_fontsize)
+        # Flatten the axes array for easy iteration
+        axes = axes.flatten()
 
-    if synthetic_data is not None:
-        avg_spectrum_synthic, lower_bound_synthic, upper_bound_synthic = calculate_average_spectrum_and_percentiles(synthetic_data)
-        axes[2].plot(numbers, avg_spectrum_synthic[:len(numbers)], label='Positive', color='orange')
-        axes[2].plot(numbers, avg_spectrum_synthic[len(numbers):], label='Negative', color='blue')
-        axes[2].fill_between(numbers, lower_bound_synthic[:len(numbers)], upper_bound_synthic[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
-        axes[2].fill_between(numbers, lower_bound_synthic[len(numbers):], upper_bound_synthic[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
-        axes[2].set_title(f'Avg Synthetic {chem_label} {synthetic_condition_type} {condition} Spectra', fontsize=title_fontsize)
-        axes[2].set_xlabel('Drift Time', fontsize=label_fontsize)
-        axes[2].set_ylabel('Ion Intensity', fontsize=label_fontsize)
-        axes[2].legend(fontsize=legend_fontsize)
+        axes[0].plot(numbers, avg_spectrum_left[:len(numbers)], label='Positive', color='orange')
+        axes[0].plot(numbers, avg_spectrum_left[len(numbers):], label='Negative', color='blue')
+        axes[0].fill_between(numbers, lower_bound_left[:len(numbers)], upper_bound_left[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+        axes[0].fill_between(numbers, lower_bound_left[len(numbers):], upper_bound_left[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+        axes[0].set_title(left_plot_title, fontsize=title_fontsize)
+        axes[0].set_xlabel('Drift Time', fontsize=label_fontsize)
+        axes[0].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+        axes[0].legend(fontsize=legend_fontsize)
 
-    if save_file_path_pt1 is not None:
-        save_file_path = save_file_path_pt1 + chem_label + save_file_path_pt2
-        plt.savefig(save_file_path, format='png', dpi=300)
+        axes[1].plot(numbers, avg_spectrum_middle[:len(numbers)], label='Positive', color='orange')
+        axes[1].plot(numbers, avg_spectrum_middle[len(numbers):], label='Negative', color='blue')
+        axes[1].fill_between(numbers, lower_bound_middle[:len(numbers)], upper_bound_middle[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+        axes[1].fill_between(numbers, lower_bound_middle[len(numbers):], upper_bound_middle[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+        axes[1].set_title(middle_plot_title, fontsize=title_fontsize)
+        axes[1].set_xlabel('Drift Time', fontsize=label_fontsize)
+        axes[1].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+        axes[1].legend(fontsize=legend_fontsize)
 
-    plt.show()
+        if right_plot_data is not None:
+            # avg_spectrum_right, lower_bound_right, upper_bound_right = calculate_average_spectrum_and_percentiles(right_plot_data)
+            axes[2].plot(numbers, avg_spectrum_right[:len(numbers)], label='Positive', color='orange')
+            axes[2].plot(numbers, avg_spectrum_right[len(numbers):], label='Negative', color='blue')
+            axes[2].fill_between(numbers, lower_bound_right[:len(numbers)], upper_bound_right[:len(numbers)], color='orange', alpha=0.5, label='Positive IQR (25%-75%)')
+            axes[2].fill_between(numbers, lower_bound_right[len(numbers):], upper_bound_right[len(numbers):], color='lightblue', alpha=0.5, label='Negative IQR (25%-75%)')
+            axes[2].set_title(right_plot_title, fontsize=title_fontsize)
+            axes[2].set_xlabel('Drift Time', fontsize=label_fontsize)
+            axes[2].set_ylabel('Ion Intensity', fontsize=label_fontsize)
+            axes[2].legend(fontsize=legend_fontsize)
+
+        if save_file_path_pt1 is not None:
+            save_file_path = save_file_path_pt1 + chem_label + save_file_path_pt2
+            plt.savefig(save_file_path, bbox_inches='tight', format='png', dpi=300)
+
+        plt.show()
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
-def plot_ims_spectrum(spectrum, chem_label, real_or_synthetic):
+def plot_ims_spectrum(
+        spectrum, chem_label, real_or_synthetic, 
+        preprocessing_type='Spectrum', save_plot_path=None,
+        rip_start_col=None, rip_stop_col=None
+        ):
     # x axis should run from lowest drift time (184) to highest drift time (184 + len(spectrum)//2)
     numbers = range(184, (len(spectrum)//2)+184)
 
     plt.plot(numbers, spectrum[:len(numbers)], label='Positive')
+    if rip_start_col is not None:
+        plt.axvline(x=rip_start_col, color='red', linestyle='--')
+        plt.axvline(x=rip_stop_col, color='red', linestyle='--')
+
     plt.plot(numbers, spectrum[len(numbers):], label='Negative')
-    plt.title(f'{real_or_synthetic} {chem_label} Spectrum', fontsize=20)
+    plt.title(f'{real_or_synthetic} {chem_label} {preprocessing_type}', fontsize=20)
     plt.xlabel('Drift Time', fontsize=16)
     plt.ylabel('Ion Intensity', fontsize=16)
     plt.legend(fontsize=14)
+
+    if save_plot_path is not None:
+        plt.savefig(save_plot_path, format='png', dpi=300)
     plt.show()
 
 # ------------------------------------------------------------------------------------------
@@ -197,26 +301,35 @@ def plot_ims_spectra_pca(data, sample_size=1000):
 
 def plot_conditions_pca(
         condition_one, condition_two, save_file_path_pt1, 
-        save_file_path_pt2, condition, sample_size=1000,
-        z_score_threshold=2,
+        save_file_path_pt2, data_one_name, data_two_name, 
+        sample_size=1000, z_score_threshold=2, 
+        data_split = 'Condition', fit_to_all=True, 
+        condition_two_start_idx=2, condition_two_stop_idx=-9,
         ):
     scaler = StandardScaler()
-    full_data = pd.concat([condition_one, condition_two], ignore_index=True)
+    if fit_to_all:
+        # Fit scaler to all data
+        full_data = pd.concat([condition_one, condition_two], ignore_index=True)
+    else:
+        # Fit scaler to condition one data only
+        full_data = condition_one.copy()
+
     scaler.fit(full_data.iloc[:, 2:-9])
+    
+    # scaled_full_data = scaler.transform(full_data.iloc[:, 2:-9])
+    full_data.iloc[:, 2:-9] = scaler.transform(full_data.iloc[:, 2:-9])#scaled_full_data
+    # del scaled_full_data
 
-    scaled_full_data = scaler.transform(full_data.iloc[:, 2:-9])
-    full_data.iloc[:, 2:-9] = scaled_full_data
-    del scaled_full_data
-
-    scaled_data = scaler.transform(condition_one.iloc[:, 2:-9])
-    condition_one.iloc[:, 2:-9] = scaled_data
-    scaled_data = scaler.transform(condition_two.iloc[:, 2:-9])
-    condition_two.iloc[:, 2:-9] = scaled_data
-    del scaled_data
-
+    # scaled_data = scaler.transform(condition_one.iloc[:, 2:-9])
+    condition_one.iloc[:, 2:-9] = scaler.transform(condition_one.iloc[:, 2:-9])#scaled_data
+    # scaled_data = scaler.transform(condition_two.iloc[:, 2:-9])
+    condition_two.iloc[:, condition_two_start_idx:condition_two_stop_idx] = scaler.transform(condition_two.iloc[:, condition_two_start_idx:condition_two_stop_idx])#scaled_data
+    # del scaled_data
+    print('here')
     all_chemical_names = list(condition_one.columns[-8:])
 
     for chem in all_chemical_names:
+        print(chem)
         # Fit PCA on all spectra for a given chemical
         pca = PCA(n_components=2)
         full_data_chem = full_data[full_data['Label'] == chem]
@@ -237,7 +350,7 @@ def plot_conditions_pca(
         filtered_data = condition_one_sample[(z_scores < z_score_threshold).all(axis=1)]
         
         transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
-        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color='purple', label=f'{chem} Low {condition}')
+        ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color='purple', label=f'{chem} {data_one_name}')
 
         if chem in list(condition_two['Label']):
             condition_two_chem = condition_two[condition_two['Label'] == chem]
@@ -246,14 +359,14 @@ def plot_conditions_pca(
             else:
                 condition_two_sample = condition_two_chem
             # print(condition_two_sample.shape)
-            z_scores = np.abs(zscore(condition_two_sample.iloc[:, 2:-9]))
+            z_scores = np.abs(zscore(condition_two_sample.iloc[:, condition_two_start_idx:condition_two_stop_idx]))
             filtered_data = condition_two_sample[(z_scores < z_score_threshold+1).all(axis=1)]
             # print(filtered_data.shape)
             
             if filtered_data.shape[0] > 1:
-                transformed_data = pca.transform(filtered_data.iloc[:, 2:-9])
+                transformed_data = pca.transform(filtered_data.iloc[:, condition_two_start_idx:condition_two_stop_idx])
                 # transformed_data = pca.transform(condition_two_sample[condition_two_sample['Label'] == chem].iloc[:, 2:-9])
-                ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color ='blue', label=f'{chem} High {condition}', marker='x')
+                ax.scatter(transformed_data[:, 0], transformed_data[:, 1], color ='blue', label=f'{chem} {data_two_name}', marker='x')
             else:
                 print(f'Chem {chem} not in condition two data')
         else:
@@ -265,7 +378,7 @@ def plot_conditions_pca(
 
         plt.xticks([])
         plt.yticks([])
-        plt.title(f'{chem} IMS Spectra by Condition PCA', fontsize=18)
+        plt.title(f'{chem} IMS Spectra by {data_split} PCA', fontsize=18)
         save_file_path = save_file_path_pt1 + chem + save_file_path_pt2
         plt.savefig(save_file_path, format='png', dpi=300)
         plt.show()
@@ -669,11 +782,14 @@ def plot_generation_results_pca_single_chem_side_by_side(
         true_spectra, synthetic_spectra, chem_labels, results_type, sample_size=None, 
         chem_of_interest=None, log_wandb=False, mse_insert=None, 
         insert_position=[0.05, 0.05], show_wandb_run_name=False, 
-        x_lims=None, y_lims=None, save_plot_path=None):
+        x_lims=None, y_lims=None, save_plot_path=None, 
+        true_spectra_start_idx=0, true_spectra_stop_idx=-1, 
+        synthetic_spectra_start_idx=0, synthetic_spectra_stop_idx=-1,
+        ):
     
     # if pca is None:
     pca = PCA(n_components=2)
-    pca.fit(true_spectra.iloc[:,:-1])
+    pca.fit(true_spectra.iloc[:,true_spectra_start_idx:true_spectra_stop_idx])
 
     _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
@@ -685,8 +801,8 @@ def plot_generation_results_pca_single_chem_side_by_side(
         ax1.set_ylim(y_lims[0], y_lims[1])
         ax2.set_ylim(y_lims[0], y_lims[1])
     if x_lims is None: # if plot boundaries are not specified, set them so that scales are consistent between plots
-        true_transformed = pca.transform(true_spectra.iloc[:, :-1])
-        synthetic_transformed = pca.transform(synthetic_spectra.iloc[:, :-1])
+        true_transformed = pca.transform(true_spectra.iloc[:, true_spectra_start_idx:true_spectra_stop_idx])
+        synthetic_transformed = pca.transform(synthetic_spectra.iloc[:, synthetic_spectra_start_idx:synthetic_spectra_stop_idx])
         x_lims = [
             min(true_transformed[:, 0].min(), synthetic_transformed[:, 0].min()) * 1.2, 
             max(true_transformed[:, 0].max(), synthetic_transformed[:, 0].max()) * 1.2
@@ -703,33 +819,34 @@ def plot_generation_results_pca_single_chem_side_by_side(
     # Create a color cycle for distinct colors
     color_cycle = plt.gca()._get_lines.prop_cycler
 
-    if sample_size is not None:
-        true_spectra = true_spectra.sample(n=sample_size, random_state=42)
-
     # Plot for true spectra
     for chem, color in zip(chem_labels, color_cycle):
+        true_spectra_chem = true_spectra[true_spectra['Label'] == chem]
+        if sample_size is not None and true_spectra_chem.shape[0] > sample_size:
+            true_spectra_chem = true_spectra_chem.sample(n=sample_size, random_state=42)
+        transformed_true_spectra = pca.transform(true_spectra_chem.iloc[:, true_spectra_start_idx:true_spectra_stop_idx])
+        
         color = color['color']
-        transformed_true_spectra = pca.transform(true_spectra[true_spectra['Label'] == chem].iloc[:, :-1])
-        
-        if chem_of_interest is not None:
-            marker_size = 50 if chem == chem_of_interest else 10
-            if chem == chem_of_interest:
-                ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
-            else:
-                true_sample = true_spectra[true_spectra['Label'] == chem].iloc[:, :-1].sample(n=10, random_state=42)
-                transformed_sample = pca.transform(true_sample)
-                ax1.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
-                ax2.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
-        # ax2.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', color=color, s=1)
-            # ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-        # else:
-        #     ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color)
-        
-        synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, :-1]
-        
-        if synthetic_chem.shape[0] > 0:
-            transformed_synthetic_spectra = pca.transform(synthetic_chem)
-            ax2.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='o', label=chem, color=color, s=50)
+        marker_size = 10
+
+        # if chem_of_interest is not None:
+        marker_size = 50 if chem == chem_of_interest else 10
+        if chem == chem_of_interest:
+            ax1.scatter(transformed_true_spectra[:, 0], transformed_true_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
+            synthetic_chem = synthetic_spectra[synthetic_spectra['Label'] == chem].iloc[:, synthetic_spectra_start_idx:synthetic_spectra_stop_idx]
+    
+            if synthetic_chem.shape[0] > 0:
+                if sample_size is not None and synthetic_chem.shape[0] > sample_size:
+                    synthetic_chem = synthetic_chem.sample(n=sample_size, random_state=42)
+                    # print(synthetic_chem.shape)
+                transformed_synthetic_spectra = pca.transform(synthetic_chem)
+                ax2.scatter(transformed_synthetic_spectra[:, 0], transformed_synthetic_spectra[:, 1], marker='o', label=chem, color=color, s=marker_size)
+        else:
+            true_sample = true_spectra[true_spectra['Label'] == chem].iloc[:, true_spectra_start_idx:true_spectra_stop_idx].sample(n=10, random_state=42)
+            transformed_sample = pca.transform(true_sample)
+            ax1.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)
+            ax2.scatter(transformed_sample[:, 0], transformed_sample[:, 1], marker='o', label=chem, color=color, s=marker_size)       
+
     
     # if chem_of_interest is not None:
     ax1.set_title(f'Experimental {results_type} Spectra PCA {chem_of_interest}', fontsize=18)
@@ -766,8 +883,8 @@ def plot_generation_results_pca_single_chem_side_by_side(
         plt.savefig('tmp_plot.png', format='png', dpi=300)
         wandb.log({'PCA of Experimental vs. Synthetic Spectra': wandb.Image('tmp_plot.png')})
     if save_plot_path is not None:
-        plot_path = os.path.join(save_plot_path, f'{chem_of_interest}_real_synthetic_pca_comparison.png')
-        plt.savefig(plot_path, format='png', dpi=300)
+        # plot_path = os.path.join(save_plot_path, f'{chem_of_interest}_real_synthetic_pca_comparison.png')
+        plt.savefig(save_plot_path, format='png', dpi=300)
 
     plt.show()
 
@@ -861,7 +978,8 @@ def plot_pca(
 def plot_carl_real_synthetic_comparison(
         true_carl, synthetic_carl, results_type, chem_label, 
         log_wandb=False, show_wandb_run_name=False, criterion=None, 
-        run_name=None, save_plot_path=None, carl_or_spec='CARL'):
+        run_name=None, save_plot_path=None, carl_or_spec='CARL',
+        comparison_names=['Real', 'Synthetic']):
     
     _, axes = plt.subplots(1, 2, figsize=(14, 8))
 
@@ -876,7 +994,7 @@ def plot_carl_real_synthetic_comparison(
 
     axes[0].plot(numbers, true_carl[:len(numbers)], label='Positive')
     axes[0].plot(numbers, true_carl[len(numbers):], label='Negative')
-    axes[0].set_title(f'True {results_type} {chem_label} {carl_or_spec}', fontsize=20)
+    axes[0].set_title(f'{comparison_names[0]} {results_type} {chem_label} {carl_or_spec}', fontsize=20)
     axes[0].set_xlabel('Drift Time', fontsize=16)
     axes[0].set_ylabel('Ion Intensity', fontsize=16)
     axes[0].set_ylim(min_y, max_y)
@@ -884,7 +1002,7 @@ def plot_carl_real_synthetic_comparison(
 
     axes[1].plot(numbers, synthetic_carl[:len(numbers)], label='Positive')
     axes[1].plot(numbers, synthetic_carl[len(numbers):], label='Negative')
-    axes[1].set_title(f'Synthetic {results_type} {chem_label} {carl_or_spec}', fontsize=20)
+    axes[1].set_title(f'{comparison_names[1]} {results_type} {chem_label} {carl_or_spec}', fontsize=20)
     axes[1].set_xlabel('Drift Time', fontsize=16)
     axes[1].set_ylabel('Ion Intensity', fontsize=16)
     axes[1].set_ylim(min_y, max_y)
@@ -917,7 +1035,7 @@ def plot_carl_real_synthetic_comparison(
 
     if log_wandb:
         plt.savefig('tmp_plot.png', format='png', dpi=300)
-        wandb.log({'Comparison of Real and Synthetic CARLs': wandb.Image('tmp_plot.png')})
+        wandb.log({'Comparison of Real and Synthetic Data': wandb.Image('tmp_plot.png')})
 
     plt.tight_layout()
 
@@ -925,6 +1043,7 @@ def plot_carl_real_synthetic_comparison(
         plt.savefig(save_plot_path, format='png', dpi=300)
 
     plt.show()
+    plt.close()
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------

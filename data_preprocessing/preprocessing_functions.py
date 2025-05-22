@@ -13,6 +13,65 @@ import pandas as pd
 
 # import matplotlib.pyplot as plt
 
+def reformat_spectra_df(df):
+    """
+    Transforms the 'Spectrum' column of a DataFrame into a new DataFrame where
+    the 'SMILES' column is used as column headers and the formatted 'Spectrum'
+    column becomes the data.
+
+    Parameters:
+    df (pd.DataFrame): Input DataFrame with 'SMILES' and 'Spectrum' columns.
+
+    Returns:
+    pd.DataFrame: Transformed DataFrame.
+    """
+    transformed_data = {}
+
+    for _, row in df.iterrows():
+        smiles = row['SMILES']
+        spectrum = row['Spectrum'].split(' ')
+        indices = [round(float(pair.split(':')[0])) for pair in spectrum]
+        values = [float(pair.split(':')[1]) for pair in spectrum]
+
+        max_index = max(indices)
+        spectrum_df = pd.DataFrame(np.zeros((max_index + 1, 1)), columns=[smiles])
+        for idx, val in zip(indices, values):
+            spectrum_df.at[idx, smiles] = val
+
+        transformed_data[smiles] = spectrum_df[smiles]
+
+    return pd.concat(transformed_data.values(), axis=1)
+
+def load_data(file_path):
+    if file_path.endswith('.feather'):
+        data = pd.read_feather(file_path)
+    elif file_path.endswith('.csv'):
+        data = pd.read_csv(file_path)
+    else:
+        raise ValueError("Unsupported file format. Please provide a .feather or .csv file.")
+    return data
+
+def scale_reactant_ion_peak(data, scaling_factor=.1, rip_start_col='184', rip_stop_col='300'):
+    """
+    Scale reactant ion peak by a given factor.
+    
+    Parameters:
+    scaling_factor (float): Factor by which to scale the reactant ion peak.
+    rip_start_col (int): Start column name for the reactant ion peak.
+    rip_stop_col (int): Stop column name for the reactant ion peak.
+    
+    Returns:
+    pd.DataFrame: DataFrame containing the scaled data.
+    """
+
+    for spec_type in ['p_', 'n_']:
+        rip_start_idx = data.columns.get_loc(f'{spec_type}{rip_start_col}')
+        rip_stop_idx = data.columns.get_loc(f'{spec_type}{rip_stop_col}')
+        # Multiply all intensity values between rip_start_idx and rip_stop_idx by scaling_factor
+        data.iloc[:, rip_start_idx:rip_stop_idx] *= scaling_factor
+    
+    return data
+
 def create_condition_dfs(metadata, spectra, condition, condition_cutoff):
     low_condition_meta = metadata[metadata[condition] < condition_cutoff]
     low_condition_indices = low_condition_meta['level_0']

@@ -43,3 +43,14 @@ To save output to a file: ```python your_script.py > output.txt 2>&1```.
 ## Notation:
 Mathematical notation rules applied throughout this project are taken from [this](https://wookai.github.io/paper-tips-and-tricks/math.html) article.
 ![Notation rules](images/notation_rules.png)
+
+## Naming and Formatting Conventions:
+File systems - Preprocessing technique (e.g. spectrum, CARL) -> model (encoder, decoder) + '_results' -> training dataset (e.g. universal, group) + f'_{model}'
+  * Example: plots -> CARL -> encoder_results -> group_encoder
+
+Data file column names for n columns - 
+  * Col number:    0,    1,      2,   ..., n-len(classes), n-len(classes)-1, ...,     n
+  * Name:        Index, p_184, p_185, ...,   e.g. DEB,        e.g. DEM,      ...,   Label 
+  * Meaning: sample ID, sample values ...,      class one-hot encodings      ..., class name
+
+  Note: column formatting established after creation of many data files. As a result, some files may have different column formatting.

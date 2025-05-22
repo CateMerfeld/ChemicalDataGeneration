@@ -9,63 +9,147 @@ from torch.utils.data import TensorDataset, DataLoader
 import wandb
 import itertools
 import GPUtil
-from collections import Counter
+from collections import Counter, OrderedDict
 import dask.dataframe as dd
 import os
 # import random
 # import psutil
 import plotting_functions as pf
 from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
+from signal import signal, SIGALRM, alarm
 
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+def load_data(file_path_parts_list, file_ending):
+    """
+    Load data from a file path constructed from the provided parts.
+    Args:
+        file_path_parts_list (list): List of strings representing parts of the file path.   
+        file_ending (str): The file ending of the synthetic data file.
+    Returns:
+        pd.DataFrame: The loaded data as a pandas DataFrame.
+    """
+    if len(file_path_parts_list) > 1:
+        file_path = '_'.join(file_path_parts_list)
+    else:
+        file_path = file_path_parts_list[0]
+        
+    if file_ending == 'feather':
+        data = pd.read_feather(file_path)
+    elif file_ending == 'csv':
+        data = pd.read_csv(file_path)
+    else:
+        raise ValueError(f"Unsupported file ending: {file_ending}")
+    return data
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+class Timeout(Exception):
+    ...
+
+def get_input(time_limit=120):
+    def handler(*_):
+        raise Timeout
+    old_handler = signal(SIGALRM, handler)
+    alarm(time_limit)
+    try:
+        alarm(0)
+        return input(f'Generate predictions using best trained model? (y/n) ')
+    except Timeout:
+        print('Time limit exceeded. Exiting script.')
+    finally:
+        signal(SIGALRM, old_handler)
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+def get_onehot_labels(data, one_hot_columns_idx_list):
+    one_hot_columns = data.columns[one_hot_columns_idx_list[0]:one_hot_columns_idx_list[1]]
+    one_hot_labels = data[one_hot_columns].idxmax(axis=1)
+    return one_hot_labels
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def oversample_condition_data(data_to_oversample, data_to_match):
+# def oversample_condition_data(data_to_oversample, data_to_match):
+#     if 'Label' not in data_to_match.columns:
+#         # Extract the one-hot encoded columns
+#         one_hot_columns = data_to_match.columns[-8:]
+
+#         # Convert one-hot encodings to 'Label' column
+#         data_to_match['Label'] = data_to_match[one_hot_columns].idxmax(axis=1)
+
+#     # Not all chems have data for both conditions. 
+#     # Drop rows in data_to_match if their 'Label' is not in data_to_oversample['Label']
+#     labels_to_keep = data_to_oversample['Label'].unique()
+#     data_to_match = data_to_match[data_to_match['Label'].isin(labels_to_keep)]
+
+#     class_counts = data_to_match['Label'].value_counts()
+
+#     X = data_to_oversample.drop(columns=['Label'], axis=1)
+#     y = data_to_oversample['Label']
+
+#     ros = RandomOverSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
+#     X_resampled, y_resampled = ros.fit_resample(X, y)
+
+#     upsampled_data = pd.DataFrame(X_resampled, columns=X.columns).copy()
+#     upsampled_data['Label'] = y_resampled
+
+#     data_to_match = data_to_match.sort_values(by=['Label'])
+#     upsampled_data = upsampled_data.sort_values(by=['Label'])
+
+#     data_to_match.drop(columns=['Label'], inplace=True)
+#     return upsampled_data, data_to_match
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+def resample_condition_data(data_to_resample, data_to_match, sampling_technique='over'):
     if 'Label' not in data_to_match.columns:
-        # Extract the one-hot encoded columns
-        one_hot_columns = data_to_match.columns[-8:]
-
-        # Convert one-hot encodings to 'Label' column
-        data_to_match['Label'] = data_to_match[one_hot_columns].idxmax(axis=1)
-
+        data_to_match['Label'] = get_onehot_labels(data_to_match, one_hot_columns_idx_list=[-8, None])
+    
     # Not all chems have data for both conditions. 
-    # Drop rows in data_to_match if their 'Label' is not in data_to_oversample['Label']
-    labels_to_keep = data_to_oversample['Label'].unique()
-    data_to_match = data_to_match[data_to_match['Label'].isin(labels_to_keep)]
+    # Drop rows of each dataframe if their 'Label' is not in the other dataframe
+    data_to_resample = data_to_resample[data_to_resample['Label'].isin(data_to_match['Label'].unique())]
+    data_to_match = data_to_match[data_to_match['Label'].isin(data_to_resample['Label'].unique())]
 
     class_counts = data_to_match['Label'].value_counts()
 
-    X = data_to_oversample.drop(columns=['Label'], axis=1)
-    y = data_to_oversample['Label']
+    X = data_to_resample.drop(columns=['Label'], axis=1)
+    y = data_to_resample['Label']
 
-    ros = RandomOverSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
-    X_resampled, y_resampled = ros.fit_resample(X, y)
+    if sampling_technique == 'over':
+        sampler = RandomOverSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
+    elif sampling_technique == 'under':
+        sampler = RandomUnderSampler(sampling_strategy=class_counts.to_dict(), random_state=42)
+    X_resampled, y_resampled = sampler.fit_resample(X, y)
 
-    upsampled_data = pd.DataFrame(X_resampled, columns=X.columns).copy()
-    upsampled_data['Label'] = y_resampled
+    resampled_data = pd.DataFrame(X_resampled, columns=X.columns).copy()
+    resampled_data['Label'] = y_resampled
 
     data_to_match = data_to_match.sort_values(by=['Label'])
-    upsampled_data = upsampled_data.sort_values(by=['Label'])
+    resampled_data = resampled_data.sort_values(by=['Label'])
 
     data_to_match.drop(columns=['Label'], inplace=True)
-    return upsampled_data, data_to_match
-
+    return resampled_data, data_to_match
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
-
 def format_preds_df(input_indices, predicted_embeddings, output_name_encodings, sorted_chem_names):
     input_indices = [idx for idx_list in input_indices for idx in idx_list]
     predicted_embeddings = [emb for emb_list in predicted_embeddings for emb in emb_list]
     output_name_encodings = [enc for enc_list in output_name_encodings for enc in enc_list]
-    test_preds_df = pd.DataFrame(predicted_embeddings)
-    test_preds_df.insert(0, 'index', input_indices)
+    preds_df = pd.DataFrame(predicted_embeddings)
+    preds_df.insert(0, 'index', input_indices)
     name_encodings_df = pd.DataFrame(output_name_encodings)
     name_encodings_df.columns = sorted_chem_names
-    test_preds_df = pd.concat([test_preds_df, name_encodings_df], axis=1)
-    return test_preds_df
+    preds_df = pd.concat([preds_df, name_encodings_df], axis=1)
+    preds_df.columns = preds_df.columns.astype(str)
+    return preds_df
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -119,24 +203,24 @@ def run_generator(
         ):
     
     device = set_up_gpu()
-    train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = create_individual_chemical_dataset_tensors(
-    file_path_dict['train_carls_file_path'], file_path_dict['train_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    train_embeddings_tensor, train_data_tensor, train_chem_encodings_tensor, train_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['train_data_file_path'], file_path_dict['train_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
     )
-    val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = create_individual_chemical_dataset_tensors(
-    file_path_dict['val_carls_file_path'], file_path_dict['val_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    val_embeddings_tensor, val_data_tensor, val_chem_encodings_tensor, val_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['val_data_file_path'], file_path_dict['val_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
     )
-    test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = create_individual_chemical_dataset_tensors(
-    file_path_dict['test_carls_file_path'], file_path_dict['test_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
+    test_embeddings_tensor, test_data_tensor, test_chem_encodings_tensor, test_indices_tensor = create_individual_chemical_dataset_tensors(
+    file_path_dict['test_data_file_path'], file_path_dict['test_embeddings_file_path'], device, chem, multiple_carls_per_spec=False
     )
 
-    train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor)
-    val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor)
-    test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor)
+    train_data = TensorDataset(train_embeddings_tensor, train_chem_encodings_tensor, train_data_tensor, train_indices_tensor)
+    val_data = TensorDataset(val_embeddings_tensor, val_chem_encodings_tensor, val_data_tensor, val_indices_tensor)
+    test_data = TensorDataset(test_embeddings_tensor, test_chem_encodings_tensor, test_data_tensor, test_indices_tensor)
 
     # remove from memory since information is now stored in train/val/test datasets
-    del train_embeddings_tensor, train_chem_encodings_tensor, train_carl_tensor, train_carl_indices_tensor
-    del val_embeddings_tensor, val_chem_encodings_tensor, val_carl_tensor, val_carl_indices_tensor
-    del test_embeddings_tensor, test_chem_encodings_tensor, test_carl_tensor, test_carl_indices_tensor
+    del train_embeddings_tensor, train_chem_encodings_tensor, train_data_tensor, train_indices_tensor
+    del val_embeddings_tensor, val_chem_encodings_tensor, val_data_tensor, val_indices_tensor
+    del test_embeddings_tensor, test_chem_encodings_tensor, test_data_tensor, test_indices_tensor
 
     config = {
         'wandb_entity': 'catemerfeld',
@@ -362,7 +446,22 @@ def train_one_epoch(
     return average_loss, predicted_embeddings, output_name_encodings
   else:
     return average_loss
-  
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+# def format_embedding_predictions(predicted_embeddings, input_indices, output_name_encodings, sorted_chem_names):
+#     # input_indices = [idx for idx_list in input_indices for idx in idx_list]
+#     input_indices = [int(idx) for idx in input_indices]
+#     predicted_embeddings = [emb for emb_list in predicted_embeddings for emb in emb_list]
+#     output_name_encodings = [enc for enc_list in output_name_encodings for enc in enc_list]
+#     preds_df = pd.DataFrame(predicted_embeddings)
+#     preds_df.insert(0, 'index', input_indices)
+#     name_encodings_df = pd.DataFrame(output_name_encodings)
+#     name_encodings_df.columns = sorted_chem_names
+#     preds_df = pd.concat([preds_df, name_encodings_df], axis=1)
+#     return preds_df
+
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -406,7 +505,7 @@ def predict_embeddings(dataset, model, device, criterion, reparameterization=Fal
     output_name_encodings = []
     input_spectra_indices = []
 
-    print('Predicting embeddings...')
+    # print('Predicting embeddings...')
     with torch.no_grad():
         for batch, name_encodings, true_embeddings, spectra_indices in dataset:
             batch = batch.to(device)
@@ -499,12 +598,13 @@ class IMStoOneHotEncoder(nn.Module):
       nn.LeakyReLU(inplace=True),
       nn.Linear(381, 196),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(196, 8)
+      nn.Linear(196, 8),
     )
 
   def forward(self, x):
     x = self.encoder(x)
     return x
+
 #%%
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -535,6 +635,8 @@ class OneHottoChemNetEncoder(nn.Module):
     x = self.encoder(x)
     return x
 #%%
+
+
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
@@ -1136,10 +1238,11 @@ def train_generator(
         save_plots_to_wandb = True, early_stop_threshold=10, 
         show_wandb_run_name=True, lr_scheduler = True, 
         num_plots = 1, patience=5, plot_overlap_pca=False, 
-        model_type='Generator', pretrained_model_path=False,
+        model_type='Generator', pretrained_model_path=None,
         carl_or_spec = 'CARL'
         ):
-    # wandb.finish()
+    if save_plots_to_wandb:
+        wandb.finish()
     # loss to compare for each model. Starting at infinity so it will be replaced by first model's first epoch loss 
     lowest_val_loss = np.inf
 
@@ -1161,7 +1264,7 @@ def train_generator(
         lowest_val_model_loss = np.inf
         
         # load pretrained model if provided, otherwise create new model
-        if pretrained_model_path:
+        if pretrained_model_path is not None:
             model = load_model(pretrained_model_path, freeze_layers=combo['freeze_layers'])
         else:
             if model_type == 'Generator':
@@ -1267,12 +1370,8 @@ def train_generator(
                 else:
                     epochs_without_validation_improvement += 1
 
-                # # log losses and memory stats to wandb
-                # memory_info = psutil.virtual_memory()
-                wandb.log({
-                    f"{model_type} Training Loss": average_loss, f"{model_type} Validation Loss": val_average_loss, 
-                    # "memory_used": memory_info.used, "memory_percent": memory_info.percent
-                    })
+                # log losses to wandb
+                wandb.log({f"{model_type} Training Loss": average_loss, f"{model_type} Validation Loss": val_average_loss})
 
                 if (epoch) % 10 == 0 or epoch == 0:
                     print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
@@ -1282,7 +1381,7 @@ def train_generator(
     
             else:
                 print(f'Validation loss has not improved in {epochs_without_validation_improvement} epochs. Stopping training at epoch {epoch}.')
-                wandb.log({'Early Stopping Ecoch':epoch})
+                wandb.log({'Early Stopping Epoch':epoch})
                 wandb.log({'Learning Rate at Final Epoch':final_lr})
                 pf.plot_and_save_generator_results(
                     train_data, combo['batch_size'], sorted_chem_names, 

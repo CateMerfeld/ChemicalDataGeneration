@@ -11,27 +11,23 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 import plotting_functions as pf
 import functions as f
-#%%
-importlib.reload(pf)
-#%%
 
+#%%
 device = f.set_up_gpu()
 #%%
-encoder_type = ''
-condition_value_name = 'high_temp_'
-condition_value = 'high_'
-encoder_path = f'../trained_models/{condition_value_name}carl_to_chemnet_encoder{encoder_type}.pth'
+n_layers = 3
+encoder_path = f'../trained_models/ims_to_chemnet_encoder_{n_layers}_layers.pth'
 best_model = torch.load(encoder_path, weights_only=False)
 encoder_criterion = nn.MSELoss()
-batch_size = 16
+batch_size = 32
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 #%%
 file_path = '../../data/name_smiles_embedding_file.csv'
 name_smiles_embedding_df = f.format_embedding_df(file_path)
-file_path = '../../data/mass_spec_name_smiles_embedding_file.csv'
-mass_spec_name_smiles_embedding_df = f.format_embedding_df(file_path)
 
-all_true_embeddings = f.combine_embeddings(name_smiles_embedding_df, mass_spec_name_smiles_embedding_df)
+embeddings_df = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']][1:]).T
+cols = name_smiles_embedding_df.index[1:]
+embeddings_df.columns = cols
 
 #%%
 start_idx = 2
@@ -107,7 +103,7 @@ test_preds_df.to_csv(file_path, index=False)
 
 del x_test, y_test, test_chem_encodings_tensor, test_carl_indices_tensor
 
-# #%%
+# # #%%
 # file_path = f'../../data/encoder_embedding_predictions/conditioning_test_preds{encoder_type}.csv'
 # test_preds_df = pd.read_csv(file_path)
 # ims_embeddings = pd.DataFrame([emb for emb in name_smiles_embedding_df['Embedding Floats']][1:]).T

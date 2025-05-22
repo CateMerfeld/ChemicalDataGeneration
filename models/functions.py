@@ -1209,12 +1209,14 @@ def set_up_gpu():
     else:
         device = torch.device('cpu')
         print('Using CPU')
+        
 
     # Confirm the currently selected device in PyTorch
     print("PyTorch current device ID:", torch.cuda.current_device())
     print("PyTorch current device name:", torch.cuda.get_device_name(torch.cuda.current_device()))
 
     return device
+
 
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------

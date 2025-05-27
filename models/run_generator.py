@@ -1,13 +1,12 @@
-#%%
-#%%
-
-#%%
 # General script to run generator model
 #%%
 # Load Packages and Files:
 import pandas as pd
+val_embeddings_file_path = '../data/encoder_embedding_predictions/val_embeddings.csv'
+val_embs = pd.read_csv(val_embeddings_file_path)
+val_embs.head()
+#%%
 
-# #%%
 # import numpy as np
 # import torch
 from torch.utils.data import DataLoader, TensorDataset
@@ -34,20 +33,19 @@ generator_load_path = None
 
 #%%
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_generator.py'
-target_type = 'PHIL'
-architecture = 'group_generator'
+target_type = 'CARL'
+architecture = 'universal_condition_generator'
 loss = 'MSELoss'
 criterion = nn.MSELoss()
-input_type = 'phil_embeddings'
+input_type = 'carl_embeddings'
 early_stopping_threshold = 10
 num_plots = 5
-scaling_string = '25'
-scaling_factor = .25
+# scaling_string = '25'
+# scaling_factor = .25
 
-start_idx = 2
-stop_idx = -9
+start_idx = 1
+stop_idx = -8
 device = f.set_up_gpu()
-
 
 model_hyperparams = {
     'batch_size':[32],#, 32],
@@ -71,22 +69,22 @@ synthetic_data_save_path_pt_1 = f'../../scratch/synthetic_data/{target_type}/{ar
 synthetic_data_save_path_pt_2 = 'synthetic_test_spectra.feather'
 # train_file_path = '../data/carls/train_carls_one_per_spec.feather'
 # train_file_path = '../../scratch/train_data.feather'
-train_file_path = f'../../scratch/PHIL/train_phils_scaled_to_{scaling_string}_pct.csv'
 # train_embeddings_file_path = '../data/encoder_embedding_predictions/train_embeddings.csv'
-train_embeddings_file_path = f'../../scratch/PHIL/train_embedding_preds_scaled_to_{scaling_string}_pct.feather'
+# train_file_path = f'../../scratch/PHIL/train_phils_scaled_to_{scaling_string}_pct.csv'
+# train_embeddings_file_path = f'../../scratch/PHIL/train_embedding_preds_scaled_to_{scaling_string}_pct.feather'
 
 # val_file_path = '../data/carls/val_carls_one_per_spec.feather'
 # val_file_path = '../../scratch/val_data.feather'
 # val_embeddings_file_path = '../data/encoder_embedding_predictions/val_embeddings.csv'
-val_file_path = f'../../scratch/PHIL/val_phils_scaled_to_{scaling_string}_pct.csv'
-val_embeddings_file_path = f'../../scratch/PHIL/val_embedding_preds_scaled_to_{scaling_string}_pct.feather'
+# val_file_path = f'../../scratch/PHIL/val_phils_scaled_to_{scaling_string}_pct.csv'
+# val_embeddings_file_path = f'../../scratch/PHIL/val_embedding_preds_scaled_to_{scaling_string}_pct.feather'
 
 # test_file_path = '../data/carls/test_carls_one_per_spec.feather'
 # test_file_path = '../../scratch/test_data.feather'
 # test_embeddings_file_path = '../data/encoder_embedding_predictions/test_embeddings.csv'
-test_file_path = f'../../scratch/PHIL/test_phils_scaled_to_{scaling_string}_pct.csv'
-test_embeddings_file_path = f'../../scratch/PHIL/test_embedding_preds_scaled_to_{scaling_string}_pct.feather'
-test_avg_bkg_file_path = '../../scratch/test_avg_bkg.csv'
+# test_file_path = f'../../scratch/PHIL/test_phils_scaled_to_{scaling_string}_pct.csv'
+# test_embeddings_file_path = f'../../scratch/PHIL/test_embedding_preds_scaled_to_{scaling_string}_pct.feather'
+# test_avg_bkg_file_path = '../../scratch/test_avg_bkg.csv'
 
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 

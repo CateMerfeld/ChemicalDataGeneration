@@ -1,5 +1,5 @@
 #%%
-import requests
+# import requests
 from fcd_torch import FCD
 import torch
 import pandas as pd
@@ -28,13 +28,13 @@ def reformat_spectra_df(df):
         smiles = row['SMILES']
         spectrum = row['Spectrum'].split(' ')
         # print(int('123456'))
-        print(spectrum)
+        # print(spectrum)
         # spectrum = [pair.replace("'", "") for pair in spectrum]
         # print(spectrum)
         # for pair in spectrum:
         #     print(pair)
         #     print(pair.split(':')[0], pair.split(':')[1])
-        print(spectrum[0][0])
+        # print(spectrum[0][0])
         if spectrum[0][0] == 'k':
             spectrum = spectrum[1:]
 
@@ -64,7 +64,7 @@ result_df = reformat_spectra_df(df)
 #%%
 
 #%%
-def get_chemnet_emb_from_smiles(smiles_list, device):
+def get_chemnet_emb_from_smiles(smiles_list):
     """
     Get ChemNet embeddings from a list of SMILES strings.
 
@@ -74,8 +74,9 @@ def get_chemnet_emb_from_smiles(smiles_list, device):
     Returns:
     dict: A dictionary mapping each SMILES string to its corresponding ChemNet embedding.
     """
-    fcd = FCD(device, n_jobs=1)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    fcd = FCD(device, n_jobs=1)
+    
     smiles_emb_dict = {}
 
     for smiles in smiles_list:
@@ -120,7 +121,8 @@ def set_up_gpu():
 
     return device
 
-device = set_up_gpu()
-smiles_list = ['CCO', 'CCN', 'CCOCC']
-emb_dict = get_chemnet_emb_from_smiles(smiles_list, device)
-print(emb_dict)
+# device = set_up_gpu()
+smiles_list = ['O=C(O)C(Cl)Cl', 'CC(=O)C(Cl)Cl']
+emb_dict = get_chemnet_emb_from_smiles(smiles_list)
+print(emb_dict.keys())
+print(len(emb_dict['O=C(O)C(Cl)Cl']))

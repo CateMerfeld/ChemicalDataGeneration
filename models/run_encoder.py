@@ -16,9 +16,9 @@ import functions as f
 # Things that need to be changed for each encoder/dataset/target embedding
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_encoder.py'
 architecture = 'ims_to_ChemNet_encoder'
-dataset_type = 'PHIL'
+dataset_type = 'spectrum'
 target_embedding = 'ChemNet'
-model_type = 'Encoder'
+model_type = 'ConditionEncoder'
 loss = 'MSELoss'
 
 early_stopping_threshold = 10
@@ -26,40 +26,49 @@ lr_scheduler_patience = 5
 start_idx = 2
 stop_idx = -9
 
-# # generate_embeddings allows user to decide whether or not to generate embeddings based off of model performance. 
-# # If set to None, user will be prompted to enter 'y' or 'n' after training.
+# generate_embeddings allows user to decide whether or not to generate embeddings based off of model performance. 
+# If set to None, user will be prompted to enter 'y' or 'n' after training.
+generate_embeddings = None
+# generate_embeddings = 'y'
 
-# generate_embeddings = None
-generate_embeddings = 'y'
+# best_hyperparameters is the output of training the encoder.
+# If running this file for prediction only (using a pre-trained model),
+# set best_hyperparameters['batch_size'] to the batch size used to train the model. 
 
-# # best_hyperparameters is the output of training the encoder.
-# # If running this file for prediction only (using a pre-trained model),
-# # set best_hyperparameters['batch_size'] to the batch size used to train the model. 
 # best_hyperparams = {'batch_size':16}
 
 model_hyperparams = {
   'batch_size':[16],#, 32],
-  'epochs': [100],
+  'epochs': [3],
   'learning_rate':[.00001]#,, .000001],
   }
 
 encoder_criterion = nn.MSELoss()
 
-scaling_string = '10'
-scaling_factor = 0.1
-
-encoder_save_path = f'trained_models/{dataset_type}/{scaling_string}_pct_scaling_{model_type.lower()}.pth'
 name_smiles_embedding_df_file_path = '../../scratch/name_smiles_embedding_file.csv'
 mass_spec_name_smiles_embedding_df_file_path = '../data/mass_spec_name_smiles_embedding_file.csv'
-train_file_path = f'../../scratch/PHIL/train_phils_scaled_to_{scaling_string}_pct.csv'
-val_file_path = f'../../scratch/PHIL/val_phils_scaled_to_{scaling_string}_pct.csv'
-test_file_path = f'../../scratch/PHIL/test_phils_scaled_to_{scaling_string}_pct.csv'
+
+# Spectra with conditions
+encoder_save_path = f'trained_models/{dataset_type}/{model_type.lower()}.pth'
+train_file_path = '../../../scratch/train_data_with_conditions.feather'
+val_file_path = '../../../scratch/val_data_with_conditions.feather'
+test_file_path = '../../../scratch/test_data_with_conditions.feather'
+
+# # Spectra with no conditions
 # train_file_path = '../../../scratch/train_data.feather'
 # val_file_path = '../../../scratch/val_data.feather'
 # test_file_path = '../../../scratch/test_data.feather'
-train_preds_file_path = f'../../scratch/{dataset_type}/train_embedding_preds_scaled_to_{scaling_string}_pct.feather'
-val_preds_file_path = f'../../scratch/{dataset_type}/val_embedding_preds_scaled_to_{scaling_string}_pct.feather'
-test_preds_file_path = f'../../scratch/{dataset_type}/test_embedding_preds_scaled_to_{scaling_string}_pct.feather'
+
+# # PHILs:
+# scaling_string = '10'
+# scaling_factor = 0.1
+# encoder_save_path = f'trained_models/{dataset_type}/{scaling_string}_pct_scaling_{model_type.lower()}.pth'
+# train_file_path = f'../../scratch/PHIL/train_phils_scaled_to_{scaling_string}_pct.csv'
+# val_file_path = f'../../scratch/PHIL/val_phils_scaled_to_{scaling_string}_pct.csv'
+# test_file_path = f'../../scratch/PHIL/test_phils_scaled_to_{scaling_string}_pct.csv'
+# train_preds_file_path = f'../../scratch/{dataset_type}/train_embedding_preds_scaled_to_{scaling_string}_pct.feather'
+# val_preds_file_path = f'../../scratch/{dataset_type}/val_embedding_preds_scaled_to_{scaling_string}_pct.feather'
+# test_preds_file_path = f'../../scratch/{dataset_type}/test_embedding_preds_scaled_to_{scaling_string}_pct.feather'
 
 
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
@@ -79,7 +88,7 @@ wandb_kwargs = {
     'dataset': dataset_type,
     'target_embedding': target_embedding,
     'early stopping threshold':early_stopping_threshold,
-    'scaling factor': scaling_factor,
+    # 'scaling factor': scaling_factor,
 }
 
 device = f.set_up_gpu()

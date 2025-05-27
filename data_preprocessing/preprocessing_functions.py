@@ -13,6 +13,33 @@ import pandas as pd
 
 # import matplotlib.pyplot as plt
 
+def merge_conditions(data, metadata):
+    """
+    Merges temperature and pressure conditions from metadata into the data DataFrame.
+    The 'index' column in data is used to match with 'level_0' in metadata.
+    The resulting DataFrame will have 'TemperatureKelvin' and 'PressureBar' columns
+    added before the 'Label' column.
+    Parameters:
+    data (pd.DataFrame): DataFrame containing the spectral data with an 'index' column.
+    metadata (pd.DataFrame): DataFrame containing metadata with 'level_0', 'TemperatureKelvin', and 'PressureBar' columns.
+    Returns:
+    pd.DataFrame: DataFrame with merged conditions, including 'TemperatureKelvin' and 'PressureBar'.            
+    """
+    data_with_conditions = data.merge(
+        metadata[['level_0', 'TemperatureKelvin', 'PressureBar']],
+        left_on='index',
+        right_on='level_0',
+        how='left'
+    )
+    # Reorder columns to move TemperatureKelvin and PressureBar before Label
+    cols = list(data_with_conditions.columns)
+    label_index = cols.index('Label')
+    cols.insert(label_index, cols.pop(cols.index('TemperatureKelvin')))
+    cols.insert(label_index + 1, cols.pop(cols.index('PressureBar')))
+    data_with_conditions = data_with_conditions[cols]
+    data_with_conditions.drop(columns=['level_0'], inplace=True)
+    return data_with_conditions
+
 def reformat_spectra_df(df):
     """
     Transforms the 'Spectrum' column of a DataFrame into a new DataFrame where

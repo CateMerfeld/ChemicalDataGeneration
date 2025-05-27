@@ -578,6 +578,34 @@ class Encoder(nn.Module):
         x = self.final_linear(x)
         return x
 #%%
+class ConditionEncoder(nn.Module):
+  def __init__(self):
+    super().__init__()
+    self.encoder = nn.Sequential(
+      nn.Linear(1678,1546),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1548,1420),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1420, 1292),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1292, 1164),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1164, 1036),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(1036, 908),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(908, 780),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(780, 652),
+      nn.LeakyReLU(inplace=True),
+      nn.Linear(652, 514)
+    )
+
+  def forward(self, x):
+    x = self.encoder(x)
+    return x
+
+#%%
 class IMStoOneHotEncoder(nn.Module):
   def __init__(self):
     super().__init__()
@@ -728,9 +756,17 @@ def train_model(
         if model_type == 'Encoder':
             model = Encoder().to(device)
             criterion = nn.MSELoss()
+        
+        if model_type == 'ConditionEncoder':
+            model = ConditionEncoder().to(device)
+            criterion = nn.MSELoss()
 
         if model_type == 'Generator':
             model = Generator().to(device)
+            criterion = nn.MSELoss()
+        
+        if model_type == 'ConditionGenerator':
+            model = ConditionGenerator().to(device)
             criterion = nn.MSELoss()
 
         if model_type == 'IMStoOneHotEncoder':
@@ -1130,6 +1166,37 @@ class Generator(nn.Module):
         super().__init__()
         self.generator = nn.Sequential(
         nn.Linear(512,652),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(652,780),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(780, 908),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(908, 1036),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1036, 1164),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1164, 1292),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1292, 1420),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1420, 1548),
+        nn.LeakyReLU(inplace=True),
+        nn.Linear(1548, 1676),
+        )
+
+    def forward(self, x):
+        x = self.generator(x)
+        return x
+    
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+ 
+class ConditionGenerator(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.generator = nn.Sequential(
+        nn.Linear(514,652),
         nn.LeakyReLU(inplace=True),
         nn.Linear(652,780),
         nn.LeakyReLU(inplace=True),

@@ -34,22 +34,23 @@ generator_load_path = None
 #%%
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_generator.py'
 target_type = 'CARL'
-architecture = 'universal_condition_generator'
+architecture = 'universal_generator'
+model_type = 'ConditionGenerator'
 loss = 'MSELoss'
 criterion = nn.MSELoss()
 input_type = 'carl_embeddings'
 early_stopping_threshold = 10
 num_plots = 5
 # scaling_string = '25'
-# scaling_factor = .25
+scaling_factor = .25
 
-start_idx = 1
-stop_idx = -8
+start_idx = 2
+stop_idx = -9
 device = f.set_up_gpu()
 
 model_hyperparams = {
     'batch_size':[32],#, 32],
-    'epochs': [100],
+    'epochs': [10],
     'learning_rate':[.001]#, .001],
     }
 
@@ -61,30 +62,31 @@ wandb_kwargs = {
     'target': target_type,
     'early stopping threshold':early_stopping_threshold
 }
+metadata = pd.read_feather('../../scratch/BKG_SIM_ims_acbc_train_v1.1.09_meta.feather')
 
 generator_save_path_pt_1 = f'trained_models/{target_type}/'
 generator_save_path_pt_2 = f'{architecture}.pth'
 generator_save_path = f'trained_models/{target_type}/{architecture}.pth'
 synthetic_data_save_path_pt_1 = f'../../scratch/synthetic_data/{target_type}/{architecture}/'
 synthetic_data_save_path_pt_2 = 'synthetic_test_spectra.feather'
-# train_file_path = '../data/carls/train_carls_one_per_spec.feather'
+train_file_path = '../../scratch/CARL/train_carls_one_per_spec.feather'
 # train_file_path = '../../scratch/train_data.feather'
-# train_embeddings_file_path = '../data/encoder_embedding_predictions/train_embeddings.csv'
+train_embeddings_file_path = '../data/encoder_embedding_predictions/train_embeddings.csv'
 # train_file_path = f'../../scratch/PHIL/train_phils_scaled_to_{scaling_string}_pct.csv'
 # train_embeddings_file_path = f'../../scratch/PHIL/train_embedding_preds_scaled_to_{scaling_string}_pct.feather'
 
-# val_file_path = '../data/carls/val_carls_one_per_spec.feather'
+val_file_path = '../../scratch/CARL/val_carls_one_per_spec.feather'
 # val_file_path = '../../scratch/val_data.feather'
-# val_embeddings_file_path = '../data/encoder_embedding_predictions/val_embeddings.csv'
+val_embeddings_file_path = '../data/encoder_embedding_predictions/val_embeddings.csv'
 # val_file_path = f'../../scratch/PHIL/val_phils_scaled_to_{scaling_string}_pct.csv'
 # val_embeddings_file_path = f'../../scratch/PHIL/val_embedding_preds_scaled_to_{scaling_string}_pct.feather'
 
-# test_file_path = '../data/carls/test_carls_one_per_spec.feather'
+test_file_path = '../../scratch/CARL/test_carls_one_per_spec.feather'
 # test_file_path = '../../scratch/test_data.feather'
-# test_embeddings_file_path = '../data/encoder_embedding_predictions/test_embeddings.csv'
+test_embeddings_file_path = '../data/encoder_embedding_predictions/test_embeddings.csv'
 # test_file_path = f'../../scratch/PHIL/test_phils_scaled_to_{scaling_string}_pct.csv'
 # test_embeddings_file_path = f'../../scratch/PHIL/test_embedding_preds_scaled_to_{scaling_string}_pct.feather'
-# test_avg_bkg_file_path = '../../scratch/test_avg_bkg.csv'
+test_avg_bkg_file_path = '../../scratch/test_avg_bkg.csv'
 
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 
@@ -100,7 +102,6 @@ if architecture == 'group_generator':
 elif architecture == 'universal_generator':
     chem_groups = ['all chemicals']
 
-# If doing group generators this should be uncommented and next code blocks indented
 # Lines that only apply to group generators marked with #####
 ###
 for group in chem_groups:
@@ -112,32 +113,55 @@ for group in chem_groups:
 
     # Loading data needs to be redone for each group because keeping the entire dataset in memory + the group subset is too much
     train_data = ppf.load_data(train_file_path)
+    # print(train_data.head())
     train_embeddings_df = ppf.load_data(train_embeddings_file_path)
+
+    train_embeddings_with_conditions = ppf.merge_conditions(
+        train_embeddings_df, metadata, col_to_insert_before='DEB',
+    )
+    # train_embeddings_df.merge(
+    #     metadata[['level_0', 'TemperatureKelvin', 'PressureBar']],
+    #     left_on='index',
+    #     right_on='level_0',
+    #     how='left'
+    # )
+    # cols = list(train_embeddings_with_conditions.columns)
+    # label_index = cols.index('DEB')
+    # cols.insert(label_index, cols.pop(cols.index('TemperatureKelvin')))
+    # cols.insert(label_index + 1, cols.pop(cols.index('PressureBar')))
+    # train_embeddings_with_conditions = train_embeddings_with_conditions[cols]
+    # train_embeddings_with_conditions.drop(columns=['level_0'], inplace=True)
 
     #####
     if chem_groups[0] != 'all chemicals':
         train_data = train_data[train_data[group].any(axis=1)] 
         train_embeddings_df = train_embeddings_df[train_embeddings_df[group].any(axis=1)] 
+        train_embeddings_with_conditions = train_embeddings_with_conditions[train_embeddings_with_conditions[group].any(axis=1)]
+
     #####
-
+    
     x_train, y_train, train_chem_encodings_tensor, train_indices_tensor = f.create_dataset_tensors_for_generator(
-        train_data, train_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
+        train_data, train_embeddings_with_conditions, device, start_idx=start_idx, stop_idx=stop_idx)
 
-    del train_data, train_embeddings_df
+    del train_data, train_embeddings_df, train_embeddings_with_conditions
 
     #%%
     val_data = ppf.load_data(val_file_path)
     val_embeddings_df = ppf.load_data(val_embeddings_file_path)
 
+    val_embeddings_with_conditions = ppf.merge_conditions(
+        val_embeddings_df, metadata, col_to_insert_before='DEB',
+    )
     # #####
     if chem_groups[0] != 'all chemicals':
         val_data = val_data[val_data[group].any(axis=1)] 
         val_embeddings_df = val_embeddings_df[val_embeddings_df[group].any(axis=1)]
+        val_embeddings_with_conditions = val_embeddings_with_conditions[val_embeddings_with_conditions[group].any(axis=1)]
     # #####
 
     x_val, y_val, val_chem_encodings_tensor, val_indices_tensor = f.create_dataset_tensors_for_generator(
-        val_data, val_embeddings_df, device, start_idx=start_idx, stop_idx=stop_idx)
-    del val_data, val_embeddings_df
+        val_data, val_embeddings_with_conditions, device, start_idx=start_idx, stop_idx=stop_idx)
+    del val_data, val_embeddings_df, val_embeddings_with_conditions
     # %%
     test_data = ppf.load_data(test_file_path)
     test_cols = test_data.columns[start_idx:stop_idx]
@@ -165,7 +189,7 @@ for group in chem_groups:
             wandb_kwargs, model_hyperparams, sorted_chem_names,
             generator_save_path, save_plots_to_wandb=True,
             early_stop_threshold=wandb_kwargs['early stopping threshold'], 
-            num_plots=num_plots, pretrained_model_path=generator_load_path,
+            num_plots=num_plots, model_type=model_type, pretrained_model_path=generator_load_path,
             carl_or_spec=target_type
         )
         #%%

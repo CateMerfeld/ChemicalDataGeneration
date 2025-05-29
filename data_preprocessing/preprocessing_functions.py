@@ -13,7 +13,7 @@ import pandas as pd
 
 # import matplotlib.pyplot as plt
 
-def merge_conditions(data, metadata):
+def merge_conditions(data, metadata, col_to_insert_before='Label'):
     """
     Merges temperature and pressure conditions from metadata into the data DataFrame.
     The 'index' column in data is used to match with 'level_0' in metadata.
@@ -33,7 +33,7 @@ def merge_conditions(data, metadata):
     )
     # Reorder columns to move TemperatureKelvin and PressureBar before Label
     cols = list(data_with_conditions.columns)
-    label_index = cols.index('Label')
+    label_index = cols.index(col_to_insert_before)
     cols.insert(label_index, cols.pop(cols.index('TemperatureKelvin')))
     cols.insert(label_index + 1, cols.pop(cols.index('PressureBar')))
     data_with_conditions = data_with_conditions[cols]

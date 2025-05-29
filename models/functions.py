@@ -1340,6 +1340,8 @@ def train_generator(
                 model = Generator().to(device)
             elif model_type == 'OneHottoIMSGenerator':
                 model = OneHottoIMSGenerator().to(device)
+            elif model_type == 'ConditionGenerator':
+                model = ConditionGenerator().to(device)
 
         epochs_without_validation_improvement = 0
 

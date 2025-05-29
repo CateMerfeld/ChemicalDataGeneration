@@ -582,7 +582,7 @@ class ConditionEncoder(nn.Module):
   def __init__(self):
     super().__init__()
     self.encoder = nn.Sequential(
-      nn.Linear(1678,1546),
+      nn.Linear(1678,1548),
       nn.LeakyReLU(inplace=True),
       nn.Linear(1548,1420),
       nn.LeakyReLU(inplace=True),
@@ -757,26 +757,26 @@ def train_model(
             model = Encoder().to(device)
             criterion = nn.MSELoss()
         
-        if model_type == 'ConditionEncoder':
+        elif model_type == 'ConditionEncoder':
             model = ConditionEncoder().to(device)
             criterion = nn.MSELoss()
 
-        if model_type == 'Generator':
+        elif model_type == 'Generator':
             model = Generator().to(device)
             criterion = nn.MSELoss()
         
-        if model_type == 'ConditionGenerator':
+        elif model_type == 'ConditionGenerator':
             model = ConditionGenerator().to(device)
             criterion = nn.MSELoss()
 
-        if model_type == 'IMStoOneHotEncoder':
+        elif model_type == 'IMStoOneHotEncoder':
             model = IMStoOneHotEncoder().to(device)
             if class_weights is not None:
                 criterion = nn.CrossEntropyLoss(weight=class_weights)
             else:
                 criterion = nn.CrossEntropyLoss()
         
-        if model_type == 'OneHottoChemNetEncoder':
+        elif model_type == 'OneHottoChemNetEncoder':
             model = OneHottoChemNetEncoder().to(device)
             criterion = nn.MSELoss()
 

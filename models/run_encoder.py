@@ -38,9 +38,15 @@ generate_embeddings = None
 # best_hyperparams = {'batch_size':16}
 
 model_hyperparams = {
-  'batch_size':[16],#, 32],
-  'epochs': [3],
-  'learning_rate':[.00001]#,, .000001],
+  'batch_size':[16, 32, 64],
+  'epochs': [3000, 5000],
+  'learning_rate':[.01, .000001],
+  }
+
+combo = {
+  'batch_size':[16],
+  'epochs': [3000],
+  'learning_rate':[.01],
   }
 
 encoder_criterion = nn.MSELoss()

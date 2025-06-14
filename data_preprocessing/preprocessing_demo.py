@@ -27,14 +27,7 @@ def reformat_spectra_df(df):
     for _, row in df.iterrows():
         smiles = row['SMILES']
         spectrum = row['Spectrum'].split(' ')
-        # print(int('123456'))
-        # print(spectrum)
-        # spectrum = [pair.replace("'", "") for pair in spectrum]
-        # print(spectrum)
-        # for pair in spectrum:
-        #     print(pair)
-        #     print(pair.split(':')[0], pair.split(':')[1])
-        # print(spectrum[0][0])
+
         if spectrum[0][0] == 'k':
             spectrum = spectrum[1:]
 
@@ -57,10 +50,8 @@ df = pd.DataFrame({
     'SMILES': ['CCO', 'CCN'],
     'Spectrum': ['k3.4:125 4.6:857 13.9:20.3', '2.1:50 5.5:100 10.2:75']
 })
-# print(df)
 
 result_df = reformat_spectra_df(df)
-# print(result_df)
 #%%
 
 #%%
@@ -88,6 +79,18 @@ def get_chemnet_emb_from_smiles(smiles_list):
                 smiles_emb_dict[smiles] = 'unknown'
 
     return smiles_emb_dict
+
+chemical_list = ['MES', 'DtBP']
+smiles_list = ['C1COCCN1CCS(=O)(=O)O', 'CC(C)(C)OOC(C)(C)C'] # MES and DtBP SMILES
+smiles_emb_dict = get_chemnet_emb_from_smiles(smiles_list)
+for chem, smiles in zip(chemical_list, smiles_list):
+    print('The ChemNet embedding for {} is {} dimensions and begins with:'.format(
+        chem, 
+        len(smiles_emb_dict[smiles]),
+    ))
+    print(smiles_emb_dict[smiles][:5])
+    print('')
+
 #%%
 def set_up_gpu():
     if torch.cuda.is_available():

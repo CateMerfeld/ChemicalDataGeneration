@@ -428,8 +428,8 @@ def train_one_epoch(
         class_indices = torch.argmax(true_embeddings, dim=1)
         loss = criterion(batch_predicted_embeddings, class_indices)
     elif isinstance(model, ConditionEncoder):
-        embedding_loss = criterion(batch_predicted_embeddings.iloc[:, :-2], true_embeddings.iloc[:, :-2])
-        condition_loss = criterion(batch_predicted_embeddings.iloc[:, -2:], true_embeddings.iloc[:, -2:])
+        embedding_loss = criterion(batch_predicted_embeddings[:, :-2], true_embeddings[:, :-2])
+        condition_loss = criterion(batch_predicted_embeddings[:, -2:], true_embeddings[:, -2:])
         loss = embedding_loss + 10*condition_loss
     else:
         loss = criterion(batch_predicted_embeddings, true_embeddings)
@@ -590,7 +590,7 @@ class ConditionEncoder(nn.Module):
   def __init__(self):
     super().__init__()
     self.encoder = nn.Sequential(
-      nn.Linear(1678,1548),
+      nn.Linear(1676,1548),
       nn.LeakyReLU(inplace=True),
       nn.Linear(1548,1420),
       nn.LeakyReLU(inplace=True),

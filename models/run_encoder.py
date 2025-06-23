@@ -15,10 +15,12 @@ import functions as f
 
 # Things that need to be changed for each encoder/dataset/target embedding
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/run_encoder.py'
-architecture = 'ims_to_ChemNet_encoder'
-dataset_type = 'spectrum'
+# architecture = 'ims_to_ChemNet_encoder'
+architecture = 'carl_encoder'
+# dataset_type = 'spectrum'
+dataset_type = 'CARL'
 target_embedding = 'ChemNet'
-model_type = 'ConditionEncoder'
+# model_type = 'ConditionEncoder'
 loss = 'MSELoss'
 
 early_stopping_threshold = 10
@@ -37,33 +39,39 @@ generate_embeddings = None
 
 # best_hyperparams = {'batch_size':16}
 
+# model_hyperparams = {
+#   'batch_size':[16, 32, 64],
+#   'epochs': [3000, 5000],
+#   'learning_rate':[.01, .000001],
+#   }
 model_hyperparams = {
-  'batch_size':[16, 32, 64],
-  'epochs': [3000, 5000],
-  'learning_rate':[.01, .000001],
+  'batch_size':[32],
+  'epochs': [500],
+  'learning_rate':[.00001],
   }
 
-combo = {
-  'batch_size':[16],
-  'epochs': [3000],
-  'learning_rate':[.01],
-  }
+# combo = {
+#   'batch_size':[16],
+#   'epochs': [3000],
+#   'learning_rate':[.01],
+#   }
 
 encoder_criterion = nn.MSELoss()
 
 name_smiles_embedding_df_file_path = '../../scratch/name_smiles_embedding_file.csv'
 mass_spec_name_smiles_embedding_df_file_path = '../data/mass_spec_name_smiles_embedding_file.csv'
 
-# Spectra with conditions
 encoder_save_path = f'trained_models/{dataset_type}/{model_type.lower()}.pth'
-train_file_path = '../../../scratch/train_data_with_conditions.feather'
-val_file_path = '../../../scratch/val_data_with_conditions.feather'
-test_file_path = '../../../scratch/test_data_with_conditions.feather'
 
-# # Spectra with no conditions
-# train_file_path = '../../../scratch/train_data.feather'
-# val_file_path = '../../../scratch/val_data.feather'
-# test_file_path = '../../../scratch/test_data.feather'
+# # Spectra with conditions
+# train_file_path = '../../../scratch/train_data_with_conditions.feather'
+# val_file_path = '../../../scratch/val_data_with_conditions.feather'
+# test_file_path = '../../../scratch/test_data_with_conditions.feather'
+
+# Spectra with no conditions
+train_file_path = '../../../scratch/train_data.feather'
+val_file_path = '../../../scratch/val_data.feather'
+test_file_path = '../../../scratch/test_data.feather'
 
 # # PHILs:
 # scaling_string = '10'

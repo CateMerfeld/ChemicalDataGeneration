@@ -8,19 +8,28 @@ import functions as f
 # # Reload the functions module after updates
 # importlib.reload(f)
 
+early_stopping_threshold = 20
+model_hyperparams = {
+  'batch_size':[64],
+  'epochs': [500],
+  'learning_rate':[.0001],
+  }
+
 # Loading Data:
 # file_path = '../data/carls/train_carls.feather'
-file_path = '../data/carls/train_carls_one_per_spec.feather'
+file_path = '../../scratch/CARL/train_carls_one_per_spec.feather'
 train_carls = pd.read_feather(file_path)
 train_carls = train_carls.drop(columns=['level_0'])
+train_carls.head()
+#%%
 
 # # file_path = '../data/carls/val_carls.feather'
-file_path = '../data/carls/val_carls_one_per_spec.feather'
+file_path = '../../scratch/CARL/val_carls_one_per_spec.feather'
 val_carls = pd.read_feather(file_path)
 val_carls = val_carls.drop(columns=['level_0'])
 
 # # file_path = '../data/carls/test_carls.feather'
-file_path = '../data/carls/test_carls_one_per_spec.feather'
+file_path = '../../scratch/CARL/test_carls_one_per_spec.feather'
 test_carls = pd.read_feather(file_path)
 test_carls = test_carls.drop(columns=['level_0'])
 
@@ -34,6 +43,14 @@ name_smiles_embedding_df = f.format_embedding_df(file_path) # pd.read_csv(file_p
 
 file_path = '../data/mass_spec_name_smiles_embedding_file.csv'
 mass_spec_name_smiles_embedding_df = f.format_embedding_df(file_path) # pd.read_csv(file_path)
+
+# Things that need to be changed for each encoder/dataset/target embedding
+notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/carl_encoder.py'
+architecture = 'carl_encoder'
+dataset_type = 'carls'
+target_embedding = 'ChemNet'
+encoder_path = 'trained_models/carl_to_chemnet_encoder.pth'
+
 
 # # set the df index to be the chemical abbreviations in col 'Unnamed: 0'
 # mass_spec_name_smiles_embedding_df.set_index('Unnamed: 0', inplace=True)
@@ -77,18 +94,31 @@ mass_spec_name_smiles_embedding_df.head()
 # Training Encoder on Carls:
 
 device = f.set_up_gpu()
-train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(train_carls, name_smiles_embedding_df, device, carl=True)
-val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(val_carls, name_smiles_embedding_df, device, carl=True)
-test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(test_carls, name_smiles_embedding_df, device, carl=True)
+train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
+    train_carls, 
+    name_smiles_embedding_df, 
+    device, 
+    start_idx=1, 
+    stop_idx=-9,
+    )
+val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
+    val_carls,     
+    name_smiles_embedding_df, 
+    device, 
+    start_idx=1, 
+    stop_idx=-9,
+    )
+test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(
+    test_carls, 
+    name_smiles_embedding_df, 
+    device, 
+    start_idx=1, 
+    stop_idx=-9,
+    )
 sorted_chem_names = list(train_carls.columns[-8:])
 del train_carls, val_carls, test_carls
 
-# Things that need to be changed for each encoder/dataset/target embedding
-notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/carl_encoder.py'
-architecture = 'carl_encoder'
-dataset_type = 'carls'
-target_embedding = 'ChemNet'
-encoder_path = 'trained_models/carl_to_chemnet_encoder_.pth'
+
 
 config = {
     'wandb_entity': 'catemerfeld',
@@ -101,7 +131,7 @@ os.environ['WANDB_NOTEBOOK_NAME'] = notebook_name
 
 # Reload the functions module after updates
 importlib.reload(f)
-early_stopping_threshold = 20
+
 wandb_kwargs = {
     'architecture': architecture,
     'optimizer':'AdamW',
@@ -111,11 +141,7 @@ wandb_kwargs = {
     'early stopping threshold':early_stopping_threshold
 }
 
-model_hyperparams = {
-  'batch_size':[32,64],
-  'epochs': [100, 500],
-  'learning_rate':[.00001],
-  }
+
 
 train_data = TensorDataset(train_carl_tensor, train_chem_encodings_tensor, train_embeddings_tensor, train_carl_indices_tensor)
 val_data = TensorDataset(val_carl_tensor, val_chem_encodings_tensor, val_embeddings_tensor, val_carl_indices_tensor)

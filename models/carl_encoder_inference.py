@@ -6,20 +6,33 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 import importlib
 import functions as f
+import plotting_functions as pf
 # Reload the functions module after updates
 importlib.reload(f)
 
 #%%
 device = f.set_up_gpu()
 #%%
-encoder_path = 'trained_models/carl_to_chemnet_encoder_reparameterization.pth'
-best_model = torch.load(encoder_path, weights_only=False)
+save_file_path_pt_1 = '../data/encoder_embedding_predictions/carl_to_chemnet_' 
+save_file_path_pt_2 = '_preds.csv'
+
+train_file_path = '../../scratch/CARL/train_carls_one_per_spec.feather'
+val_file_path = '../../scratch/CARL/val_carls_one_per_spec.feather'
+test_file_path = '../../scratch/CARL/test_carls_one_per_spec.feather'
+# encoder_path = 'trained_models/carl_to_chemnet_encoder_reparameterization.pth'
+encoder_path = 'trained_models/carl_to_chemnet_encoder_used_for_results.pth'
+best_model = f.Encoder().to(device)  # Replace with your model class
+state_dict = torch.load(encoder_path, weights_only=False)
+best_model.load_state_dict(state_dict)
+# best_model.to(device)
+
+
 encoder_criterion = nn.MSELoss()
 batch_size = 16
-reparameterization = True
+reparameterization = False
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 #%%
-file_path = '../data/name_smiles_embedding_file.csv'
+file_path = '../../scratch/name_smiles_embedding_file.csv'
 name_smiles_embedding_df = pd.read_csv(file_path)
 
 # set the df index to be the chemical abbreviations in col 'Unnamed: 0'
@@ -64,11 +77,16 @@ all_true_embeddings.head()
 
 
 #%%
-file_path = '../data/carls/train_carls_one_per_spec.feather'
-train_carls = pd.read_feather(file_path)
+train_carls = pd.read_feather(train_file_path)
 train_carls = train_carls.drop(columns=['level_0'])
 
-train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(train_carls, name_smiles_embedding_df, device, carl=True)
+train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
+    train_carls, 
+    name_smiles_embedding_df, 
+    device, 
+    start_idx=1, 
+    stop_idx=-8,
+    )
 del train_carls
 train_dataset = DataLoader(
     TensorDataset(
@@ -95,16 +113,22 @@ name_encodings_df = pd.DataFrame(output_name_encodings)
 name_encodings_df.columns = sorted_chem_names
 train_preds_df = pd.concat([train_preds_df, name_encodings_df], axis=1)
 
-file_path = '../data/encoder_embedding_predictions/reparameterization_train_preds.csv'
-train_preds_df.to_csv(file_path, index=False)
+train_preds_file_path = save_file_path_pt_1 + 'train' + save_file_path_pt_2
+train_preds_df.to_csv(train_preds_file_path, index=False)
 
 del train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor, train_preds_df
 #%%
-file_path = '../data/carls/val_carls_one_per_spec.feather'
-val_carls = pd.read_feather(file_path)
+
+val_carls = pd.read_feather(val_file_path)
 val_carls = val_carls.drop(columns=['level_0'])
 
-val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(val_carls, name_smiles_embedding_df, device, carl=True)
+val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
+    val_carls, 
+    name_smiles_embedding_df, 
+    device, 
+    start_idx=1, 
+    stop_idx=-9,
+    )
 del val_carls
 
 val_dataset = DataLoader(
@@ -132,15 +156,21 @@ name_encodings_df = pd.DataFrame(output_name_encodings)
 name_encodings_df.columns = sorted_chem_names
 val_preds_df = pd.concat([val_preds_df, name_encodings_df], axis=1)
 
-file_path = '../data/encoder_embedding_predictions/reparameterization_val_preds.csv'
-val_preds_df.to_csv(file_path, index=False)
+val_preds_file_path = save_file_path_pt_1 + 'val' + save_file_path_pt_2
+val_preds_df.to_csv(val_preds_file_path, index=False)
 
 del val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor, val_preds_df
 #%%
-file_path = '../data/carls/test_carls_one_per_spec.feather'
-test_carls = pd.read_feather(file_path)
+
+test_carls = pd.read_feather(test_file_path)
 test_carls = test_carls.drop(columns=['level_0'])
-test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(test_carls, name_smiles_embedding_df, device, carl=True)
+test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(
+    test_carls, 
+    name_smiles_embedding_df, 
+    device, 
+    start_idx=1, 
+    stop_idx=-9,
+    )
 del test_carls
 
 test_dataset = DataLoader(
@@ -168,15 +198,14 @@ name_encodings_df = pd.DataFrame(output_name_encodings)
 name_encodings_df.columns = sorted_chem_names
 test_preds_df = pd.concat([test_preds_df, name_encodings_df], axis=1)
 
-file_path = '../data/encoder_embedding_predictions/reparameterization_test_preds.csv'
-test_preds_df.to_csv(file_path, index=False)
+test_preds_file_path = save_file_path_pt_1 + 'test' + save_file_path_pt_2
+test_preds_df.to_csv(test_preds_file_path, index=False)
 
 del test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_carl_indices_tensor
 
 #%%
 
-file_path = '../data/encoder_embedding_predictions/reparameterization_test_preds.csv'
-test_preds_df = pd.read_csv(file_path)
+test_preds_df = pd.read_csv(test_preds_file_path)
 test_preds_df.head()
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 encodings_list = test_preds_df[sorted_chem_names].values.tolist()
@@ -185,7 +214,7 @@ embeddings_only = test_preds_df.iloc[:,1:-8]
 embeddings_only.columns = ims_embeddings.T.columns
 # embeddings_only['Label'] = test['Label']
 embeddings_only['Label'] = [sorted_chem_names[enc.index(1)] for enc in encodings_list]
-f.plot_emb_pca(
+pf.plot_emb_pca(
     all_true_embeddings, embeddings_only, 'Test', 'IMS', 
     log_wandb=False, chemnet_embeddings_to_plot=ims_embeddings,
     show_wandb_run_name=False)

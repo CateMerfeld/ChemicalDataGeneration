@@ -553,30 +553,34 @@ class Encoder(nn.Module):
       nn.LeakyReLU(inplace=True),
       nn.Linear(780, 652),
       nn.LeakyReLU(inplace=True),
+      nn.Linear(652, 512),
     )
 
-    # self.final_relu = 
-    self.final_linear = nn.Linear(652, 512)
+#     # self.final_relu = 
+#     self.final_linear = nn.Linear(652, 512)
 
-    self.mean_layer = nn.Linear(652, 512)
-    self.logvar_layer = nn.Linear(652, 512)
+#     self.mean_layer = nn.Linear(652, 512)
+#     self.logvar_layer = nn.Linear(652, 512)
 
-  def reparameterize(self, mean, log_var):
-    eps = torch.randn_like(log_var)
-    z = mean + log_var * eps
-    return z
+#   def reparameterize(self, mean, log_var):
+#     eps = torch.randn_like(log_var)
+#     z = mean + log_var * eps
+#     return z
 
-  def forward(self, x, reparameterization=False):
-    x = self.encoder(x)
+#   def forward(self, x, reparameterization=False):
+#     x = self.encoder(x)
     
-    # Do reparameterization if desired, otherwise run final encoder layer
-    if reparameterization:
-        mean, logvar = self.mean_layer(x), self.logvar_layer(x)
-        z = self.reparameterize(mean, logvar)
-        return z
-    else:
-        x = self.final_linear(x)
-        return x
+#     # Do reparameterization if desired, otherwise run final encoder layer
+#     if reparameterization:
+#         mean, logvar = self.mean_layer(x), self.logvar_layer(x)
+#         z = self.reparameterize(mean, logvar)
+#         return z
+#     else:
+#         x = self.final_linear(x)
+#         return x
+  def forward(self, x):
+    x = self.encoder(x)
+    return x
 #%%
 class ConditionEncoder(nn.Module):
   def __init__(self):

@@ -12,7 +12,6 @@ importlib.reload(f)
 
 #%%
 device = f.set_up_gpu()
-#%%
 save_file_path_pt_1 = '../data/encoder_embedding_predictions/carl_to_chemnet_' 
 save_file_path_pt_2 = '_preds.csv'
 
@@ -20,15 +19,16 @@ train_file_path = '../../scratch/CARL/train_carls_one_per_spec.feather'
 val_file_path = '../../scratch/CARL/val_carls_one_per_spec.feather'
 test_file_path = '../../scratch/CARL/test_carls_one_per_spec.feather'
 # encoder_path = 'trained_models/carl_to_chemnet_encoder_reparameterization.pth'
-encoder_path = 'trained_models/carl_to_chemnet_encoder_used_for_results.pth'
-best_model = f.Encoder().to(device)  # Replace with your model class
-state_dict = torch.load(encoder_path, weights_only=False)
-best_model.load_state_dict(state_dict)
-# best_model.to(device)
+# encoder_path = 'trained_models/carl_to_chemnet_encoder_used_for_results.pth'
+encoder_path = 'trained_models/carl_to_chemnet_encoder.pth'
+# best_model = f.Encoder().to(device)
+# state_dict = torch.load(encoder_path, weights_only=False)
+# best_model.load_state_dict(state_dict)
+best_model = torch.load(encoder_path, map_location=device)
 
 
 encoder_criterion = nn.MSELoss()
-batch_size = 16
+batch_size = 64
 reparameterization = False
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 #%%
@@ -85,7 +85,7 @@ train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_c
     name_smiles_embedding_df, 
     device, 
     start_idx=1, 
-    stop_idx=-8,
+    stop_idx=-9,
     )
 del train_carls
 train_dataset = DataLoader(
@@ -205,16 +205,16 @@ del test_embeddings_tensor, test_carl_tensor, test_chem_encodings_tensor, test_c
 
 #%%
 
-test_preds_df = pd.read_csv(test_preds_file_path)
-test_preds_df.head()
-sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
-encodings_list = test_preds_df[sorted_chem_names].values.tolist()
-# spectra_labels = [sorted_chem_names[list(enc).index(1)] for enc in encodings_list]
-embeddings_only = test_preds_df.iloc[:,1:-8]
-embeddings_only.columns = ims_embeddings.T.columns
-# embeddings_only['Label'] = test['Label']
-embeddings_only['Label'] = [sorted_chem_names[enc.index(1)] for enc in encodings_list]
-pf.plot_emb_pca(
-    all_true_embeddings, embeddings_only, 'Test', 'IMS', 
-    log_wandb=False, chemnet_embeddings_to_plot=ims_embeddings,
-    show_wandb_run_name=False)
+# test_preds_df = pd.read_csv(test_preds_file_path)
+# test_preds_df.head()
+# sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
+# encodings_list = test_preds_df[sorted_chem_names].values.tolist()
+# # spectra_labels = [sorted_chem_names[list(enc).index(1)] for enc in encodings_list]
+# embeddings_only = test_preds_df.iloc[:,1:-8]
+# embeddings_only.columns = ims_embeddings.T.columns
+# # embeddings_only['Label'] = test['Label']
+# embeddings_only['Label'] = [sorted_chem_names[enc.index(1)] for enc in encodings_list]
+# pf.plot_emb_pca(
+#     all_true_embeddings, embeddings_only, 'Test', 'IMS', 
+#     log_wandb=False, chemnet_embeddings_to_plot=ims_embeddings,
+#     show_wandb_run_name=False)

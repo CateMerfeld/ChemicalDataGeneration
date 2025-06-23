@@ -17,9 +17,9 @@ import torch
 
 early_stopping_threshold = 15
 model_hyperparams = {
-  'batch_size':[32],
+  'batch_size':[32, 64],
   'epochs': [100],
-  'learning_rate':[.0001],
+  'learning_rate':[.001, .0001, .00001, .000001],
   }
 
 # Loading Data:
@@ -52,7 +52,7 @@ notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/conditioning/CARL/
 architecture = 'carl_conditional_encoder'
 dataset_type = 'carls'
 target_embedding = 'ChemNet'
-encoder_path = '/home/cmdunham/models/trained_models/carl_to_chemnet_conditional_encoder.pth'
+encoder_path = '/home/cmdunham/ChemicalDataGeneration/models/trained_models/carl_to_chemnet_conditional_encoder.pth'
 
 #%%
 # Combine embeddings for IMS simulants and mass spec chems to use for plotting pca
@@ -85,8 +85,11 @@ train_embeddings_df['index'] = train_carl_indices_tensor.cpu().numpy()
 train_data_with_conditions = pf.merge_conditions(train_embeddings_df, metadata, col_to_insert_before='index')
 # drop the 'index' column after merging conditions since it's no longer needed
 train_data_with_conditions.drop(columns=['index'], inplace=True)
+# replace NaN values with 0
+train_data_with_conditions = train_data_with_conditions.fillna(0)
 # convert the DataFrame back to a tensor
 train_embeddings_tensor = torch.Tensor(train_data_with_conditions.values).to(device)
+print(torch.isnan(train_embeddings_tensor).any())
 del train_data_with_conditions, train_carls
 
 val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
@@ -101,10 +104,14 @@ val_embeddings_df = pd.DataFrame(val_embeddings_tensor.cpu().numpy())
 val_embeddings_df['index'] = val_carl_indices_tensor.cpu().numpy()
 # merge conditions with true embeddings
 val_data_with_conditions = pf.merge_conditions(val_embeddings_df, metadata, col_to_insert_before='index')
+# replace NaN values with 0
+val_data_with_conditions = val_data_with_conditions.fillna(0)
 # drop the 'index' column after merging conditions since it's no longer needed
 val_data_with_conditions.drop(columns=['index'], inplace=True)
+
 # convert the DataFrame back to a tensor
 val_embeddings_tensor = torch.Tensor(val_data_with_conditions.values).to(device)
+
 del val_data_with_conditions, val_carls
 
 
@@ -122,6 +129,8 @@ test_embeddings_df['index'] = test_carl_indices_tensor.cpu().numpy()
 test_data_with_conditions = pf.merge_conditions(test_embeddings_df, metadata, col_to_insert_before='index')
 # drop the 'index' column after merging conditions since it's no longer needed
 test_data_with_conditions.drop(columns=['index'], inplace=True)
+# replace NaN values with 0
+test_data_with_conditions = test_data_with_conditions.fillna(0)
 # convert the DataFrame back to a tensor
 test_embeddings_tensor = torch.Tensor(test_data_with_conditions.values).to(device)
 del test_data_with_conditions, test_carls

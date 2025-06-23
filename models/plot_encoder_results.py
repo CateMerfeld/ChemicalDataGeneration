@@ -49,25 +49,28 @@ encodings_list = embedding_preds_df[sorted_chem_names].values.tolist()
 for condition in conditions:
     for chem in sorted_chem_names:
         chem_embeddings = embedding_preds_df[embedding_preds_df['Label'] == chem]
-        print(chem_embeddings.shape)
-        chem_embeddings = chem_embeddings.sample(frac=0.05, random_state=42)
-        print(chem_embeddings.shape)
-#         chemnet_embeddings_to_plot = ims_embeddings[[chem]]
+        if chem_embeddings.shape[0] < 2000:
+            # print(chem, chem_embeddings.shape[0])
+            chem_embeddings = chem_embeddings.sample(frac=0.1, random_state=42)
+        else:
+            chem_embeddings = chem_embeddings.sample(frac=0.05, random_state=42)
+        # print(chem_embeddings.shape)
+        chemnet_embeddings_to_plot = ims_embeddings[[chem]]
 
-#         save_plot_path = f'../plots/CARL/encoder_results/{chem}_embeddings_by_{condition}.png'
+        save_plot_path = f'../plots/CARL/encoder_results/{chem}_embeddings_by_{condition}.png'
 
-#         pf.plot_emb_colored_by_condition(
-#             ims_embeddings, 
-#             chemnet_embeddings_to_plot, 
-#             chem_embeddings,
-#             chem,
-#             results_type,
-#             condition=condition,
-#             save_plot_path=save_plot_path,
-#             )
-# #%%
-# embeddings_only = embedding_preds_df.iloc[:,1:-11]
-# pf.plot_emb_pca(
-#     ims_embeddings, embeddings_only, results_type, 'IMS', 
-#     log_wandb=False, chemnet_embeddings_to_plot=chemnet_embeddings_to_plot,
-#     show_wandb_run_name=False)
+        pf.plot_emb_colored_by_condition(
+            ims_embeddings, 
+            chemnet_embeddings_to_plot, 
+            chem_embeddings,
+            chem,
+            results_type,
+            condition=condition,
+            save_plot_path=save_plot_path,
+            )
+#%%
+embeddings_only = embedding_preds_df.iloc[:,1:-11]
+pf.plot_emb_pca(
+    ims_embeddings, embeddings_only, results_type, 'IMS', 
+    log_wandb=False, chemnet_embeddings_to_plot=chemnet_embeddings_to_plot,
+    show_wandb_run_name=False)

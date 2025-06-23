@@ -364,7 +364,7 @@ def update_wandb_kwargs(wandb_kwargs, updates):
 
 def train_one_epoch(
         train_dataset, device, model, criterion, optimizer, 
-        epoch, combo
+        epoch, combo#, condition_criterion=None
         ):
   """
     Train the model for one epoch on the given training dataset.
@@ -427,16 +427,23 @@ def train_one_epoch(
     if isinstance(model, IMStoOneHotEncoder):
         class_indices = torch.argmax(true_embeddings, dim=1)
         loss = criterion(batch_predicted_embeddings, class_indices)
-    elif isinstance(model, ConditionEncoder):
-        embedding_loss = criterion(batch_predicted_embeddings[:, :-2], true_embeddings[:, :-2])
-        condition_loss = criterion(batch_predicted_embeddings[:, -2:], true_embeddings[:, -2:])
-        loss = embedding_loss + 10*condition_loss
+    # elif isinstance(model, ConditionEncoder):
+    #     embedding_loss = criterion(batch_predicted_embeddings[:, :-2], true_embeddings[:, :-2])/2
+    #     # print(embedding_loss)
+    #     condition_loss = condition_criterion(batch_predicted_embeddings[:, -2:], true_embeddings[:, -2:])
+    #     # print(condition_loss)
+    #     loss = embedding_loss + condition_loss
+    #     # loss = sum([embedding_loss, condition_loss])
+    #     # print(loss)
     else:
         loss = criterion(batch_predicted_embeddings, true_embeddings)
     # accumulate epoch training loss
     epoch_training_loss += loss.item()
 
+    # print(batch.shape)
+    # print(loss)
     loss.backward()
+    # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
     optimizer.step()
 
     # at last epoch store output embeddings and corresponding labels to output list
@@ -888,7 +895,7 @@ def train_model(
                 # elif model_type == 'Generator':
                 #     wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
-                if epoch % 10 == 0 or epoch == 0:
+                if epoch % 1 == 0 or epoch == 0:
                     print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')

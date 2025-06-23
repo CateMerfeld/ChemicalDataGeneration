@@ -685,7 +685,8 @@ def plot_emb_pca(
     plt.show()
 
 def plot_emb_colored_by_condition(
-        ims_embeddings, chemnet_embeddings_to_plot, chem_embeddings, chem):
+        ims_embeddings, chemnet_embeddings_to_plot, chem_embeddings, 
+        chem, results_type, condition, save_plot_path=None):
     # Fit PCA on ims_embeddings
     pca = PCA(n_components=2)
     pca.fit(ims_embeddings.T)
@@ -700,15 +701,22 @@ def plot_emb_colored_by_condition(
     # Plot chemnet_embeddings_to_plot
     plt.scatter(chemnet_pca[:, 0], chemnet_pca[:, 1], color='black', label=f'ChemNet Embeddings ({chem})', s=200, alpha=0.6)
 
-    # Plot embeddings_only, colored by TemperatureKelvin
-    temp = chem_embeddings['TemperatureKelvin']
-    sc = plt.scatter(embeddings_only_pca[:, 0], embeddings_only_pca[:, 1], c=temp, marker='x', cmap='viridis', label='Predicted Embeddings')
-    plt.colorbar(sc, label='Temperature (K)')
+    # Plot embeddings_only, colored by condition
+    cond = chem_embeddings[condition]
+    sc = plt.scatter(embeddings_only_pca[:, 0], embeddings_only_pca[:, 1], c=cond, marker='x', cmap='viridis', label='Predicted Embeddings')
+    print(condition)
+    if condition == 'TemperatureKelvin':
+        plt.colorbar(sc, label='Temperature (K)')
+    elif condition == 'PressureBar':
+        plt.colorbar(sc, label='Pressure')
 
     plt.xticks([])
     plt.yticks([])
     plt.legend()
-    plt.title(f'PCA of {chem} Embeddings')
+    plt.title(f'PCA of {chem} {results_type} Embeddings')
+
+    if save_plot_path is not None:
+        plt.savefig(save_plot_path, format='png', dpi=300)
     plt.show()
 
 # ------------------------------------------------------------------------------------------

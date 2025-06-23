@@ -427,6 +427,10 @@ def train_one_epoch(
     if isinstance(model, IMStoOneHotEncoder):
         class_indices = torch.argmax(true_embeddings, dim=1)
         loss = criterion(batch_predicted_embeddings, class_indices)
+    elif isinstance(model, ConditionEncoder):
+        embedding_loss = criterion(batch_predicted_embeddings.iloc[:, :-2], true_embeddings.iloc[:, :-2])
+        condition_loss = criterion(batch_predicted_embeddings.iloc[:, -2:], true_embeddings.iloc[:, -2:])
+        loss = embedding_loss + 10*condition_loss
     else:
         loss = criterion(batch_predicted_embeddings, true_embeddings)
     # accumulate epoch training loss

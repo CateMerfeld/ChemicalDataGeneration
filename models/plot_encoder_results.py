@@ -7,8 +7,12 @@ import sys
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data_preprocessing'))
 sys.path.append(parent_dir)
 import preprocessing_functions as ppf
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
+# from sklearn.decomposition import PCA
+# import matplotlib.pyplot as plt
+#%%
+import importlib
+importlib.reload(pf)
+#%%
 
 metadata = pd.read_feather('../../scratch/BKG_SIM_ims_acbc_train_v1.1.09_meta.feather')
 
@@ -20,6 +24,7 @@ cols = name_smiles_embedding_df.index[1:]
 ims_embeddings.columns = cols
 #%%
 results_type = 'Test'
+condition = 'TemperatureKelvin'
 file_path = f'../data/encoder_embedding_predictions/carl_to_chemnet_{results_type.lower()}_preds.csv'
 embedding_preds_df = pd.read_csv(file_path)
 
@@ -37,43 +42,30 @@ cols.insert(-8, label_col)
 embedding_preds_df = embedding_preds_df[cols]
 #%%
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
+conditions = ['TemperatureKelvin', 'PressureBar']
 encodings_list = embedding_preds_df[sorted_chem_names].values.tolist()
 
-# spectra_labels = [sorted_chem_names[list(enc).index(1)] for enc in encodings_list]
+
+#%%
+for condition in conditions:
+    for chem in sorted_chem_names:
+        chem_embeddings = embedding_preds_df[embedding_preds_df['Label'] == chem]
+        chem_embeddings = chem_embeddings.sample(frac=0.05, random_state=42)
+        chemnet_embeddings_to_plot = ims_embeddings[[chem]]
+
+        save_plot_path = f'../plots/CARL/encoder_results/{chem}_embeddings_by_{condition}.png'
+
+        pf.plot_emb_colored_by_condition(
+            ims_embeddings, 
+            chemnet_embeddings_to_plot, 
+            chem_embeddings,
+            chem,
+            results_type,
+            condition=condition,
+            save_plot_path=save_plot_path,
+            )
+#%%
 embeddings_only = embedding_preds_df.iloc[:,1:-11]
-#%%
-chem = 'DtBP'
-chem_embeddings = embedding_preds_df[embedding_preds_df['Label'] == chem]
-chemnet_embeddings_to_plot = ims_embeddings[[chem]]
-#%%
-
-# Fit PCA on ims_embeddings
-pca = PCA(n_components=2)
-ims_pca = pca.fit(ims_embeddings.T)
-
-# Transform chemnet_embeddings_to_plot
-chemnet_pca = pca.transform(chemnet_embeddings_to_plot.T)
-
-# Transform embeddings_only
-embeddings_only = chem_embeddings.iloc[:,1:-11]
-embeddings_only_pca = pca.transform(embeddings_only)
-
-# Plot chemnet_embeddings_to_plot
-plt.scatter(chemnet_pca[:, 0], chemnet_pca[:, 1], color='black', label=f'ChemNet Embeddings ({chem})', s=200, alpha=0.6)
-
-# Plot embeddings_only, colored by TemperatureKelvin
-temp = chem_embeddings['TemperatureKelvin']
-sc = plt.scatter(embeddings_only_pca[:, 0], embeddings_only_pca[:, 1], c=temp, marker='x', cmap='viridis', label='Predicted Embeddings')
-plt.colorbar(sc, label='Temperature (K)')
-
-# plt.xlabel('PCA 1')
-# plt.ylabel('PCA 2')
-plt.xticks([])
-plt.yticks([])
-plt.legend()
-plt.title(f'PCA of {chem} Embeddings')
-plt.show()
-#%%
 pf.plot_emb_pca(
     ims_embeddings, embeddings_only, results_type, 'IMS', 
     log_wandb=False, chemnet_embeddings_to_plot=chemnet_embeddings_to_plot,

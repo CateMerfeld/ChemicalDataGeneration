@@ -895,7 +895,7 @@ def train_model(
                 # elif model_type == 'Generator':
                 #     wandb.log({"Generator Training Loss": average_loss, "Generator Validation Loss": val_average_loss})
 
-                if epoch % 1 == 0 or epoch == 0:
+                if epoch % 10 == 0 or epoch == 0:
                     print('Epoch[{}/{}]:'.format(epoch, combo['epochs']))
                     print(f'   Training loss: {average_loss}')
                     print(f'   Validation loss: {val_average_loss}')

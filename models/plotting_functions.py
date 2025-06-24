@@ -615,7 +615,7 @@ def plot_emb_pca(
         # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
         if chem in ims_labels:
             # transform all data for the given chemical. Exclude last col (label)
-            ims_transformed = pca.transform(ims_embeddings[ims_embeddings['Label'] == chem].iloc[:, :-1])
+            ims_transformed = pca.transform(ims_embeddings[ims_embeddings['Label'] == chem].iloc[:, :512])
             
             # Scatter plot for ims_embeddings with a different marker
             ax.scatter(ims_transformed[:, 0], ims_transformed[:, 1], marker='o', facecolors='none', edgecolors=color)#, s=200)#marker='x', color=color)#, s=75)

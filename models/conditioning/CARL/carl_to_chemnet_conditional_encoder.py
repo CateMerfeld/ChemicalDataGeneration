@@ -19,7 +19,7 @@ early_stopping_threshold = 15
 model_hyperparams = {
   'batch_size':[32, 64],
   'epochs': [100],
-  'learning_rate':[.001, .0001, .00001, .000001],
+  'learning_rate':[.00001, .000001],
   }
 
 # Loading Data:

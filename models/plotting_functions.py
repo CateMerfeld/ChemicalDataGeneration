@@ -606,11 +606,6 @@ def plot_emb_pca(
     for chem in all_chemical_names:
         idx = all_chemical_names.index(chem)
         color = next(color_cycle)['color']
-        # Plot ChemNet embeddings
-        if idx < 8: # only label 1st 8 chemicals to avoid giant legend
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=150, alpha=0.5)
-        else:
-            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, s=150, alpha=0.5)
 
         # Transform encoder-generated ims_embeddings for the current chemical, if we have ims data for chem
         if chem in ims_labels:
@@ -633,6 +628,12 @@ def plot_emb_pca(
                 
                 # Scatter plot for mass_spec_embeddings with a different marker
                 ax.scatter(mass_spec_transformed[:, 0], mass_spec_transformed[:, 1], marker='*', color=color)#, s=75)
+
+        # Plot ChemNet embeddings
+        if idx < 8: # only label 1st 8 chemicals to avoid giant legend
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, label=chem, s=150, alpha=0.5)
+        else:
+            ax.scatter(transformed_embeddings[idx, 0], transformed_embeddings[idx, 1], color = color, s=150, alpha=0.5)
     # Add legend
     legend1 = ax.legend(loc='upper right', title='Label')
     ax.add_artist(legend1)
@@ -686,7 +687,9 @@ def plot_emb_pca(
 
 def plot_emb_colored_by_condition(
         ims_embeddings, chemnet_embeddings_to_plot, chem_embeddings, 
-        chem, results_type, condition, save_plot_path=None):
+        chem, results_type, condition, save_plot_path=None,
+        start_idx=1, stop_idx=-11, plot_predicted_condition=False,
+        ):
     # Fit PCA on ims_embeddings
     pca = PCA(n_components=2)
     pca.fit(ims_embeddings.T)
@@ -695,16 +698,21 @@ def plot_emb_colored_by_condition(
     chemnet_pca = pca.transform(chemnet_embeddings_to_plot.T)
 
     # Transform embeddings_only
-    embeddings_only = chem_embeddings.iloc[:,1:-11]
+    embeddings_only = chem_embeddings.iloc[:,start_idx:stop_idx]
     embeddings_only_pca = pca.transform(embeddings_only)
 
-    # Plot chemnet_embeddings_to_plot
-    plt.scatter(chemnet_pca[:, 0], chemnet_pca[:, 1], color='black', label=f'ChemNet Embeddings ({chem})', s=200, alpha=0.6)
-
-    # Plot embeddings_only, colored by condition
     cond = chem_embeddings[condition]
-    sc = plt.scatter(embeddings_only_pca[:, 0], embeddings_only_pca[:, 1], c=cond, marker='x', cmap='viridis', label='Predicted Embeddings')
-    print(condition)
+    if plot_predicted_condition:
+        condition_col_num = '512' if condition == 'TemperatureKelvin' else '513'
+        sc = plt.scatter(embeddings_only_pca[:, 0], chem_embeddings[condition_col_num], c=cond, marker='x', cmap='viridis', label='Predicted Embeddings')
+        plt.xlabel('PCA Component 1')
+        plt.ylabel(f'Predicted {condition}')
+    else:
+        # Plot embeddings_only, colored by condition
+        sc = plt.scatter(embeddings_only_pca[:, 0], embeddings_only_pca[:, 1], c=cond, marker='x', cmap='viridis', label='Predicted Embeddings')
+        # Plot chemnet_embeddings_to_plot
+        plt.scatter(chemnet_pca[:, 0], chemnet_pca[:, 1], color='black', label=f'ChemNet Embeddings ({chem})', s=200)#, alpha=0.6)
+
     if condition == 'TemperatureKelvin':
         plt.colorbar(sc, label='Temperature (K)')
     elif condition == 'PressureBar':

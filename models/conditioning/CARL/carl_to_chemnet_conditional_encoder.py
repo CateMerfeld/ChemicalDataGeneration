@@ -17,23 +17,23 @@ import torch
 
 early_stopping_threshold = 15
 model_hyperparams = {
-  'batch_size':[64],
+  'batch_size':[16],
   'epochs': [100],
-  'learning_rate':[.000001],
+  'learning_rate':[.0001],#, .00001, .000001],
   }
 
-# Loading Data:
+# Loading metadata:
 metadata = pd.read_feather('/home/cmdunham/scratch/BKG_SIM_ims_acbc_train_v1.1.09_meta.feather')
 
 
-# file_path = '/home/cmdunham/scratch/CARL/train_carls_one_per_spec.feather'
-# train_carls = pd.read_feather(file_path)
-# train_carls = train_carls.drop(columns=['level_0'])
-# #%%
+file_path = '/home/cmdunham/scratch/CARL/train_carls_one_per_spec.feather'
+train_carls = pd.read_feather(file_path)
+train_carls = train_carls.drop(columns=['level_0'])
+#%%
 
-# file_path = '/home/cmdunham/scratch/CARL/val_carls_one_per_spec.feather'
-# val_carls = pd.read_feather(file_path)
-# val_carls = val_carls.drop(columns=['level_0'])
+file_path = '/home/cmdunham/scratch/CARL/val_carls_one_per_spec.feather'
+val_carls = pd.read_feather(file_path)
+val_carls = val_carls.drop(columns=['level_0'])
 
 file_path = '/home/cmdunham/scratch/CARL/test_carls_one_per_spec.feather'
 test_carls = pd.read_feather(file_path)
@@ -70,59 +70,67 @@ all_true_embeddings.head()
 # Training Encoder on Carls:
 device = f.set_up_gpu()
 
-# sorted_chem_names = list(train_carls.columns[-8:])
-# train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
-#     train_carls, 
-#     name_smiles_embedding_df, 
-#     device, 
-#     start_idx=1, 
-#     stop_idx=-9,
-#     )
-# # merge_conditions function expects a DataFrame with an 'index' column
-# train_embeddings_df = pd.DataFrame(train_embeddings_tensor.cpu().numpy())
-# train_embeddings_df['index'] = train_carl_indices_tensor.cpu().numpy()
-# # merge conditions with true embeddings
-# train_embeddings_with_conditions = pf.merge_conditions(train_embeddings_df, metadata, col_to_insert_before='index')
-# # drop the 'index' column after merging conditions since it's no longer needed
-# train_embeddings_with_conditions.drop(columns=['index'], inplace=True)
-# # # replace NaN values with 0
-# # train_embeddings_with_conditions = train_embeddings_with_conditions.fillna(0)
-# # replace NaN values with the mean of each column
-# train_embeddings_with_conditions = train_embeddings_with_conditions.fillna(train_embeddings_with_conditions.mean())
-# # # round the TemperatureKelvin and PressureBar columns to the nearest integer
-# # train_embeddings_with_conditions['TemperatureKelvin'] = train_embeddings_with_conditions['TemperatureKelvin'].round(0)
-# # train_embeddings_with_conditions['PressureBar'] = train_embeddings_with_conditions['PressureBar'].round(0)
-# # convert the DataFrame back to a tensor
-# train_embeddings_tensor = torch.Tensor(train_embeddings_with_conditions.values).to(device)
-# del train_embeddings_with_conditions, train_carls
+sorted_chem_names = list(train_carls.columns[-8:])
+train_embeddings_tensor, train_carl_tensor, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
+    train_carls, 
+    name_smiles_embedding_df, 
+    device, 
+    start_idx=1, 
+    stop_idx=-9,
+    )
+# merge_conditions function expects a DataFrame with an 'index' column
+train_embeddings_df = pd.DataFrame(train_embeddings_tensor.cpu().numpy())
+train_embeddings_df['index'] = train_carl_indices_tensor.cpu().numpy()
+# merge conditions with true embeddings
+train_embeddings_with_conditions = pf.merge_conditions(train_embeddings_df, metadata, col_to_insert_before='index')
+# drop the 'index' column after merging conditions since it's no longer needed
+train_embeddings_with_conditions.drop(columns=['index'], inplace=True)
+# # replace NaN values with 0
+# train_embeddings_with_conditions = train_embeddings_with_conditions.fillna(0)
+# replace NaN values with the mean of each column
+train_embeddings_with_conditions = train_embeddings_with_conditions.fillna(train_embeddings_with_conditions.mean())
+# # round the TemperatureKelvin column to the nearest tenth and PressureBar column to the nearest integer   
+# train_embeddings_with_conditions['TemperatureKelvin'] = train_embeddings_with_conditions['TemperatureKelvin'].round(1)
+# train_embeddings_with_conditions['PressureBar'] = train_embeddings_with_conditions['PressureBar'].round(0)
+# scale the TemperatureKelvin column to be between 0 and 1
+train_embeddings_with_conditions['TemperatureKelvin'] = (train_embeddings_with_conditions['TemperatureKelvin'] - train_embeddings_with_conditions['TemperatureKelvin'].min()) / (train_embeddings_with_conditions['TemperatureKelvin'].max() - train_embeddings_with_conditions['TemperatureKelvin'].min())
+# scale the PressureBar column to be between 0 and 1
+train_embeddings_with_conditions['PressureBar'] = (train_embeddings_with_conditions['PressureBar'] - train_embeddings_with_conditions['PressureBar'].min()) / (train_embeddings_with_conditions['PressureBar'].max() - train_embeddings_with_conditions['PressureBar'].min())
+# convert the DataFrame back to a tensor
+train_embeddings_tensor = torch.Tensor(train_embeddings_with_conditions.values).to(device)
+del train_embeddings_with_conditions, train_carls
 # del train_carls
 
-# val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
-#     val_carls,     
-#     name_smiles_embedding_df, 
-#     device, 
-#     start_idx=1, 
-#     stop_idx=-9,
-#     )
-# # merge_conditions function expects a DataFrame with an 'index' column
-# val_embeddings_df = pd.DataFrame(val_embeddings_tensor.cpu().numpy())
-# val_embeddings_df['index'] = val_carl_indices_tensor.cpu().numpy()
-# # merge conditions with true embeddings
-# val_embeddings_with_conditions = pf.merge_conditions(val_embeddings_df, metadata, col_to_insert_before='index')
-# # # replace NaN values with 0
-# # val_embeddings_with_conditions = val_embeddings_with_conditions.fillna(0)
-# # replace NaN values with the mean of each column
-# val_embeddings_with_conditions = val_embeddings_with_conditions.fillna(val_embeddings_with_conditions.mean())
-# # drop the 'index' column after merging conditions since it's no longer needed
-# val_embeddings_with_conditions.drop(columns=['index'], inplace=True)
-# # # round the TemperatureKelvin and PressureBar columns to the nearest integer
-# # val_embeddings_with_conditions['TemperatureKelvin'] = val_embeddings_with_conditions['TemperatureKelvin'].round(0)
-# # val_embeddings_with_conditions['PressureBar'] = val_embeddings_with_conditions['PressureBar'].round(0)
+val_embeddings_tensor, val_carl_tensor, val_chem_encodings_tensor, val_carl_indices_tensor = f.create_dataset_tensors(
+    val_carls,     
+    name_smiles_embedding_df, 
+    device, 
+    start_idx=1, 
+    stop_idx=-9,
+    )
+# merge_conditions function expects a DataFrame with an 'index' column
+val_embeddings_df = pd.DataFrame(val_embeddings_tensor.cpu().numpy())
+val_embeddings_df['index'] = val_carl_indices_tensor.cpu().numpy()
+# merge conditions with true embeddings
+val_embeddings_with_conditions = pf.merge_conditions(val_embeddings_df, metadata, col_to_insert_before='index')
+# # replace NaN values with 0
+# val_embeddings_with_conditions = val_embeddings_with_conditions.fillna(0)
+# replace NaN values with the mean of each column
+val_embeddings_with_conditions = val_embeddings_with_conditions.fillna(val_embeddings_with_conditions.mean())
+# drop the 'index' column after merging conditions since it's no longer needed
+val_embeddings_with_conditions.drop(columns=['index'], inplace=True)
+# # round the TemperatureKelvin column to the nearest tenth and PressureBar column to the nearest integer   
+# val_embeddings_with_conditions['TemperatureKelvin'] = val_embeddings_with_conditions['TemperatureKelvin'].round(1)
+# val_embeddings_with_conditions['PressureBar'] = val_embeddings_with_conditions['PressureBar'].round(0)
+# scale the TemperatureKelvin column to be between 0 and 1
+val_embeddings_with_conditions['TemperatureKelvin'] = (val_embeddings_with_conditions['TemperatureKelvin'] - val_embeddings_with_conditions['TemperatureKelvin'].min()) / (val_embeddings_with_conditions['TemperatureKelvin'].max() - val_embeddings_with_conditions['TemperatureKelvin'].min())
+# scale the PressureBar column to be between 0 and 1
+val_embeddings_with_conditions['PressureBar'] = (val_embeddings_with_conditions['PressureBar'] - val_embeddings_with_conditions['PressureBar'].min()) / (val_embeddings_with_conditions['PressureBar'].max() - val_embeddings_with_conditions['PressureBar'].min())
 
-# # convert the DataFrame back to a tensor
-# val_embeddings_tensor = torch.Tensor(val_embeddings_with_conditions.values).to(device)
+# convert the DataFrame back to a tensor
+val_embeddings_tensor = torch.Tensor(val_embeddings_with_conditions.values).to(device)
 
-# del val_embeddings_with_conditions, val_carls
+del val_embeddings_with_conditions, val_carls
 # del val_carls
 
 
@@ -144,10 +152,13 @@ test_embeddings_with_conditions.drop(columns=['index'], inplace=True)
 # test_embeddings_with_conditions = test_embeddings_with_conditions.fillna(0)
 # replace NaN values with the mean of each column
 test_embeddings_with_conditions = test_embeddings_with_conditions.fillna(test_embeddings_with_conditions.mean())
-print(test_embeddings_with_conditions.head())
-# # round the TemperatureKelvin and PressureBar columns to the nearest integer    
-# test_embeddings_with_conditions['TemperatureKelvin'] = test_embeddings_with_conditions['TemperatureKelvin'].round(0)
+# # round the TemperatureKelvin column to the nearest tenth and PressureBar column to the nearest integer    
+# test_embeddings_with_conditions['TemperatureKelvin'] = test_embeddings_with_conditions['TemperatureKelvin'].round(1)
 # test_embeddings_with_conditions['PressureBar'] = test_embeddings_with_conditions['PressureBar'].round(0)
+# scale the TemperatureKelvin column to be between 0 and 1
+test_embeddings_with_conditions['TemperatureKelvin'] = (test_embeddings_with_conditions['TemperatureKelvin'] - test_embeddings_with_conditions['TemperatureKelvin'].min()) / (test_embeddings_with_conditions['TemperatureKelvin'].max() - test_embeddings_with_conditions['TemperatureKelvin'].min())
+# scale the PressureBar column to be between 0 and 1
+test_embeddings_with_conditions['PressureBar'] = (test_embeddings_with_conditions['PressureBar'] - test_embeddings_with_conditions['PressureBar'].min()) / (test_embeddings_with_conditions['PressureBar'].max() - test_embeddings_with_conditions['PressureBar'].min())
 # convert the DataFrame back to a tensor
 test_embeddings_tensor = torch.Tensor(test_embeddings_with_conditions.values).to(device)
 del test_embeddings_with_conditions, test_carls

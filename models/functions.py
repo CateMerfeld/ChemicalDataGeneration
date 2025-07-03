@@ -243,10 +243,14 @@ def run_generator(
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 
-def get_class_weights(data, device):
+def get_class_weights(data, device, weights_dimension=512):
     class_counts = dict(sorted(Counter(data['Label']).items()))
     class_weights = {cls: len(data) / count for cls, count in class_counts.items()}
     class_weights = torch.tensor(list(class_weights.values()))
+    # Pad class_weights with zeros to match the required length of 512
+    if len(class_weights) < weights_dimension:
+        padding = torch.zeros(weights_dimension - len(class_weights), dtype=torch.float32)
+        class_weights = torch.cat([class_weights, padding])
     return class_weights.to(device)
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------

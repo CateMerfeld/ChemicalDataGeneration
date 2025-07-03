@@ -3,14 +3,15 @@ import pandas as pd
 import numpy as np
 #%%
 from torch.utils.data import TensorDataset
-import os
-import sys
 import torch.nn as nn
 #%%
 import uninformative_embeddings_functions as adv_emb_f
+import os
+import sys
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 import functions as f
+#%%
 
 # Things that need to be changed for each encoder/dataset/target embedding
 notebook_name = '/home/cmdunham/ChemicalDataGeneration/models/uninformative_embeddings/ims_to_onehot_encoder.py'
@@ -66,7 +67,7 @@ onehot_matrix[:, :8] = np.eye(8, dtype=np.float32)
 cols = sorted_chem_names + [f"zero_{i}" for i in range(8, 512)]
 embedding_df = pd.DataFrame(onehot_matrix, columns=cols, index=sorted_chem_names)
 embedding_df['Embedding Floats'] = embedding_df.apply(lambda row: row.values.tolist(), axis=1)
-print(embedding_df.head())
+# print(embedding_df.head())
 #%%
 # # format one-hot encoded embeddings correctly for f.create_dataset_tensors
 # true_embeddings = pd.get_dummies(sorted_chem_names, dtype=np.float32)
@@ -77,11 +78,11 @@ print(embedding_df.head())
 #%%
 
 class_weights = f.get_class_weights(train_spectra, device)
+#%%
 
 y_train, x_train, train_chem_encodings_tensor, train_carl_indices_tensor = f.create_dataset_tensors(
     train_spectra, embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
 del train_spectra
-
 
 # #%%
 file_path = '/home/cmdunham/scratch/val_data.feather'
@@ -95,7 +96,7 @@ test_spectra = pd.read_feather(file_path)
 y_test, x_test, test_chem_encodings_tensor, test_carl_indices_tensor = f.create_dataset_tensors(
     test_spectra, embedding_df, device, start_idx=start_idx, stop_idx=stop_idx)
 del test_spectra
-# %%
+#%%
 
 # Combine ChemNet embeddings and OneHot embeddings so PCA plots are comparable
 file_path = '/home/cmdunham/scratch/name_smiles_embedding_file.csv'
@@ -103,14 +104,19 @@ smiles_chemnet_embeddings_df = f.format_embedding_df(file_path)
 chemnet_embeddings = pd.DataFrame([emb for emb in smiles_chemnet_embeddings_df['Embedding Floats']][1:]).T
 cols = [f"{col} ChemNet" for col in smiles_chemnet_embeddings_df.index[1:]]
 chemnet_embeddings.columns = cols
+# print(chemnet_embeddings.isna().sum())
+#%%
 
 onehot_embeddings = pd.DataFrame([emb for emb in embedding_df['Embedding Floats']]).T
-onehot_embeddings.columns = cols
+onehot_embeddings.columns = sorted_chem_names
 # padding onehot embeddings with zeros to match chemnet embeddings
-zeros_df = pd.DataFrame(np.zeros((504, 8)), columns=onehot_embeddings.columns)
-onehot_embeddings = pd.concat([zeros_df, onehot_embeddings], axis=0).reset_index(drop=True)
+# zeros_df = pd.DataFrame(np.zeros((504, 8)), columns=onehot_embeddings.columns)
+# onehot_embeddings = pd.concat([zeros_df, onehot_embeddings], axis=0).reset_index(drop=True)
 all_true_embeddings = pd.concat([chemnet_embeddings, onehot_embeddings], axis=1)
-# #%%
+# print(all_true_embeddings.head())
+# print(all_true_embeddings.isna().sum())
+# print(all_true_embeddings.shape)
+#%%
 
 train_data = TensorDataset(x_train, train_chem_encodings_tensor, y_train, train_carl_indices_tensor)
 val_data = TensorDataset(x_val, val_chem_encodings_tensor, y_val, val_carl_indices_tensor)
@@ -127,6 +133,6 @@ for n_layers in n_layers_list:
         all_true_embeddings, onehot_embeddings, model_hyperparams, sorted_chem_names, 
         encoder_path, criterion, input_type='IMS', embedding_type='OneHot',
         early_stop_threshold=early_stopping_threshold, lr_scheduler=True, 
-        patience=lr_scheduler_patience, save_emb_pca_to_wandb=False
+        patience=lr_scheduler_patience, save_emb_pca_to_wandb=True
         )
 # %%

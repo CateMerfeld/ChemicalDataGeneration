@@ -625,23 +625,23 @@ class IMStoOneHotEncoder(nn.Module):
   def __init__(self):
     super().__init__()
     self.encoder = nn.Sequential(
-      nn.Linear(1676,1491),
+      nn.Linear(1676,1548),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(1491,1306),
+      nn.Linear(1548,1420),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(1306, 1121),
+      nn.Linear(1420, 1292),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(1121, 936),
+      nn.Linear(1292, 1164),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(936, 751),
+      nn.Linear(1164, 1036),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(751, 566),
+      nn.Linear(1036, 908),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(566, 381),
+      nn.Linear(908, 780),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(381, 196),
+      nn.Linear(780, 652),
       nn.LeakyReLU(inplace=True),
-      nn.Linear(196, 8),
+      nn.Linear(652, 512),
     )
 
   def forward(self, x):

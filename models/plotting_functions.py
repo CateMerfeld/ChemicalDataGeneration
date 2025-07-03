@@ -685,6 +685,11 @@ def plot_emb_pca(
 
     plt.show()
 
+def project_embeddings_to_line(embeddings, condition_data, condition_name):
+    condition_direction = condition_data.max() - condition_data.min()
+    
+    
+
 def plot_emb_colored_by_condition(
         ims_embeddings, chemnet_embeddings_to_plot, chem_embeddings, 
         chem, results_type, condition, save_plot_path=None,

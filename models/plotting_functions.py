@@ -674,10 +674,7 @@ def plot_emb_pca(
 
     plt.xticks([])
     plt.yticks([])
-    if embedding_type != 'ChemNet':
-        plt.title(f'{embedding_type} vs. Encoder {results_type} Output PCA', fontsize=18)
-    else:
-        plt.title(f'ChemNet vs. Encoder {results_type} Output PCA', fontsize=18)
+    plt.title(f'{embedding_type} Encoder {results_type} Output PCA', fontsize=18)
 
     if log_wandb:
         plt.savefig('tmp_plot.png', format='png', dpi=300)

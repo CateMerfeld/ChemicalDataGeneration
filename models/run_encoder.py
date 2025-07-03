@@ -20,7 +20,7 @@ architecture = 'carl_encoder'
 # dataset_type = 'spectrum'
 dataset_type = 'CARL'
 target_embedding = 'ChemNet'
-# model_type = 'ConditionEncoder'
+model_type = 'ConditionEncoder'
 loss = 'MSELoss'
 
 early_stopping_threshold = 10

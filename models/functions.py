@@ -530,6 +530,17 @@ def predict_embeddings(dataset, model, device, criterion, reparameterization=Fal
                 batch_predicted_embeddings = model(batch, reparameterization)
             else:
                 batch_predicted_embeddings = model(batch)
+
+            # if type(model) == 'uninformative_embeddings_functions.IMStoOneHotEncoder':
+            #     print('-------------Here!!-----------------')
+            #     # Convert each entry in the batch so that the highest value is 1 and all others are 0
+            #     batch_predicted_embeddings = torch.nn.sigmoid(batch_predicted_embeddings)
+            #     print('here')
+            # else:
+            #     print(f"Model type: {type(model)}")
+            #     print('-------------Not Here!!-----------------')
+            
+            
             predicted_embeddings.append(batch_predicted_embeddings.to('cpu').detach().numpy())
             output_name_encodings.append(name_encodings.to('cpu').detach().numpy())
             input_spectra_indices.append(spectra_indices.to('cpu').detach().numpy())

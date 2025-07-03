@@ -17,7 +17,7 @@ import plotting_functions as pf
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------
-class Encoder(nn.Module):
+class IMStoOneHotEncoder(nn.Module):
   def __init__(self, input_size=1676, output_size=8, n_layers=3):
     super().__init__()
 
@@ -39,6 +39,8 @@ class Encoder(nn.Module):
 
   def forward(self, x):
     x = self.encoder(x)
+    # apply sigmoid activation to output
+    # x = torch.sigmoid(x)
     return x
   
 # ------------------------------------------------------------------------------------------

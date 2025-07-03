@@ -8,7 +8,7 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data_pr
 sys.path.append(parent_dir)
 import preprocessing_functions as ppf
 # from sklearn.decomposition import PCA
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 #%%
 import importlib
 importlib.reload(pf)
@@ -45,7 +45,7 @@ embedding_preds_df = pd.read_csv(file_path)
 # add a col to embedding_preds_df called TemperatureKelvin. 
 embedding_preds_df = ppf.merge_conditions(embedding_preds_df, metadata, col_to_insert_before='DEB')
 
-
+#%%
 # create a label column based on the one-hot encoded columns
 one_hot_cols = embedding_preds_df.columns[-8:]
 embedding_preds_df['Label'] = embedding_preds_df[one_hot_cols].idxmax(axis=1)
@@ -57,6 +57,20 @@ embedding_preds_df = embedding_preds_df[cols]
 sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
 conditions = ['TemperatureKelvin', 'PressureBar']
 encodings_list = embedding_preds_df[sorted_chem_names].values.tolist()
+#%%
+# Plot predicted TemperatureKelvin against predicted PressureBar
+sorted_chem_names = ['DEB','DEM','DMMP','DPM','DtBP','JP8','MES','TEPO']
+
+for chem in sorted_chem_names:
+    chem_embeddings = embedding_preds_df[embedding_preds_df['Label'] == chem]
+    plt.figure(figsize=(8, 6))
+    plt.scatter(chem_embeddings['TemperatureKelvin'], chem_embeddings['PressureBar'], alpha=0.5)
+    plt.xlabel('Temperature Kelvin', fontsize=16)
+    plt.ylabel('Pressure Bar', fontsize=16)
+    plt.title(f'True Temperature vs Pressure for {chem}', fontsize=20)
+    # plt.xticks([])
+    # plt.yticks([])
+    plt.show()
 #%%
 importlib.reload(pf)
 
